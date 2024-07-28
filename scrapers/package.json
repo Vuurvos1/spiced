@@ -5,6 +5,13 @@
   "scripts": {},
   "type": "module",
   "dependencies": {
-    "puppeteer": "^22.14.0"
+    "cheerio": "1.0.0-rc.12",
+    "chrome-aws-lambda": "^10.1.0",
+    "jsdom": "^24.1.1",
+    "puppeteer": "^22.14.0",
+    "puppeteer-core": "^22.14.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-adblocker": "^2.13.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
   }
 }
