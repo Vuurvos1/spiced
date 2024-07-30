@@ -1,5 +1,5 @@
 {
-	"name": "my-app",
+	"name": "@spiced/site",
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
@@ -16,10 +16,14 @@
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",
+		"@spiced/boring-avatars": "workspace:^",
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
+		"@types/better-sqlite3": "^7.6.11",
 		"@types/eslint": "^9.6.0",
+		"@types/pg": "^8.11.6",
+		"drizzle-kit": "^0.23.1",
 		"eslint": "^9.0.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.36.0",
@@ -33,5 +37,17 @@
 		"vite": "^5.0.3",
 		"vitest": "^2.0.0"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"@lucia-auth/adapter-drizzle": "^1.0.7",
+		"@lucia-auth/adapter-postgresql": "^3.1.2",
+		"@lucia-auth/adapter-sqlite": "^3.0.2",
+		"@node-rs/argon2": "^1.8.3",
+		"arctic": "^1.9.2",
+		"better-sqlite3": "^11.1.2",
+		"boring-avatars": "^1.10.2",
+		"drizzle-orm": "^0.32.1",
+		"lucia": "^3.2.0",
+		"pg": "^8.12.0"
+	}
 }
