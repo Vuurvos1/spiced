@@ -1,18 +1,12 @@
-import { pgTable, integer, serial, text, timestamp, varchar, bigint } from 'drizzle-orm/pg-core';
-
-export const sauces = pgTable('sauces', {
-	id: serial('id').primaryKey(),
-	name: text('name').notNull(),
-	description: text('description').default(''),
-	scovile: integer('scovile'),
-	// compoany, producer, makers?
-	createdAt: timestamp('created_at').defaultNow(),
-	updatedAt: timestamp('updated_at').defaultNow()
-});
+// import { sql } from 'drizzle-orm';
+import { pgTable, integer, serial, text, timestamp, unique, varchar } from 'drizzle-orm/pg-core';
 
 // lucia auth
 export const userTable = pgTable('user', {
-	id: text('id').primaryKey()
+	id: text('id').primaryKey(),
+	username: text('username').notNull().unique(),
+	passwordHash: text('password_hash').notNull()
+	// other user attributes
 });
 
 export const sessionTable = pgTable('session', {
@@ -26,40 +20,140 @@ export const sessionTable = pgTable('session', {
 	}).notNull()
 });
 
-// export const user = pgTable('auth_user', {
-// 	id: varchar('id', {
-// 		length: 15 // change this when using custom user ids
-// 	}).primaryKey()
-// 	// other user attributes
-// });
+// app
+export const makers = pgTable('makers', {
+	makerId: serial('maker_id').primaryKey(),
+	name: varchar('name', { length: 256 }).notNull().unique(),
+	description: text('description').default(''),
+	website: varchar('website', { length: 256 }),
+	createdAt: timestamp('created_at').notNull().defaultNow(),
+	updatedAt: timestamp('updated_at')
+		.notNull()
+		.defaultNow()
+		// TODO: maybe replace these with sql`now()`?
+		.$onUpdate(() => new Date())
+});
 
-// export const session = pgTable('user_session', {
-// 	id: varchar('id', {
-// 		length: 128
-// 	}).primaryKey(),
-// 	userId: varchar('user_id', {
-// 		length: 15
-// 	})
-// 		.notNull()
-// 		.references(() => user.id),
-// 	activeExpires: bigint('active_expires', {
-// 		mode: 'number'
-// 	}).notNull(),
-// 	idleExpires: bigint('idle_expires', {
-// 		mode: 'number'
-// 	}).notNull()
-// });
+export const hotSauces = pgTable('hot_sauces', {
+	id: serial('id').primaryKey(),
+	name: text('name').notNull(),
+	description: text('description').default(''),
+	scovile: integer('scovile'),
+	makerId: integer('maker_id').references(() => makers.makerId, { onDelete: 'set null' }),
+	createdAt: timestamp('created_at')
+		.notNull()
+		.defaultNow()
+		.$onUpdate(() => new Date()),
 
-// export const key = pgTable('user_key', {
-// 	id: varchar('id', {
-// 		length: 255
-// 	}).primaryKey(),
-// 	userId: varchar('user_id', {
-// 		length: 15
-// 	})
-// 		.notNull()
-// 		.references(() => user.id),
-// 	hashedPassword: varchar('hashed_password', {
-// 		length: 255
-// 	})
-// });
+	updatedAt: timestamp('updated_at')
+		.notNull()
+		.defaultNow()
+		.$onUpdate(() => new Date())
+});
+
+export const stores = pgTable('stores', {
+	storeId: serial('store_id').primaryKey(),
+	name: varchar('name', { length: 256 }).notNull().unique(),
+	description: text('description').default(''),
+	website: varchar('website', { length: 256 }),
+	// TODO: add country/loccation?
+	createdAt: timestamp('created_at').notNull().defaultNow(),
+	updatedAt: timestamp('updated_at')
+		.notNull()
+		.defaultNow()
+		.$onUpdate(() => new Date())
+});
+
+export const hotSauceStores = pgTable(
+	'hot_sauce_stores',
+	{
+		id: serial('id').primaryKey(),
+		hotSauceId: integer('hot_sauce_id')
+			.notNull()
+			.references(() => hotSauces.id, { onDelete: 'cascade' }),
+		storeId: integer('store_id')
+			.notNull()
+			.references(() => stores.storeId, { onDelete: 'cascade' }),
+		// price: integer('price'),
+		createdAt: timestamp('created_at').notNull().defaultNow(),
+		updatedAt: timestamp('updated_at')
+			.notNull()
+			.defaultNow()
+			.$onUpdate(() => new Date())
+	},
+	(t) => ({
+		unq: unique().on(t.hotSauceId, t.storeId)
+	})
+);
+
+export const reviews = pgTable(
+	'reviews',
+	{
+		reviewId: serial('review_id').primaryKey(),
+		userId: integer('user_id')
+			.notNull()
+			.references(() => userTable.id, { onDelete: 'cascade' }),
+		hotSauceId: integer('hot_sauce_id')
+			.notNull()
+			.references(() => hotSauces.id, { onDelete: 'cascade' }),
+		// ratings go from 1 to 6? where 6 is extreme heat
+		rating: integer('rating'), // .check((rating) => rating >= 1 && rating <= 5), rating INTEGER CHECK (rating >= 1 AND rating <= 5),
+		reviewText: text('review_text').default(''),
+		createdAt: timestamp('created_at').notNull().defaultNow(),
+		updatedAt: timestamp('updated_at')
+			.notNull()
+			.defaultNow()
+			.$onUpdate(() => new Date())
+	},
+	(t) => {
+		return {
+			unq: unique().on(t.userId, t.hotSauceId)
+		};
+	}
+);
+
+export const events = pgTable('events', {
+	eventId: serial('event_id').primaryKey(),
+	name: varchar('name', { length: 256 }).notNull(),
+	description: text('description').default(''),
+	eventDate: timestamp('event_date').notNull(),
+	location: varchar('location', { length: 256 }),
+	createdAt: timestamp('created_at').defaultNow(),
+	updatedAt: timestamp('updated_at').defaultNow()
+});
+
+export const followers = pgTable(
+	'followers',
+	{
+		followerId: serial('follower_id').primaryKey(),
+		followerUserId: integer('follower_user_id')
+			.notNull()
+			.references(() => userTable.id, { onDelete: 'cascade' }),
+		followedUserId: integer('followed_user_id')
+			.notNull()
+			.references(() => userTable.id, { onDelete: 'cascade' }),
+		followedAt: timestamp('followed_at').defaultNow()
+	},
+	(t) => {
+		return {
+			unq: unique().on(t.followerUserId, t.followedUserId)
+		};
+	}
+);
+
+export const friends = pgTable(
+	'friends',
+	{
+		friendId: serial('friend_id').primaryKey(),
+		userId: integer('user_id')
+			.notNull()
+			.references(() => userTable.id, { onDelete: 'cascade' }),
+		friendUserId: integer('friend_user_id')
+			.notNull()
+			.references(() => userTable.id, { onDelete: 'cascade' }),
+		becameFriendsAt: timestamp('became_friends_at').notNull().defaultNow()
+	},
+	(t) => ({
+		unq: unique().on(t.userId, t.friendUserId)
+	})
+);

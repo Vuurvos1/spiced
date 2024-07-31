@@ -12,7 +12,11 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:integration": "playwright test",
-		"test:unit": "vitest"
+		"test:unit": "vitest",
+		"drizzle": "drizzle",
+		"drizzle-kit": "drizzle-kit",
+		"introspect": "drizzle-kit introspect:pg",
+		"db:generate": "drizzle-kit generate"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",
@@ -46,8 +50,11 @@
 		"arctic": "^1.9.2",
 		"better-sqlite3": "^11.1.2",
 		"boring-avatars": "^1.10.2",
+		"dayjs": "^1.11.12",
 		"drizzle-orm": "^0.32.1",
+		"drizzle-zod": "^0.5.1",
 		"lucia": "^3.2.0",
-		"pg": "^8.12.0"
+		"pg": "^8.12.0",
+		"postgres": "^3.4.4"
 	}
 }
