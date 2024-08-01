@@ -16,10 +16,12 @@
 		"drizzle": "drizzle",
 		"drizzle-kit": "drizzle-kit",
 		"introspect": "drizzle-kit introspect:pg",
-		"db:generate": "drizzle-kit generate"
+		"db:generate": "drizzle-kit generate",
+		"db:diagram": "node dbml.js && pnpm dbml-renderer -i schema.dbml -o erd.svg"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",
+		"@softwaretechnik/dbml-renderer": "^1.0.30",
 		"@spiced/boring-avatars": "workspace:^",
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/kit": "^2.0.0",
@@ -27,6 +29,7 @@
 		"@types/better-sqlite3": "^7.6.11",
 		"@types/eslint": "^9.6.0",
 		"@types/pg": "^8.11.6",
+		"drizzle-dbml-generator": "^0.8.0",
 		"drizzle-kit": "^0.23.1",
 		"eslint": "^9.0.0",
 		"eslint-config-prettier": "^9.1.0",
