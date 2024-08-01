@@ -3,9 +3,10 @@ import { fail, redirect } from '@sveltejs/kit';
 import { generateId } from 'lucia';
 import { hash } from '@node-rs/argon2';
 import { SqliteError } from 'better-sqlite3';
-import { db } from '$lib/server/db';
+import { db } from '$lib/db';
 
 import type { Actions, PageServerLoad } from './$types';
+import { userTable } from '$lib/db/schema';
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
@@ -45,11 +46,11 @@ export const actions: Actions = {
 		const userId = generateId(15);
 
 		try {
-			db.prepare('INSERT INTO user (id, username, password_hash) VALUES(?, ?, ?)').run(
-				userId,
+			await db.insert(userTable).values({
+				id: userId,
 				username,
 				passwordHash
-			);
+			});
 
 			const session = await lucia.createSession(userId, {});
 			const sessionCookie = lucia.createSessionCookie(session.id);

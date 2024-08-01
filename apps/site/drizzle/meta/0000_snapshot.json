@@ -1,5 +1,5 @@
 {
-  "id": "02d182f1-ddf1-4f1c-b72f-71ee662f98c3",
+  "id": "4d9cb7bf-fb62-426d-859b-e242acf64460",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -71,13 +71,13 @@
         },
         "follower_user_id": {
           "name": "follower_user_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "followed_user_id": {
           "name": "followed_user_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -142,13 +142,13 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "friend_user_id": {
           "name": "friend_user_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -156,7 +156,7 @@
           "name": "became_friends_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "now()"
         }
       },
@@ -417,7 +417,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
