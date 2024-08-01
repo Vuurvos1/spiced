@@ -1,10 +1,10 @@
 import { lucia } from '$lib/server/lucia';
 import { fail, redirect } from '@sveltejs/kit';
 import { verify } from '@node-rs/argon2';
-import { db } from '$lib/server/db';
-
+import { db } from '$lib/db';
 import type { Actions, PageServerLoad } from './$types';
-import type { DatabaseUser } from '$lib/server/db';
+import { userTable } from '$lib/db/schema';
+import { eq } from 'drizzle-orm';
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
@@ -35,16 +35,17 @@ export const actions: Actions = {
 			});
 		}
 
-		const existingUser = db.prepare('SELECT * FROM user WHERE username = ?').get(username) as
-			| DatabaseUser
-			| undefined;
+		const existingUser = (
+			await db.select().from(userTable).where(eq(userTable.username, username)).limit(1)
+		)[0];
+
 		if (!existingUser) {
 			return fail(400, {
 				message: 'Incorrect username or password'
 			});
 		}
 
-		const validPassword = await verify(existingUser.password_hash, password, {
+		const validPassword = await verify(existingUser.passwordHash, password, {
 			memoryCost: 19456,
 			timeCost: 2,
 			outputLen: 32,

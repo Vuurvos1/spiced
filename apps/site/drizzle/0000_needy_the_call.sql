@@ -10,17 +10,17 @@ CREATE TABLE IF NOT EXISTS "events" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "followers" (
 	"follower_id" serial PRIMARY KEY NOT NULL,
-	"follower_user_id" integer NOT NULL,
-	"followed_user_id" integer NOT NULL,
+	"follower_user_id" text NOT NULL,
+	"followed_user_id" text NOT NULL,
 	"followed_at" timestamp DEFAULT now(),
 	CONSTRAINT "followers_follower_user_id_followed_user_id_unique" UNIQUE("follower_user_id","followed_user_id")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "friends" (
 	"friend_id" serial PRIMARY KEY NOT NULL,
-	"user_id" integer NOT NULL,
-	"friend_user_id" integer NOT NULL,
-	"became_friends_at" timestamp DEFAULT now(),
+	"user_id" text NOT NULL,
+	"friend_user_id" text NOT NULL,
+	"became_friends_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "friends_user_id_friend_user_id_unique" UNIQUE("user_id","friend_user_id")
 );
 --> statement-breakpoint
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS "makers" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "reviews" (
 	"review_id" serial PRIMARY KEY NOT NULL,
-	"user_id" integer NOT NULL,
+	"user_id" text NOT NULL,
 	"hot_sauce_id" integer NOT NULL,
 	"rating" integer,
 	"review_text" text DEFAULT '',

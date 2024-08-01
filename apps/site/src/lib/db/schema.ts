@@ -3,7 +3,7 @@ import { pgTable, integer, serial, text, timestamp, unique, varchar } from 'driz
 
 // lucia auth
 export const userTable = pgTable('user', {
-	id: text('id').primaryKey(),
+	id: text('id').primaryKey(), // TODO: possible change to uuid, also update references
 	username: text('username').notNull().unique(),
 	passwordHash: text('password_hash').notNull()
 	// other user attributes
@@ -90,7 +90,7 @@ export const reviews = pgTable(
 	'reviews',
 	{
 		reviewId: serial('review_id').primaryKey(),
-		userId: integer('user_id')
+		userId: text('user_id')
 			.notNull()
 			.references(() => userTable.id, { onDelete: 'cascade' }),
 		hotSauceId: integer('hot_sauce_id')
@@ -126,10 +126,10 @@ export const followers = pgTable(
 	'followers',
 	{
 		followerId: serial('follower_id').primaryKey(),
-		followerUserId: integer('follower_user_id')
+		followerUserId: text('follower_user_id')
 			.notNull()
 			.references(() => userTable.id, { onDelete: 'cascade' }),
-		followedUserId: integer('followed_user_id')
+		followedUserId: text('followed_user_id')
 			.notNull()
 			.references(() => userTable.id, { onDelete: 'cascade' }),
 		followedAt: timestamp('followed_at').defaultNow()
@@ -145,10 +145,10 @@ export const friends = pgTable(
 	'friends',
 	{
 		friendId: serial('friend_id').primaryKey(),
-		userId: integer('user_id')
+		userId: text('user_id')
 			.notNull()
 			.references(() => userTable.id, { onDelete: 'cascade' }),
-		friendUserId: integer('friend_user_id')
+		friendUserId: text('friend_user_id')
 			.notNull()
 			.references(() => userTable.id, { onDelete: 'cascade' }),
 		becameFriendsAt: timestamp('became_friends_at').notNull().defaultNow()
