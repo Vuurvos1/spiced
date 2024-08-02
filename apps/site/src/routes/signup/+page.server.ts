@@ -2,11 +2,11 @@ import { lucia } from '$lib/server/lucia';
 import { fail, redirect } from '@sveltejs/kit';
 import { generateId } from 'lucia';
 import { hash } from '@node-rs/argon2';
-import { SqliteError } from 'better-sqlite3';
 import { db } from '$lib/db';
 
 import type { Actions, PageServerLoad } from './$types';
 import { userTable } from '$lib/db/schema';
+import postgres from 'postgres';
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
@@ -58,12 +58,13 @@ export const actions: Actions = {
 				path: '.',
 				...sessionCookie.attributes
 			});
-		} catch (e) {
-			if (e instanceof SqliteError && e.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+		} catch (err) {
+			if (err instanceof postgres.PostgresError && err.code === '23505') {
 				return fail(400, {
 					message: 'Username already used'
 				});
 			}
+
 			return fail(500, {
 				message: 'An unknown error occurred'
 			});

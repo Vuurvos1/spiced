@@ -3,13 +3,13 @@ version: '3.8'
 services:
   db:
     image: postgres:16
-    container_name: my-postgres-container
+    container_name: postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
       POSTGRES_DB: sauce
     ports:
-      - '5432:5432'
+      - '5433:5432'
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER}']
       interval: 1s
