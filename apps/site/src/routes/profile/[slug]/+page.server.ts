@@ -10,7 +10,7 @@ export async function load({ params }) {
 		const users = await db.select().from(userTable).where(eq(userTable.username, slug)).limit(1);
 
 		if (users.length === 0) {
-			throw error(404, 'User not found');
+			error(404, 'User not found');
 		}
 
 		const user = users[0];
@@ -22,6 +22,6 @@ export async function load({ params }) {
 		};
 	} catch (err) {
 		console.error(err);
-		throw error(500, 'Internal server error');
+		error(500, 'Internal server error');
 	}
 }

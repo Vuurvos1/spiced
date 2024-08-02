@@ -1,10 +1,11 @@
 <script lang="ts">
-	// TODO: svelte 5 ify
-	export let data;
+	import { BeamAvatar } from '@spiced/boring-avatars';
 
-	$: ({ user } = data);
+	let { data } = $props();
+
+	let { user } = $derived(data);
 </script>
 
-<pre>
-  {JSON.stringify(user, null, 2)}
-</pre>
+<BeamAvatar name={user.username}></BeamAvatar>
+
+<h2>{user.username}</h2>
