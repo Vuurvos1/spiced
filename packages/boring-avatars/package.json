@@ -1,5 +1,5 @@
 {
-	"name": "@spiced/boring-avatars",
+	"name": "@app/boring-avatars",
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "vite dev",

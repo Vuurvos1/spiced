@@ -1,5 +1,5 @@
 {
-  "name": "@spiced/scraper",
+  "name": "@app/scraper",
   "version": "0.0.1",
   "private": true,
   "scripts": {},

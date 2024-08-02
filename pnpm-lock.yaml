@@ -6,6 +6,8 @@ settings:
 
 importers:
 
+  .: {}
+
   apps/site:
     dependencies:
       '@lucia-auth/adapter-drizzle':

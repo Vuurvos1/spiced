@@ -1,0 +1,11 @@
+{
+  "name": "spiced",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "site": "pnpm --filter @app/site -- "
+  },
+  "devDependencies": {},
+  "type": "module",
+  "dependencies": {}
+}
