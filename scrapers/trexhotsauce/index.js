@@ -1,5 +1,3 @@
-// import * as cheerio from 'cheerio';
-import { parseFromString } from 'dom-parser';
 import { JSDOM } from 'jsdom';
 import fs from 'node:fs';
 

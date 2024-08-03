@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { BeamAvatar } from '@spiced/boring-avatars';
+	import { BeamAvatar } from '@app/boring-avatars';
 
 	let { data } = $props();
 
