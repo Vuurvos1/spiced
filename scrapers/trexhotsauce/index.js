@@ -7,6 +7,12 @@ console.log('Scraping', url);
 
 let body = '';
 
+async function getSauceUrls() {}
+
+async function scrapeSauces() {}
+
+export const scraper = {};
+
 if (!fs.existsSync('tmp.html')) {
   console.log('Fetching');
   const res = await fetch(`${url}/collections/all`);
