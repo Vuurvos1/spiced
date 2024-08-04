@@ -2,8 +2,8 @@ import { Lucia } from 'lucia';
 import { DrizzlePostgreSQLAdapter } from '@lucia-auth/adapter-drizzle';
 import { dev } from '$app/environment';
 import { db } from '$lib/db';
-import { sessionTable, userTable } from '$lib/db/schema';
-import type { DatabaseUser } from '$lib/db/types';
+import { sessionTable, userTable } from '@app/db/schema';
+import type { DatabaseUser } from '@app/db/types';
 
 const adapter = new DrizzlePostgreSQLAdapter(db, sessionTable, userTable);
 

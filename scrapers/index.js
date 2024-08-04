@@ -1,11 +1,15 @@
 import parser from 'yargs-parser';
 import fs from 'node:fs';
 import scrapers from './scrapers.js';
+import { getDb } from '@app/db/index.js';
+import { hotSauces } from '@app/db/schema.js';
 
 const [, , ...args] = process.argv;
 const flags = parser(args, {
-  boolean: ['noCache'],
+  boolean: ['noCache', 'dbInsert'],
 });
+
+const db = getDb(process.env.DATABASE_URL);
 
 async function main() {
   const command = flags['_'].shift();
@@ -29,6 +33,12 @@ async function main() {
     await scraper.getSauceUrls(scraper.baseUrl, cache),
     cache
   );
+
+  console.info('Found', data.length, 'sauces');
+
+  if (flags.dbInsert) {
+    await db.insert(hotSauces).values(data);
+  }
 
   // command.get
 

@@ -1,5 +1,5 @@
 {
-  "id": "4d9cb7bf-fb62-426d-859b-e242acf64460",
+  "id": "7852c7da-b93e-4009-b890-da7226573a83",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -301,6 +301,12 @@
           "primaryKey": false,
           "notNull": false,
           "default": "''"
+        },
+        "image_url": {
+          "name": "image_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "scovile": {
           "name": "scovile",

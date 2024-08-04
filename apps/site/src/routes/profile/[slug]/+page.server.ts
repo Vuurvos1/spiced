@@ -1,5 +1,5 @@
 import { db } from '$lib/db';
-import { userTable } from '$lib/db/schema';
+import { userTable } from '@app/db/schema';
 import { error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 

@@ -2,8 +2,25 @@
   "name": "@app/db",
   "version": "0.0.1",
   "private": true,
-  "scripts": {},
-  "devDependencies": {},
+  "scripts": {
+    "drizzle": "drizzle",
+    "drizzle-kit": "drizzle-kit",
+    "introspect": "drizzle-kit introspect:pg",
+    "db:generate": "drizzle-kit generate",
+    "db:diagram": "node dbml.js && pnpm dbml-renderer -i schema.dbml -o erd.svg",
+    "db:studio": "dotenv -e .env -- drizzle-kit studio",
+    "db:migrate": "drizzle-kit migrate"
+  },
   "type": "module",
-  "dependencies": {}
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.32.1",
+    "drizzle-zod": "^0.5.1",
+    "postgres": "^3.4.4"
+  },
+  "devDependencies": {
+    "dotenv-cli": "^7.4.2",
+    "drizzle-dbml-generator": "^0.8.0",
+    "drizzle-kit": "^0.23.1"
+  }
 }

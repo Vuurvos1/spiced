@@ -4,11 +4,7 @@ import fs from 'node:fs';
 const baseUrl = 'https://t-rexhotsauce.com';
 const cachePath = './cache/trex';
 
-/**
- * @param {string} url
- * @param {boolean} cache
- * @returns
- */
+/** @type {import('../').GetSauceUrls} */
 async function getSauceUrls(url, cache = true) {
   // TODO: delete cache if no cache?
 
@@ -39,14 +35,10 @@ async function getSauceUrls(url, cache = true) {
   return links;
 }
 
-/**
- * @param {string[]} sauceUrls
- * @param {boolean} cache
- * @returns
- */
+/** @type {import('../').ScrapeSauces} */
 async function scrapeSauces(sauceUrls, cache = true) {
   /**
-   * @type {Array<{ name: string, description: string, brand: string, price: number, currency: string, img: string, url: string }>}
+   * @type {import('../').Sauce[]}}
    */
   const producs = [];
 
@@ -72,27 +64,31 @@ async function scrapeSauces(sauceUrls, cache = true) {
     const body = fs.readFileSync(`${cachePath}/sauces/${file}`, 'utf8');
 
     const document = new JSDOM(body).window.document;
-    const name = document.querySelector('h1')?.textContent.trim();
+    const name = document.querySelector('h1')?.textContent?.trim() ?? '';
     const description =
       document
         .querySelector('.product__description')
-        ?.textContent.trim()
+        ?.textContent?.trim()
         .replace(/^"|"$/g, '') || '';
     if (!description) {
       console.warn('No description found for', name);
     }
 
     const brand = 'T-Rex Hot Sauce';
-    const img = 'https:' + document.querySelector('.product__media img').src; // TODO: maybe get all images
 
-    const url = document.querySelector('link[rel="canonical"]').href;
+    /** @type {HTMLImageElement | null} */
+    const img = document.querySelector('.product__media img'); // TODO: maybe get all images
 
+    // const url = document.querySelector('link[rel="canonical"]')?.href;
+
+    /** @type {import('../').Sauce}} */
     const sauce = {
       name,
       description,
-      brand,
-      img,
-      url,
+      imageUrl: img ? `https:${img.src}` : null,
+      // brand,
+      // img,
+      // url,
     };
 
     producs.push(sauce);
@@ -102,6 +98,7 @@ async function scrapeSauces(sauceUrls, cache = true) {
   return producs;
 }
 
+/** @type {import('../').SauceScraper} */
 export const scraper = {
   baseUrl,
   name: 'trex',

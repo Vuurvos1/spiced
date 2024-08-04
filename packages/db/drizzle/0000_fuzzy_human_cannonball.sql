@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS "hot_sauces" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"description" text DEFAULT '',
+	"image_url" text,
 	"scovile" integer,
 	"maker_id" integer,
 	"created_at" timestamp DEFAULT now() NOT NULL,
