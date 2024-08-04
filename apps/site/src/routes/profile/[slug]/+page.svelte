@@ -6,6 +6,12 @@
 	let { user } = $derived(data);
 </script>
 
-<BeamAvatar name={user.username}></BeamAvatar>
+<div>
+	<section>
+		<div class="flex flex-col items-center gap-4">
+			<BeamAvatar size={128} name={user.username}></BeamAvatar>
 
-<h2>{user.username}</h2>
+			<h1 class="text-xl font-medium">{user.username}</h1>
+		</div>
+	</section>
+</div>

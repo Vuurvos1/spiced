@@ -10,12 +10,17 @@
 
 {#snippet sauce(sauce: HotSauce)}
 	<li>
-		<h2>{sauce.name}</h2>
-		<p>{sauce.description}</p>
+		<!-- TODO: make relative? -->
+		<a href="/sauces/{sauce.id}">
+			<img src={sauce.imageUrl} alt="" />
+
+			<h2 class="mb-2 text-xl font-semibold">{sauce.name}</h2>
+			<p class="line-clamp-3">{sauce.description}</p>
+		</a>
 	</li>
 {/snippet}
 
-<ul class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+<ul class="grid grid-cols-2 gap-x-4 gap-y-6 md:grid-cols-3 lg:grid-cols-4">
 	{#each sauces as s}
 		{@render sauce(s)}
 	{:else}

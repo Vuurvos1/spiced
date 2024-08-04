@@ -105,10 +105,10 @@ export const reviews = pgTable(
       .references(() => userTable.id, { onDelete: 'cascade' }),
     hotSauceId: integer('hot_sauce_id')
       .notNull()
-      .references(() => hotSauces.id, { onDelete: 'cascade' }),
+      .references(() => hotSauces.id, { onDelete: 'cascade' }), // TODO: change to uuid?
     // ratings go from 1 to 6? where 6 is extreme heat
     rating: integer('rating'), // .check((rating) => rating >= 1 && rating <= 5), rating INTEGER CHECK (rating >= 1 AND rating <= 5),
-    reviewText: text('review_text').default(''),
+    reviewText: text('review_text').default(''), // TODO: rename to content
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at')
       .notNull()

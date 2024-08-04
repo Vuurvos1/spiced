@@ -1,0 +1,90 @@
+<script lang="ts">
+	import { enhance } from '$app/forms';
+	import { BeamAvatar } from '@app/boring-avatars';
+	import dayjs from '$lib/dayjs';
+
+	let { data, form } = $props();
+
+	let { sauce, reviews } = $derived(data);
+</script>
+
+<div class="container">
+	<section class="mb-12 grid gap-4 md:grid-cols-5">
+		<img class="md:col-span-3" src={sauce.imageUrl} alt="" />
+
+		<div class="md:col-span-2">
+			<h1 class="mb-3 text-4xl font-semibold">{sauce.name}</h1>
+
+			<p class="text-gray-500">{sauce.description}</p>
+		</div>
+	</section>
+
+	<section>
+		<h2 class="mb-4 text-3xl font-semibold">Reviews</h2>
+
+		<!-- TODO: maybe put this into a modal with shallow routing? -->
+		<form class="mb-12" method="post" action="?/review" use:enhance>
+			<div class="flex max-w-md flex-col gap-4">
+				<!-- rating slider -->
+				<div class="w-full">
+					<label for="rating">Rating</label>
+
+					<div class="flex w-full flex-row gap-3 tabular-nums">
+						<span>1</span>
+						<input class="flex-1" name="rating" type="range" min="1" max="5" step="1" />
+						<span>5</span>
+					</div>
+				</div>
+
+				<!-- comment -->
+				<label for="content">Review</label>
+				<textarea class="resize-none rounded border" name="content" rows="4" cols="50"></textarea>
+
+				<button
+					type="submit"
+					class="rounded bg-blue-500 px-3 py-2 font-semibold text-white hover:bg-blue-700"
+				>
+					Submit Review
+				</button>
+			</div>
+		</form>
+
+		{#if reviews.length === 0}
+			<p>No reviews yet.</p>
+		{:else}
+			<ul class="flex flex-col divide-y">
+				{#each reviews as review}
+					<li class="py-4 first:pt-0 last:pb-0">
+						<div class="mb-3 flex flex-row items-center gap-4">
+							<BeamAvatar name={review.username ?? ''}></BeamAvatar>
+
+							<div class="flex flex-col">
+								<span>
+									<!-- TODO: change into date/time element? -->
+									{dayjs(review.review.createdAt).format('MMMM D, YYYY')}
+								</span>
+								{#if review.username}
+									<a href={`/profile/${review.username}`}>{review.username}</a>
+								{/if}
+							</div>
+						</div>
+
+						<div class="mb-3 flex flex-row items-center gap-2">
+							{#each { length: 5 } as dot, i}
+								{#if i < (review.review?.rating ?? 0)}
+									<span class="size-3 rounded-full border border-blue-400 bg-blue-400"></span>
+								{:else}
+									<span class="size-3 rounded-full border border-blue-400"></span>
+								{/if}
+							{/each}
+
+							<span class="ml-2">({review.review.rating?.toFixed(1)})</span>
+						</div>
+
+						<p>{review.review.reviewText}</p>
+					</li>
+				{/each}
+			</ul>
+		{/if}
+	</section>
+</div>
