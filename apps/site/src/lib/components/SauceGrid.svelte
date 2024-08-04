@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { HotSauce } from '$lib/db/types';
+	import type { HotSauce } from '@app/db/types';
 
 	interface Props {
 		sauces: HotSauce[];

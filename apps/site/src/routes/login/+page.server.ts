@@ -3,7 +3,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import { verify } from '@node-rs/argon2';
 import { db } from '$lib/db';
 import type { Actions, PageServerLoad } from './$types';
-import { userTable } from '$lib/db/schema';
+import { userTable } from '@app/db/schema';
 import { eq } from 'drizzle-orm';
 
 export const load: PageServerLoad = async (event) => {

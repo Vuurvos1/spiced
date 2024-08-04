@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "db": "pnpm --filter @app/db -- ",
     "site": "pnpm --filter @app/site -- "
   },
   "devDependencies": {},

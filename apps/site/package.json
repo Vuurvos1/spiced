@@ -12,14 +12,7 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:integration": "playwright test",
-		"test:unit": "vitest",
-		"drizzle": "drizzle",
-		"drizzle-kit": "drizzle-kit",
-		"introspect": "drizzle-kit introspect:pg",
-		"db:generate": "drizzle-kit generate",
-		"db:diagram": "node dbml.js && pnpm dbml-renderer -i schema.dbml -o erd.svg",
-		"db:studio": "drizzle-kit studio",
-		"db:migrate": "drizzle-kit migrate"
+		"test:unit": "vitest"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",
@@ -50,6 +43,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@app/db": "workspace:^",
 		"@lucia-auth/adapter-drizzle": "^1.0.7",
 		"@lucia-auth/adapter-postgresql": "^3.1.2",
 		"@node-rs/argon2": "^1.8.3",
@@ -59,7 +53,6 @@
 		"drizzle-orm": "^0.32.1",
 		"drizzle-zod": "^0.5.1",
 		"lucia": "^3.2.0",
-		"pg": "^8.12.0",
 		"postgres": "^3.4.4",
 		"prettier-plugin-tailwindcss": "^0.6.5",
 		"zod": "^3.23.8"

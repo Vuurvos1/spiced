@@ -5,7 +5,7 @@ import { hash } from '@node-rs/argon2';
 import { db } from '$lib/db';
 
 import type { Actions, PageServerLoad } from './$types';
-import { userTable } from '$lib/db/schema';
+import { userTable } from '@app/db/schema';
 import postgres from 'postgres';
 
 export const load: PageServerLoad = async (event) => {
