@@ -6,7 +6,7 @@
 
 	let { sauces, sauceCount, pageSize } = $derived(data);
 
-	const currentPage = $derived(Math.max(Number($page.url.searchParams.get('page')) || 0, 0));
+	const currentPage = $derived(Math.max(Number($page.url.searchParams.get('page')) || 1, 1));
 </script>
 
 <div class="container">
@@ -19,7 +19,7 @@
 	<div class="flex flex-row justify-end gap-6 py-4">
 		<a
 			href={`/sauces?page=${currentPage - 1}`}
-			class={`${currentPage < 1 ? 'pointer-events-none cursor-not-allowed opacity-70' : ''}`}
+			class={`${currentPage < 2 ? 'pointer-events-none cursor-not-allowed opacity-70' : ''}`}
 		>
 			Prev
 		</a>
@@ -30,7 +30,7 @@
 
 		<a
 			href={`/sauces?page=${currentPage + 1}`}
-			class={`${currentPage > Math.ceil(sauceCount / pageSize) - 2 ? 'pointer-events-none cursor-not-allowed opacity-70' : ''}`}
+			class={`${currentPage > Math.ceil(sauceCount / pageSize) - 1 ? 'pointer-events-none cursor-not-allowed opacity-70' : ''}`}
 		>
 			Next
 		</a>
