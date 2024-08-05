@@ -1,5 +1,6 @@
 import { JSDOM } from 'jsdom';
 import fs from 'node:fs';
+import { createDir } from '../utils.js';
 
 const baseUrl = 'https://t-rexhotsauce.com';
 const cachePath = './cache/trex';
@@ -9,9 +10,7 @@ async function getSauceUrls(url, cache = true) {
   // TODO: delete cache if no cache?
 
   if (!cache || !fs.existsSync(`${cachePath}/saucePage.html`)) {
-    if (!fs.existsSync(cachePath)) {
-      fs.mkdirSync(cachePath, { recursive: true });
-    }
+    createDir(cachePath);
 
     console.log('Fetching');
     const res = await fetch(`${url}/collections/all`);
@@ -45,9 +44,7 @@ async function scrapeSauces(sauceUrls, cache = true) {
   // TODO: delete cache if no cache?
 
   if (!cache || !fs.existsSync(`${cachePath}/sauces`)) {
-    if (!fs.existsSync(`${cachePath}/sauces`)) {
-      fs.mkdirSync(`${cachePath}/sauces`, { recursive: true });
-    }
+    createDir(`${cachePath}/sauces`);
 
     for (const link of sauceUrls) {
       console.info('Scraping sauce', link);
