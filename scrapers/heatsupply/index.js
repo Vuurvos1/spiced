@@ -117,6 +117,18 @@ async function scrapeSauces(sauceUrls, cache = true) {
     const document = new JSDOM(body).window.document;
 
     const name = document.querySelector('h1')?.textContent?.trim() ?? '';
+
+    if (
+      document.querySelector('form.bundle_form') ||
+      name.toLowerCase().endsWith(' pack') ||
+      name.toLowerCase().includes('3 pack') ||
+      name.toLowerCase().endsWith(' subscription box') ||
+      name.toLowerCase().includes('giftset')
+    ) {
+      console.info('Skipping bundle', name);
+      continue;
+    }
+
     const description =
       document
         .querySelector(
