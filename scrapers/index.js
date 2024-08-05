@@ -40,12 +40,6 @@ async function main() {
     await db.insert(hotSauces).values(data);
   }
 
-  // command.get
-
-  // get pages
-  // get sauce urls
-  // get sauce data
-  // functions should pass into eachother
   // add caching step where sauces are save to disk unless told to remove cache (yeet cache folder?)
   // deduping step
 
