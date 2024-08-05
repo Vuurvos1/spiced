@@ -4,6 +4,7 @@ import puppeteer from 'puppeteer-extra';
 
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import AdblockerPlugin from 'puppeteer-extra-plugin-adblocker';
+import { createDir } from '../utils.js';
 
 // Add stealth plugin and use defaults (all tricks to hide puppeteer usage)
 puppeteer.use(StealthPlugin());
@@ -12,56 +13,70 @@ puppeteer.use(StealthPlugin());
 puppeteer.use(AdblockerPlugin({ blockTrackers: true }));
 
 const baseUrl = 'https://heatsupply.nl';
+const cachePath = './cache/heatsupply';
 
 /** @type {import('../').GetSauceUrls} */
 async function getSauceUrls(url, cache) {
-  let body = '';
+  if (!cache || !fs.existsSync(`${cachePath}/saucePage.html`)) {
+    createDir(cachePath);
 
-  const browser = await puppeteer.launch({
-    executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe',
-  });
-  const page = await browser.newPage();
+    const browser = await puppeteer.launch({
+      executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe',
+    });
+    const page = await browser.newPage();
 
-  const u = `${url}/en/product-categorie/hot-sauces-europe/`;
-  console.info('Opening', u);
+    const u = `${url}/en/product-categorie/hot-sauces-europe/`;
+    console.info('Opening', u);
 
-  await page.goto(u, {
-    waitUntil: 'networkidle2',
-  });
+    await page.goto(u, {
+      waitUntil: 'networkidle2',
+    });
 
-  await page.waitForSelector('.facetwp-pager', {});
+    await page.waitForSelector('.facetwp-pager', {});
 
-  body = await page.content();
+    const body = await page.content();
 
-  browser.close();
+    browser.close();
 
-  fs.writeFileSync('tmp.html', body);
+    console.log('Fetching');
+
+    fs.writeFileSync(`${cachePath}/saucePage.html`, body);
+  }
 
   // pages and sauces cache
 
-  const document = new JSDOM(body).window.document;
+  if (!cache || !fs.existsSync(`${cachePath}/saucePages`)) {
+    createDir(`${cachePath}/saucePages`);
 
-  console.log(document.querySelector('.facetwp-pager .facetwp-page.last'));
-  const lastPage = document.querySelector(
-    '.facetwp-pager .facetwp-page.last'
-  )?.textContent;
+    const body = fs.readFileSync(`${cachePath}/saucePage.html`, 'utf8');
+    const document = new JSDOM(body).window.document;
 
-  const pages = [];
+    const lastPage = document.querySelector(
+      '.facetwp-pager .facetwp-page.last'
+    )?.textContent;
 
-  for (let i = 1; i <= Number(lastPage); i++) {
-    pages.push(`${url}/en/product-categorie/hot-sauces-europe/?_paged=${i}`);
+    for (let i = 1; i <= Number(lastPage); i++) {
+      const res = await fetch(
+        `${url}/en/product-categorie/hot-sauces-europe/?_paged=${i}`
+      );
+      const body = await res.text();
+
+      fs.writeFileSync(`${cachePath}/saucePages/${i}.html`, body);
+
+      // pages.push(`${url}/en/product-categorie/hot-sauces-europe/?_paged=${i}`);
+    }
+
+    console.log('Last page', lastPage);
   }
 
-  console.log('Last page', lastPage, pages);
+  const saucePages = fs.readdirSync(`${cachePath}/saucePages`);
 
+  /** @type {string[]} */
   const sauceUrls = [];
-
-  for (const page of pages) {
-    console.log('Scraping', page);
-    const res = await fetch(page);
-    const body = await res.text();
-
+  for (const file of saucePages) {
+    const body = fs.readFileSync(`${cachePath}/saucePages/${file}`, 'utf8');
     const document = new JSDOM(body).window.document;
+
     /** @type {NodeListOf<HTMLAnchorElement>} */
     const productElements = document.querySelectorAll('.products > li > a');
 
@@ -70,103 +85,65 @@ async function getSauceUrls(url, cache) {
     sauceUrls.push(...links);
   }
 
-  console.log('Found', sauceUrls.length, 'sauces');
-
-  return [];
+  return sauceUrls;
 }
 
 /** @type {import('../').ScrapeSauces} */
 async function scrapeSauces(sauceUrls, cache = true) {
-  for (const u of sauceUrls) {
-    console.log('Scraping', u);
-    const res = await fetch(u);
-    const body = await res.text();
+  if (!cache || !fs.existsSync(`${cachePath}/sauces`)) {
+    createDir(`${cachePath}/sauces`);
 
-    const document = new JSDOM(body).window.document;
-    const name = document.querySelector('h1')?.textContent?.replace(' ', '-');
+    for (const link of sauceUrls) {
+      console.info('Scraping sauce', link);
+      const res = await fetch(link);
+      const body = await res.text();
 
-    // create directory
-    if (!fs.existsSync('./sauces')) {
-      fs.mkdirSync('./sauces');
+      const fileName = `${cachePath}/sauces/${link.replace('https://', '').replace(/\//g, '_')}.html`;
+      fs.writeFileSync(fileName, body);
     }
-
-    console.info('Writing', name);
-    fs.writeFileSync(`./sauces/${name}.html`, body);
-
-    // const document = new JSDOM(body).window.document;
-
-    // const name = document.querySelector('.product_title').textContent;
-    // const price = document.querySelector('.price .amount').textContent;
-    // const description = document.querySelector('.product_description').textContent;
-    // const ingredients = document.querySelector('.product_ingredients').textContent;
-
-    // console.log({ name, price, description, ingredients });
   }
 
-  // https://heatonist.com/products/torchbearer-sauces-makers-collection-hot-sauces.js
+  /** @type {import('../').Sauce[]} */
+  const sauces = [];
 
-  // https://www.heatsupply.nl/en/product-categorie/hot-sauces-europe/?_paged=14
+  const files = fs.readdirSync(`${cachePath}/sauces`);
 
-  // for every file in sauces
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
 
-  const producs = [];
+    if (i % 10 === 0) console.info('Scraping', i, 'of', files.length);
 
-  const files = fs.readdirSync('./sauces');
-  for (const file of files) {
-    const body = fs.readFileSync(`./sauces/${file}`, 'utf-8');
+    const body = fs.readFileSync(`${cachePath}/sauces/${file}`, 'utf8');
     const document = new JSDOM(body).window.document;
 
-    const name = document.querySelector('h1').textContent.trim();
-    const description = document
-      .querySelector(
-        '.summary .woocommerce-product-details__short-description > p'
-      )
-      .textContent.trim();
-
-    // const name = document.querySelector('h1').textContent.trim();
-    // const description =
-    //   document
-    //     .querySelector('.product__description')
-    //     ?.textContent.trim()
-    //     .replace(/^"|"$/g, '') || '';
-    // if (!description) {
-    //   console.warn('No description found for', name);
-    // }
-
-    // document.querySelector("#tab-additional_information > table > tbody > tr.woocommerce-product-attributes-item.woocommerce-product-attributes-item--attribute_pa_merk-hot-sauce > td > p")
-    // document.querySelector("#tab-additional_information > table > tbody > tr.woocommerce-product-attributes-item.woocommerce-product-attributes-item--attribute_pa_merk-hot-sauce > td > p")
-
-    // const brand = 'T-Rex Hot Sauce';
-    const brand =
+    const name = document.querySelector('h1')?.textContent?.trim() ?? '';
+    const description =
       document
         .querySelector(
-          '.woocommerce-product-attributes-item--attribute_pa_merk-hot-sauce td p'
+          '.summary .woocommerce-product-details__short-description > p'
         )
-        ?.textContent.trim() ?? '';
+        ?.textContent?.trim() ?? '';
 
-    const img = document.querySelector(
+    // const brand =
+    //   document
+    //     .querySelector(
+    //       '.woocommerce-product-attributes-item--attribute_pa_merk-hot-sauce td p'
+    //     )
+    //     ?.textContent.trim() ?? '';
+
+    /** @type {HTMLImageElement | null} */
+    const imageEl = document.querySelector(
       '.woocommerce-product-gallery__image img.wp-post-image'
-    ).src;
+    );
 
-    console.info('Scraping', name);
-
-    const sauce = {
+    sauces.push({
       name,
       description,
-      brand,
-      img,
-      // url: u,
-    };
-
-    producs.push(sauce);
+      imageUrl: imageEl?.src ?? '',
+    });
   }
 
-  console.info('Found', producs.length, 'sauces');
-  console.info('Writing to data.json');
-
-  fs.writeFileSync('./data.json', JSON.stringify(producs, null, 2));
-
-  return [];
+  return sauces;
 }
 
 /** @type {import('../').SauceScraper} */
@@ -176,5 +153,3 @@ export const scraper = {
   getSauceUrls,
   scrapeSauces,
 };
-
-// fs.writeFileSync('./data.json', JSON.stringify(sauceUrls, null, 2));

@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node --env-file=.env index.js"
+    "start": "node --env-file=.env index.js",
+    "dev": "node --env-file=.env --watch index.js"
   },
   "type": "module",
   "dependencies": {
