@@ -8,6 +8,13 @@
       "when": 1722788350518,
       "tag": "0000_fuzzy_human_cannonball",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1722925850536,
+      "tag": "0001_complete_namor",
+      "breakpoints": true
     }
   ]
 }

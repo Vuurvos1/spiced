@@ -1,5 +1,5 @@
 import { db } from '$lib/db';
-import { hotSauces, reviews, userTable } from '@app/db/schema';
+import { hotSauces, reviews, userTable, wishlist } from '@app/db/schema';
 import { error, fail } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 
@@ -69,6 +69,31 @@ export const actions = {
 		} catch (err) {
 			console.error(err);
 			return fail(500, { error: 'Failed to save review' });
+		}
+
+		return { success: true };
+	},
+	addWishlist: async ({ params, locals: { session, user } }) => {
+		if (!session || !user) {
+			return fail(401, { error: 'Unauthorized' });
+		}
+
+		const sauceId = Number(params.slug);
+
+		if (!sauceId) {
+			return fail(400, { error: 'Invalid sauce' });
+		}
+
+		try {
+			await db.insert(wishlist).values([
+				{
+					hotSauceId: sauceId,
+					userId: user.id
+				}
+			]);
+		} catch (err) {
+			console.error(err);
+			return fail(500, { error: 'Failed to add to wishlist' });
 		}
 
 		return { success: true };
