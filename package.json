@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "db": "pnpm --filter @app/db -- ",
-    "site": "pnpm --filter @app/site -- "
+    "site": "pnpm --filter @app/site -- ",
+    "scrape": "pnpm --filter @app/scraper -- "
   },
   "devDependencies": {},
   "type": "module",
