@@ -1,41 +1,28 @@
 import { db } from '$lib/db';
-import { hotSauces, wishlist } from '@app/db/schema';
-// import { error, fail } from '@sveltejs/kit';
+import { hotSauces, userTable, wishlist } from '@app/db/schema';
+import { error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 
 export async function load({ params }) {
-	const userId = params.slug;
+	const username = params.slug;
 
-	// TODO: fix query
+	const dbUser = await db.select().from(userTable).where(eq(userTable.username, username)).limit(1);
+
+	if (dbUser.length === 0) {
+		error(404, 'User not found');
+	}
+
+	const user = dbUser[0];
+
 	const dbRes = await db
-		.select()
+		.select({
+			hotSauces: hotSauces
+		})
 		.from(wishlist)
-		.where(eq(wishlist.userId, userId))
-		.innerJoin(hotSauces, eq(wishlist.hotSauceId, hotSauces.id));
+		.leftJoin(hotSauces, eq(wishlist.hotSauceId, hotSauces.id))
+		.where(eq(wishlist.userId, user.id));
 
-	// dbRes[0].hot_sauces
+	const sauces = dbRes.map((row) => row.hotSauces).filter((sauce) => !!sauce);
 
-	console.info(dbRes);
-	// const sauceId = Number(params.slug);
-
-	// const dbSauce = await db.select().from(hotSauces).where(eq(hotSauces.id, sauceId)).limit(1);
-
-	// if (dbSauce.length === 0) {
-	// 	error(404, 'Sauce not found');
-	// }
-
-	// const sauce = dbSauce[0];
-
-	// const dbReviews = await db
-	// 	.select({
-	// 		username: userTable.username,
-	// 		review: reviews
-	// 	})
-	// 	.from(reviews)
-	// 	.leftJoin(userTable, eq(reviews.userId, userTable.id))
-	// 	.where(eq(reviews.hotSauceId, sauceId));
-
-	// const sauces = dbRes[0].hot_sauces;
-
-	return { sauces: [] };
+	return { sauces: sauces };
 }

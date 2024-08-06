@@ -48,7 +48,7 @@
 		</a>
 
 		<span>
-			{currentPage}
+			{currentPage} / {Math.ceil(sauceCount / pageSize)}
 		</span>
 
 		<a

@@ -6,10 +6,10 @@
     "drizzle": "drizzle",
     "drizzle-kit": "drizzle-kit",
     "introspect": "drizzle-kit introspect:pg",
-    "db:generate": "drizzle-kit generate",
-    "db:diagram": "node dbml.js && pnpm dbml-renderer -i schema.dbml -o erd.svg",
-    "db:studio": "dotenv -e .env -- drizzle-kit studio",
-    "db:migrate": "drizzle-kit migrate"
+    "generate": "drizzle-kit generate",
+    "diagram": "node dbml.js && pnpm dbml-renderer -i schema.dbml -o erd.svg",
+    "studio": "dotenv -e .env -- drizzle-kit studio",
+    "migrate": "drizzle-kit migrate"
   },
   "type": "module",
   "dependencies": {

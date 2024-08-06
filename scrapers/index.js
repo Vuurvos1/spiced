@@ -37,6 +37,7 @@ async function main() {
   console.info('Found', data.length, 'sauces');
 
   if (flags.dbInsert) {
+    console.info('Inserting into db');
     await db.insert(hotSauces).values(data);
   }
 
