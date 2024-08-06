@@ -167,3 +167,20 @@ export const friends = pgTable(
     unq: unique().on(t.userId, t.friendUserId),
   })
 );
+
+export const wishlist = pgTable(
+  'wishlist',
+  {
+    wishlistId: serial('wishlist_id').primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => userTable.id, { onDelete: 'cascade' }),
+    hotSauceId: integer('hot_sauce_id')
+      .notNull()
+      .references(() => hotSauces.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+  },
+  (t) => ({
+    unq: unique().on(t.userId, t.hotSauceId),
+  })
+);

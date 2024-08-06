@@ -15,7 +15,16 @@
 		<div class="md:col-span-2">
 			<h1 class="mb-3 text-4xl font-semibold">{sauce.name}</h1>
 
-			<p class="text-gray-500">{sauce.description}</p>
+			<p class="mb-5 text-gray-500">{sauce.description}</p>
+
+			<div>
+				<!-- TODO: if logged in -->
+				<!-- TODO: add/remove from withlist text -->
+				<!-- TODO: error handle -->
+				<form method="post" action="?/addWishlist" use:enhance>
+					<button type="submit" class="rounded bg-blue-400 px-2 py-2">Add Wishlist +</button>
+				</form>
+			</div>
 		</div>
 	</section>
 
