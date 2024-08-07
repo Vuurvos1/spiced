@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { BeamAvatar } from '@app/boring-avatars';
 	import dayjs from '$lib/dayjs';
+	import StarRating from '$lib/components/StarRating.svelte';
 
 	let { data, form } = $props();
 
@@ -17,13 +18,15 @@
 
 			<p class="mb-5 text-gray-500">{sauce.description}</p>
 
-			<div>
+			<div class="flex flex-row gap-6">
 				<!-- TODO: if logged in -->
 				<!-- TODO: add/remove from withlist text -->
 				<!-- TODO: error handle -->
 				<form method="post" action="?/addWishlist" use:enhance>
 					<button type="submit" class="rounded bg-blue-400 px-2 py-2">Add Wishlist +</button>
 				</form>
+
+				<button class="rounded bg-blue-400 px-2 py-2">Check in</button>
 			</div>
 		</div>
 	</section>
@@ -79,13 +82,7 @@
 						</div>
 
 						<div class="mb-3 flex flex-row items-center gap-2">
-							{#each { length: 5 } as dot, i}
-								{#if i < (review.review?.rating ?? 0)}
-									<span class="size-3 rounded-full border border-blue-400 bg-blue-400"></span>
-								{:else}
-									<span class="size-3 rounded-full border border-blue-400"></span>
-								{/if}
-							{/each}
+							<StarRating rating={review.review?.rating ?? 0}></StarRating>
 
 							<span class="ml-2">({review.review.rating?.toFixed(1)})</span>
 						</div>
