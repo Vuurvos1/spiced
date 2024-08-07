@@ -5,7 +5,8 @@ import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
 	if (!event.locals.user) {
-		return redirect(302, '/login');
+		return redirect(302, '/sauces'); // TODO: maybe change when I have thought of a way to structure the routes
+		// return redirect(302, '/login'); // or to some type of home page that shows timeline
 	}
 	return {
 		user: event.locals.user

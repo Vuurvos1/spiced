@@ -1,6 +1,6 @@
 import { db } from '$lib/db';
 import { hotSauces, reviews, userTable, wishlist } from '@app/db/schema';
-import { error, fail } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 
 export async function load({ params }) {
@@ -75,6 +75,7 @@ export const actions = {
 	},
 	addWishlist: async ({ params, locals: { session, user } }) => {
 		if (!session || !user) {
+			// redirect(302, '/signup');
 			return fail(401, { error: 'Unauthorized' });
 		}
 
