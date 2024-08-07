@@ -32,7 +32,7 @@
 			<p class="text-gray-500">Showing {sauceCount} sauces</p>
 		</div>
 
-		<form data-sveltekit-keepfocus use:enhance>
+		<form method="post" data-sveltekit-keepfocus use:enhance>
 			<input bind:value={search} placeholder="Search" type="text" name="search" />
 		</form>
 	</div>

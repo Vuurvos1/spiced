@@ -9,3 +9,5 @@
 <form method="post" use:enhance>
 	<button>Sign out</button>
 </form>
+
+<!-- TODO: show timeline -->
