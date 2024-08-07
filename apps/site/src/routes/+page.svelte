@@ -4,10 +4,22 @@
 	let { data } = $props();
 </script>
 
-<h1>Hi, {data.user.username}!</h1>
-<p>Your user ID is {data.user.id}.</p>
-<form method="post" use:enhance>
-	<button>Sign out</button>
-</form>
+<section class="py-6">
+	<div class="container">
+		<h1 class="h1">Recent Activity</h1>
+
+		<p>Not implemented :(</p>
+	</div>
+</section>
+
+<section>
+	<div class="container">
+		<form method="post" use:enhance>
+			<button>Sign out</button>
+		</form>
+	</div>
+</section>
 
 <!-- TODO: show timeline -->
+
+<!-- Or do like a category browse thing, and trending sauces -->

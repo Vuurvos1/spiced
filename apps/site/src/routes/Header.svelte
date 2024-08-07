@@ -7,8 +7,8 @@
 </script>
 
 <header class="sticky top-0">
-	<nav class="border-b bg-white py-4">
-		<ul class="container flex flex-row gap-4">
+	<nav class="border-b bg-neutral-950 py-4 text-white">
+		<ul class="container flex flex-row gap-4 font-medium">
 			<li>
 				<a href="/sauces">Sauces</a>
 			</li>
