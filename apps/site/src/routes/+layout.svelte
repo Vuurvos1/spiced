@@ -1,5 +1,6 @@
 <script>
 	import '../app.css';
+	import '@fontsource-variable/inter';
 	import Header from './Header.svelte';
 
 	let { children } = $props();
