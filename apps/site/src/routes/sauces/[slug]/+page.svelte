@@ -3,6 +3,7 @@
 	import { BeamAvatar } from '@app/boring-avatars';
 	import dayjs from '$lib/dayjs';
 	import StarRating from '$lib/components/StarRating.svelte';
+	import StarRater from '$lib/components/StarRater.svelte';
 
 	let { data, form } = $props();
 
@@ -47,6 +48,8 @@
 						<span>5</span>
 					</div>
 				</div>
+
+				<StarRater></StarRater>
 
 				<!-- comment -->
 				<label for="content">Review</label>
