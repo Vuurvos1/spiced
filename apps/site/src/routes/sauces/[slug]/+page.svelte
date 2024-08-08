@@ -39,16 +39,6 @@
 		<form class="mb-12" method="post" action="?/review" use:enhance>
 			<div class="flex max-w-md flex-col gap-4">
 				<!-- rating slider -->
-				<div class="w-full">
-					<label for="rating">Rating</label>
-
-					<div class="flex w-full flex-row gap-3 tabular-nums">
-						<span>1</span>
-						<input class="flex-1" name="rating" type="range" min="1" max="5" step="1" />
-						<span>5</span>
-					</div>
-				</div>
-
 				<StarRater></StarRater>
 
 				<!-- comment -->

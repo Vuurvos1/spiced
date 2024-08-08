@@ -1,31 +1,35 @@
 <script lang="ts">
 	interface Props {
-		rating: number;
+		rating?: number;
 	}
 
-	// let { rating }: Props = $props();
+	let { rating = $bindable(0) }: Props = $props();
 
-	// let starRating = $derived(Math.round(rating / 2) * 2);
-
-	// function getStarFillAmount(i: number) {
-	// 	if (starRating >= i * 2) {
-	// 		return '100%';
-	// 	}
-
-	// 	if (starRating % 2 === 1 && starRating === i * 2 - 1) {
-	// 		return '50%';
-	// 	}
-
-	// 	return '0%';
-	// }
+	let hoverRating = $state(0);
 </script>
 
 <fieldset class="star-rating">
-	<legend>Your rating:</legend>
-	<div class="flex flex-row gap-2">
+	<legend class="mb-2">Your rating:</legend>
+	<div
+		role="group"
+		onmouseleave={() => (hoverRating = 0)}
+		class="flex flex-row gap-2 text-gray-300"
+	>
 		{#each { length: 5 } as _, i}
-			<input class="sr-only" type="radio" name="rating" value={i + 1} id="rating{i}" />
-			<label for="rating{i}">
+			<input
+				bind:group={rating}
+				class="sr-only"
+				type="radio"
+				name="rating"
+				value={i + 1}
+				id="rating{i}"
+			/>
+			<label
+				onmouseenter={() => (hoverRating = i + 1)}
+				class:text-yellow-500={i < hoverRating || (i < rating && hoverRating === 0)}
+				class="cursor-pointer"
+				for="rating{i}"
+			>
 				<span class="sr-only">{i + 1}</span>
 
 				<svg
@@ -38,10 +42,8 @@
 					stroke-width="2"
 					stroke-linecap="round"
 					stroke-linejoin="round"
-					class="lucide lucide-star"
+					class="transition duration-100 hover:scale-110"
 				>
-					<!-- clip path -->
-
 					<clipPath id="star-clip">
 						<polygon
 							points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
@@ -67,7 +69,7 @@
 </fieldset>
 
 <style lang="postcss">
-	input:checked + label {
+	/* input:checked + label {
 		color: blue;
-	}
+	} */
 </style>
