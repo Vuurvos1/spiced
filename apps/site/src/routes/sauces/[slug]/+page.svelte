@@ -5,7 +5,7 @@
 	import StarRating from '$lib/components/StarRating.svelte';
 	import StarRater from '$lib/components/StarRater.svelte';
 
-	let { data, form } = $props();
+	let { data } = $props();
 
 	let { sauce, reviews } = $derived(data);
 </script>
