@@ -1,0 +1,21 @@
+name = "sauced"
+account_id = "f9b03235e740819149b10f6c1735f48f"
+
+# main = "./.cloudflare/worker.js"
+# site.bucket = "./.cloudflare/public"
+
+# compatibility_date = "2024-04-03"
+
+# compatibility_flags = [ "nodejs_compat" ]
+# build.command = "pnpm run build"
+# workers_dev = true
+
+# [env.production]
+# name = "ev-check"
+# route = "ev-check.app/*"
+# zone_id = "353504b287ade521851a53bfbf092501"
+
+# TODO: switch to hyperdrive for time series data storage
+# [[hyperdrive]]
+# https://developers.cloudflare.com/hyperdrive/?ref=timescale.com
+# https://developers.cloudflare.com/hyperdrive/tutorials/serverless-timeseries-api-with-timescale/#2-prepare-your-timescale-service
