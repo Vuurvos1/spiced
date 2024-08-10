@@ -21,5 +21,7 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 tmp.html
-*.sqlite3
 *.sqlite
+
+# turbo
+.turbo
