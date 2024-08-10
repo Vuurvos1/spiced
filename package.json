@@ -5,9 +5,20 @@
   "scripts": {
     "db": "pnpm --filter @app/db -- ",
     "site": "pnpm --filter @app/site -- ",
-    "scrape": "pnpm --filter @app/scraper -- "
+    "scrape": "pnpm --filter @app/scraper -- ",
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write ."
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "prettier": "^3.2.5",
+    "prettier-plugin-svelte": "^3.2.2",
+    "turbo": "^2.0.8"
+  },
   "type": "module",
-  "dependencies": {}
+  "dependencies": {},
+  "engines": {
+    "node": ">=20"
+  }
 }
