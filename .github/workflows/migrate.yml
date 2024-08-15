@@ -39,6 +39,6 @@ jobs:
 
       - name: Drizzle Migrate
         run: \
-          "pnpm db migrate"
+          pnpm db migrate
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
