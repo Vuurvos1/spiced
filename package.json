@@ -1,13 +1,24 @@
 {
-  "name": "spiced",
-  "version": "0.0.1",
-  "private": true,
-  "scripts": {
-    "db": "pnpm --filter @app/db -- ",
-    "site": "pnpm --filter @app/site -- ",
-    "scrape": "pnpm --filter @app/scraper -- "
-  },
-  "devDependencies": {},
-  "type": "module",
-  "dependencies": {}
+	"name": "spiced",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"db": "pnpm --filter @app/db -- ",
+		"site": "pnpm --filter @app/site -- ",
+		"scrape": "pnpm --filter @app/scraper -- ",
+		"build": "turbo run build",
+		"dev": "turbo run dev",
+		"lint": "turbo run lint",
+		"format": "prettier --write ."
+	},
+	"devDependencies": {
+		"prettier": "^3.3.3",
+		"prettier-plugin-svelte": "^3.2.6",
+		"turbo": "^2.0.12"
+	},
+	"type": "module",
+	"packageManager": "pnpm@9.4.0",
+	"engines": {
+		"node": ">=20"
+	}
 }
