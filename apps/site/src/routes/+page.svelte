@@ -14,8 +14,8 @@
 
 <section>
 	<div class="container">
-		<form method="post" use:enhance>
-			<button>Sign out</button>
+		<form method="post" action="/?/logout" use:enhance>
+			<button>Logout</button>
 		</form>
 	</div>
 </section>

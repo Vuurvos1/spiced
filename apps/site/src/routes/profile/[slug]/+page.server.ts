@@ -17,6 +17,7 @@ export async function load({ params }) {
 
 		return {
 			user: {
+				id: user.id,
 				username: user.username
 			}
 		};
