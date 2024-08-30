@@ -4,7 +4,7 @@
 
 	let { data } = $props();
 
-	let { user } = $derived(data);
+	let { user, session } = $derived(data);
 </script>
 
 <div>
@@ -15,6 +15,12 @@
 			<h1 class="text-xl font-medium">{user.username}</h1>
 
 			<a href={`/profile/${$page.params.slug}/wishlist`}>wishlist</a>
+
+			{#if session?.userId === user.id}
+				<form method="post" action="/?/logout">
+					<button type="submit">Logout</button>
+				</form>
+			{/if}
 		</div>
 	</section>
 </div>

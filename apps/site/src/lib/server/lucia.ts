@@ -18,10 +18,16 @@ export const lucia = new Lucia(adapter, {
 	},
 	getUserAttributes: (attributes) => {
 		return {
-			username: attributes.username
+			username: attributes.username,
+			email: attributes.email,
+			emailVerified: attributes.emailVerified,
+			authMethods: attributes.authMethods
 		};
 	}
 });
+
+export const GOOGLE_OAUTH_STATE_COOKIE_NAME = 'googleOauthState';
+export const GOOGLE_OAUTH_CODE_VERIFIER_COOKIE_NAME = 'googleOauthCodeVerifier';
 
 export const google = new Google(
 	GOOGLE_CLIENT_ID,
@@ -32,6 +38,6 @@ export const google = new Google(
 declare module 'lucia' {
 	interface Register {
 		Lucia: typeof lucia;
-		DatabaseUserAttributes: Omit<DatabaseUser, 'id'>;
+		DatabaseUserAttributes: Omit<DatabaseUser, 'id' | 'passwordHash'>;
 	}
 }

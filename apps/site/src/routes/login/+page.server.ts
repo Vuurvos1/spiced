@@ -1,10 +1,8 @@
 import { lucia } from '$lib/server/lucia';
 import { fail, redirect } from '@sveltejs/kit';
 import { verify } from '@node-rs/argon2';
-import { db } from '$lib/db';
 import type { Actions, PageServerLoad } from './$types';
-import { userTable } from '@app/db/schema';
-import { eq } from 'drizzle-orm';
+import { checkIfUserExists } from '$lib/server/auth';
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
@@ -16,30 +14,34 @@ export const load: PageServerLoad = async (event) => {
 export const actions: Actions = {
 	default: async (event) => {
 		const formData = await event.request.formData();
-		const username = formData.get('username');
+		const email = formData.get('email');
 		const password = formData.get('password');
 
 		if (
-			typeof username !== 'string' ||
-			username.length < 3 ||
-			username.length > 31 ||
-			!/^[a-z0-9_-]+$/.test(username)
+			typeof email !== 'string' ||
+			email.length < 3 ||
+			email.length > 255 ||
+			!email.includes('@') ||
+			!email.includes('.')
 		) {
 			return fail(400, {
-				message: 'Invalid username'
+				message: 'Invalid email'
 			});
 		}
+
 		if (typeof password !== 'string' || password.length < 6 || password.length > 255) {
 			return fail(400, {
 				message: 'Invalid password'
 			});
 		}
 
-		const existingUser = (
-			await db.select().from(userTable).where(eq(userTable.username, username)).limit(1)
-		)[0];
+		const existingUser = await checkIfUserExists(email);
 
-		if (!existingUser) {
+		if (
+			!existingUser ||
+			!existingUser.passwordHash ||
+			!existingUser.authMethods.includes('email')
+		) {
 			return fail(400, {
 				message: 'Incorrect username or password'
 			});

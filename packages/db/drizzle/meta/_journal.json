@@ -15,6 +15,13 @@
       "when": 1722925850536,
       "tag": "0001_complete_namor",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1725053335913,
+      "tag": "0002_salty_beyonder",
+      "breakpoints": true
     }
   ]
 }
