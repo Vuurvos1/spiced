@@ -1,0 +1,44 @@
+name: Migrate db
+
+on:
+  push:
+    branches:
+      - main # or your desired branch name
+    paths:
+      - '.github/workflows/migrate.yml'
+      - 'packages/db/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to run tests against'
+        type: environment
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: Production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Install dependencies
+        run: |
+          pnpm db migrate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
