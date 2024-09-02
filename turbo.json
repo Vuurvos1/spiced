@@ -1,5 +1,10 @@
 {
-	"globalPassThroughEnv": ["DATABASE_URL"],
+	"globalPassThroughEnv": [
+		"PUBLIC_BASE_URL",
+		"DATABASE_URL",
+		"GOOGLE_CLIENT_ID",
+		"GOOGLE_CLIENT_SECRET"
+	],
 	"$schema": "https://turbo.build/schema.json",
 	"tasks": {
 		"build": {
