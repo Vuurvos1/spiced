@@ -38,6 +38,16 @@ export const oauthAccountTable = pgTable(
 	})
 );
 
+export const emailVerificationTable = pgTable('email_verification', {
+	id: serial('id').primaryKey(),
+	userId: text('user_id')
+		.notNull()
+		.references(() => userTable.id, { onDelete: 'cascade' }),
+	email: text('email').notNull(),
+	token: text('token').notNull(),
+	expiresAt: timestamp('expires_at').notNull()
+});
+
 export const sessionTable = pgTable('session', {
 	id: text('id').primaryKey().notNull().unique(),
 	userId: text('user_id')

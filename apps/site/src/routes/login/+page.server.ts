@@ -37,6 +37,12 @@ export const actions: Actions = {
 
 		const existingUser = await checkIfUserExists(email);
 
+		if (existingUser && existingUser.isEmailVerified === false) {
+			return fail(400, {
+				message: 'You must verify your email before logging in.'
+			});
+		}
+
 		if (
 			!existingUser ||
 			!existingUser.passwordHash ||
