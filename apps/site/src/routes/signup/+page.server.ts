@@ -5,7 +5,11 @@ import { hash } from '@node-rs/argon2';
 import { db } from '$lib/db';
 import { userTable } from '@app/db/schema';
 import postgres from 'postgres';
-import { checkIfUserExists } from '$lib/server/auth';
+import {
+	checkIfUserExists,
+	createEmailVerificationToken,
+	sendEmailVerificationToken
+} from '$lib/server/auth';
 import { eq } from 'drizzle-orm';
 
 import type { Actions, PageServerLoad } from './$types';
@@ -18,8 +22,8 @@ export const load: PageServerLoad = async (event) => {
 };
 
 export const actions: Actions = {
-	default: async (event) => {
-		const formData = await event.request.formData();
+	default: async ({ request, cookies }) => {
+		const formData = await request.formData();
 		const username = formData.get('username');
 		const password = formData.get('password');
 		const email = formData.get('email');
@@ -67,6 +71,7 @@ export const actions: Actions = {
 					email,
 					username,
 					passwordHash,
+					emailVerified: false,
 					authMethods: ['email']
 				});
 			} else {
@@ -80,12 +85,31 @@ export const actions: Actions = {
 					.where(eq(userTable.email, email));
 			}
 
-			const session = await lucia.createSession(userId, {});
-			const sessionCookie = lucia.createSessionCookie(session.id);
-			event.cookies.set(sessionCookie.name, sessionCookie.value, {
-				path: '.',
-				...sessionCookie.attributes
+			const emailVerificationCode = await createEmailVerificationToken(userId, email);
+
+			const sendEmailVerificationCodeResult = await sendEmailVerificationToken(
+				email,
+				emailVerificationCode
+			);
+
+			if (!sendEmailVerificationCodeResult.success) {
+				return fail(500, {
+					message: 'Failed to send email verification code'
+				});
+			}
+
+			const pendingVerificationUserData = JSON.stringify({ id: userId, email: email });
+
+			cookies.set('pendingUserVerification', pendingVerificationUserData, {
+				path: '/auth/email-verification'
 			});
+
+			// const session = await lucia.createSession(userId, {});
+			// const sessionCookie = lucia.createSessionCookie(session.id);
+			// cookies.set(sessionCookie.name, sessionCookie.value, {
+			// 	path: '.',
+			// 	...sessionCookie.attributes
+			// });
 		} catch (err) {
 			if (err instanceof postgres.PostgresError && err.code === '23505') {
 				return fail(400, {
@@ -99,6 +123,9 @@ export const actions: Actions = {
 				message: 'An unknown error occurred'
 			});
 		}
-		return redirect(302, '/');
+
+		throw redirect(303, '/auth/email-verification');
+
+		// return redirect(302, '/');
 	}
 };

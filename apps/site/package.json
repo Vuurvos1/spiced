@@ -58,8 +58,10 @@
 		"drizzle-orm": "^0.32.2",
 		"drizzle-zod": "^0.5.1",
 		"lucia": "^3.2.0",
+		"oslo": "^1.2.1",
 		"postgres": "^3.4.4",
 		"prettier-plugin-tailwindcss": "^0.6.6",
+		"resend": "^4.0.0",
 		"zod": "^3.23.8"
 	}
 }
