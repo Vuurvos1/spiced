@@ -1,4 +1,3 @@
-import { lucia } from '$lib/server/lucia';
 import { fail, redirect } from '@sveltejs/kit';
 import { generateId } from 'lucia';
 import { hash } from '@node-rs/argon2';
@@ -79,8 +78,7 @@ export const actions: Actions = {
 					.update(userTable)
 					.set({
 						username,
-						passwordHash,
-						authMethods: [...existingUser.authMethods, 'email']
+						passwordHash
 					})
 					.where(eq(userTable.email, email));
 			}
@@ -103,13 +101,6 @@ export const actions: Actions = {
 			cookies.set('pendingUserVerification', pendingVerificationUserData, {
 				path: '/auth/email-verification'
 			});
-
-			// const session = await lucia.createSession(userId, {});
-			// const sessionCookie = lucia.createSessionCookie(session.id);
-			// cookies.set(sessionCookie.name, sessionCookie.value, {
-			// 	path: '.',
-			// 	...sessionCookie.attributes
-			// });
 		} catch (err) {
 			if (err instanceof postgres.PostgresError && err.code === '23505') {
 				return fail(400, {
@@ -125,7 +116,5 @@ export const actions: Actions = {
 		}
 
 		throw redirect(303, '/auth/email-verification');
-
-		// return redirect(302, '/');
 	}
 };
