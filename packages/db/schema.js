@@ -7,14 +7,18 @@ import {
 	unique,
 	varchar,
 	primaryKey,
-	boolean
+	boolean,
+	pgEnum
 } from 'drizzle-orm/pg-core';
+
+export const roleEnum = pgEnum('role', ['admin', 'moderator', 'user']);
 
 // lucia auth
 export const userTable = pgTable('user', {
 	id: text('id').primaryKey(), // TODO: possible change to uuid, also update references
 	username: text('username').notNull().unique(),
 	passwordHash: text('password_hash'),
+	role: roleEnum('role').notNull().default('user'),
 
 	email: text('email').notNull().unique(),
 	emailVerified: boolean('is_email_verified').notNull().default(false),
@@ -45,6 +49,15 @@ export const emailVerificationTable = pgTable('email_verification', {
 		.references(() => userTable.id, { onDelete: 'cascade' }),
 	email: text('email').notNull(),
 	token: text('token').notNull(),
+	expiresAt: timestamp('expires_at').notNull()
+});
+
+export const passwordResetTokenTable = pgTable('password_reset_token', {
+	// id: serial('id').primaryKey(),
+	userId: text('user_id')
+		.notNull()
+		.references(() => userTable.id),
+	tokenHash: text('token_hash').notNull().unique(),
 	expiresAt: timestamp('expires_at').notNull()
 });
 

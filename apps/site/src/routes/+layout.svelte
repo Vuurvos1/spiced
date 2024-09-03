@@ -6,6 +6,10 @@
 	let { children } = $props();
 </script>
 
+<svelte:head>
+	<title>Spiced</title>
+</svelte:head>
+
 <div class="flex min-h-screen flex-col">
 	<Header></Header>
 

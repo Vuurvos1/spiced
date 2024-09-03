@@ -7,6 +7,7 @@ import type { DatabaseUser } from '@app/db/types';
 import { Google } from 'arctic';
 import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from '$env/static/private';
 import { PUBLIC_BASE_URL } from '$env/static/public';
+import type { Options as HashOptions } from '@node-rs/argon2';
 
 const adapter = new DrizzlePostgreSQLAdapter(db, sessionTable, userTable);
 
@@ -34,6 +35,14 @@ export const google = new Google(
 	GOOGLE_CLIENT_SECRET,
 	PUBLIC_BASE_URL + '/login/google/callback'
 );
+
+export const hashSettings: HashOptions = {
+	// recommended minimum parameters
+	memoryCost: 19456,
+	timeCost: 2,
+	outputLen: 32,
+	parallelism: 1
+};
 
 declare module 'lucia' {
 	interface Register {

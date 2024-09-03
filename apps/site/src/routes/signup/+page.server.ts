@@ -4,14 +4,12 @@ import { hash } from '@node-rs/argon2';
 import { db } from '$lib/db';
 import { userTable } from '@app/db/schema';
 import postgres from 'postgres';
-import {
-	checkIfUserExists,
-	createEmailVerificationToken,
-	sendEmailVerificationToken
-} from '$lib/server/auth';
+import { checkIfUserExists, createEmailVerificationToken } from '$lib/server/auth';
 import { eq } from 'drizzle-orm';
 
 import type { Actions, PageServerLoad } from './$types';
+import { sendEmailVerificationToken } from '$lib/server/email';
+import { hashSettings } from '$lib/server/lucia';
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
@@ -56,13 +54,7 @@ export const actions: Actions = {
 			}
 
 			const userId = existingUser?.id ?? generateId(15);
-			const passwordHash = await hash(password, {
-				// recommended minimum parameters
-				memoryCost: 19456,
-				timeCost: 2,
-				outputLen: 32,
-				parallelism: 1
-			});
+			const passwordHash = await hash(password, hashSettings);
 
 			if (!existingUser) {
 				await db.insert(userTable).values({

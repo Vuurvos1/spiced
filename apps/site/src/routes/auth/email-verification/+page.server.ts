@@ -6,12 +6,12 @@ import { eq } from 'drizzle-orm';
 import {
 	createAndSetSession,
 	createEmailVerificationToken,
-	sendEmailVerificationToken,
 	verifyEmailVerificationCode
 } from '$lib/server/auth';
 import { db } from '$lib/db';
 import { userTable } from '@app/db/schema';
 import { lucia } from '$lib/server/lucia';
+import { sendEmailVerificationToken } from '$lib/server/email';
 
 type PendingVerificationUserDataType = {
 	id: string;
