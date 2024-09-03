@@ -2,25 +2,6 @@ import { fail, redirect, type Actions, type Cookies } from '@sveltejs/kit';
 
 import type { PageServerLoad } from './$types';
 
-// import { message, superValidate } from 'sveltekit-superforms/client';
-
-// import { route } from '$lib/ROUTES';
-// import {
-// 	PENDING_USER_VERIFICATION_COOKIE_NAME,
-// 	createAndSetSession,
-// 	generateEmailVerificationCode,
-// 	sendCodeRateLimiter,
-// 	sendEmailVerificationCode,
-// 	verifyCodeRateLimiter,
-// 	verifyEmailVerificationCode,
-// 	type PendingVerificationUserDataType
-// } from '$lib/database/authUtils.server';
-// import { database } from '$lib/database/database.server';
-// import { lucia } from '$lib/database/luciaAuth.server';
-// import { usersTable } from '$lib/database/schema';
-// import type { AlertMessageType } from '$lib/types';
-// import { DASHBOARD_ROUTE } from '$lib/utils/navLinks';
-// import { EmailVerificationCodeZodSchema } from '$validations/AuthZodSchemas';
 import { eq } from 'drizzle-orm';
 import {
 	createAndSetSession,
@@ -38,6 +19,7 @@ type PendingVerificationUserDataType = {
 };
 
 // Function to parse user data from cookie
+// TODO: maybe get rid of this function so you can do signup cross device
 const getUserDataFromCookie = (cookies: Cookies) => {
 	const cookieData = cookies.get('pendingUserVerification');
 
@@ -47,6 +29,8 @@ const getUserDataFromCookie = (cookies: Cookies) => {
 };
 
 export const load = (async (event) => {
+	// TODO: do some auto submitting and verifying magic
+
 	// await verifyCodeRateLimiter.cookieLimiter?.preflight(event);
 	// await sendCodeRateLimiter.cookieLimiter?.preflight(event);
 
@@ -60,42 +44,23 @@ export const load = (async (event) => {
 	return {
 		pendingUserEmail: userData.email
 	};
-
-	// return {
-	// 	emailVerificationCodeFormData: await superValidate(EmailVerificationCodeZodSchema)
-	// };
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
 	verifyCode: async (event) => {
 		const { cookies, request } = event;
 
-		const formData = await request.formData();
-
-		// const password = formData.get('password');
-		// const email = formData.get('email');
-
 		const userData = getUserDataFromCookie(cookies);
 
 		if (!userData) return redirect(303, '/signup');
 
+		const formData = await request.formData();
 		const verificationCode = formData.get('verificationCode') as string;
 
-		// const emailVerificationCodeFormData = await superValidate<
-		// 	typeof EmailVerificationCodeZodSchema,
-		// 	AlertMessageType
-		// >(request, EmailVerificationCodeZodSchema);
-
-		// if (emailVerificationCodeFormData.valid === false) {
 		if (!verificationCode) {
 			return fail(400, {
 				message: 'Invalid verification code, please try again'
 			});
-
-			// return message(emailVerificationCodeFormData, {
-			// 	alertType: 'error',
-			// 	alertText: 'Invalid verification code, please try again'
-			// });
 		}
 
 		// const sendNewCodeRateLimiterResult = await verifyCodeRateLimiter.check(event);
@@ -122,11 +87,6 @@ export const actions: Actions = {
 			return fail(400, {
 				message: isVerificationCodeValid.message
 			});
-
-			// return message(emailVerificationCodeFormData, {
-			// 	alertType: 'error',
-			// 	alertText: isVerificationCodeValid.message
-			// });
 		}
 
 		await db.transaction(async (trx) => {
