@@ -1,10 +1,11 @@
 import { db } from '$lib/db';
-import { emailVerificationTable, userTable } from '@app/db/schema';
+import { emailVerificationTable, passwordResetTokenTable, userTable } from '@app/db/schema';
 import type { Cookies } from '@sveltejs/kit';
 import { generateIdFromEntropySize, type Lucia } from 'lucia';
 import { eq } from 'drizzle-orm';
 import { TimeSpan, createDate, isWithinExpirationDate } from 'oslo';
-import { sendEmail } from './email';
+import { encodeHex } from 'oslo/encoding';
+import { sha256 } from 'oslo/crypto';
 
 export const checkIfUserExists = async (email: string) => {
 	const [user] = await db
@@ -39,24 +40,23 @@ export async function createEmailVerificationToken(userId: string, email: string
 	return tokenId;
 }
 
-export async function sendEmailVerificationToken(email: string, token: string) {
-	console.info('Sending email verification token to:', email);
-	const htmlContent = `
-	<div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
-		<h1>Email Verification</h1>
-		<p>Thank you for taking the time to verify your email address. Your verification code is:</p>
-		<p style="font-size: 20px;"><strong>${token}</strong></p>
-		<p>Please enter this code in the verification field to complete the process. If you did not request this verification, please ignore this email.</p>
-	</div>
-	`;
-	return sendEmail({
-		email,
-		subject: 'Email Verification Code Request',
-		htmlContent
+export async function createPasswordResetToken(userId: string): Promise<string> {
+	const tokenId = generateIdFromEntropySize(25); // 40 character
+	const tokenHash = encodeHex(await sha256(new TextEncoder().encode(tokenId)));
+	await db.transaction(async (trx) => {
+		await trx.delete(passwordResetTokenTable).where(eq(passwordResetTokenTable.userId, userId));
+
+		await trx.insert(passwordResetTokenTable).values({
+			tokenHash,
+			userId,
+			expiresAt: createDate(new TimeSpan(2, 'h'))
+		});
 	});
+
+	return tokenId;
 }
 
-export const verifyEmailVerificationCode = async (userId: string, token: string) => {
+export async function verifyEmailVerificationCode(userId: string, token: string) {
 	const [verificationCode] = await db
 		.select()
 		.from(emailVerificationTable)
@@ -85,7 +85,34 @@ export const verifyEmailVerificationCode = async (userId: string, token: string)
 
 	// Return a success message
 	return { success: true, message: 'Email verification successful!' };
-};
+}
+
+export async function verifyPasswordResetToken(tokenId: string) {
+	const [passwordResetToken] = await db
+		.select()
+		.from(passwordResetTokenTable)
+		.where(eq(passwordResetTokenTable.tokenHash, tokenId));
+
+	if (!passwordResetToken || passwordResetToken.tokenHash !== tokenId) {
+		return {
+			success: false,
+			message: 'The password reset link is invalid. Please request a new one.'
+		};
+	}
+
+	if (!isWithinExpirationDate(passwordResetToken.expiresAt)) {
+		return {
+			success: false,
+			message: 'The password reset link has expired. Please request a new one.'
+		};
+	}
+
+	return {
+		success: true,
+		userId: passwordResetToken.userId,
+		message: 'Password reset token is valid.'
+	};
+}
 
 export const createAndSetSession = async (lucia: Lucia, userId: string, cookies: Cookies) => {
 	const session = await lucia.createSession(userId, {});

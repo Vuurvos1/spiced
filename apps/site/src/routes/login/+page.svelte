@@ -27,6 +27,8 @@
 			</form>
 
 			<a class="hover:underline" href="/signup">Create an account</a>
+
+			<a class="hover:underline" href="/auth/reset-password">Forgot password</a>
 		</div>
 
 		<div class="my-4 flex items-center">

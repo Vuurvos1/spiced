@@ -1,4 +1,4 @@
-import { lucia } from '$lib/server/lucia';
+import { hashSettings, lucia } from '$lib/server/lucia';
 import { fail, redirect } from '@sveltejs/kit';
 import { verify } from '@node-rs/argon2';
 import type { Actions, PageServerLoad } from './$types';
@@ -53,12 +53,7 @@ export const actions: Actions = {
 			});
 		}
 
-		const validPassword = await verify(existingUser.passwordHash, password, {
-			memoryCost: 19456,
-			timeCost: 2,
-			outputLen: 32,
-			parallelism: 1
-		});
+		const validPassword = await verify(existingUser.passwordHash, password, hashSettings);
 		if (!validPassword) {
 			// NOTE:
 			// Returning immediately allows malicious actors to figure out valid usernames from response times,
