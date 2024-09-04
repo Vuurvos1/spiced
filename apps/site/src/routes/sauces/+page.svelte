@@ -1,15 +1,12 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import SauceGrid from '$lib/components/SauceGrid.svelte';
-	import { enhance } from '$app/forms';
 
 	let { data } = $props();
 
 	let { sauces, sauceCount, pageSize } = $derived(data);
 
 	const currentPage = $derived(Math.max(Number($page.url.searchParams.get('page')) || 1, 1));
-
-	let search = $state($page.url.searchParams.get('search') || '');
 
 	const previousUrl = $derived.by(() => {
 		const url = new URL($page.url);
@@ -26,15 +23,9 @@
 
 <div class="container">
 	<div class="flex flex-row items-center justify-between">
-		<div>
-			<h1 class="text-4xl font-semibold">Sauces</h1>
+		<h1 class="text-4xl font-semibold">Sauces</h1>
 
-			<p class="text-gray-500">Showing {sauceCount} sauces</p>
-		</div>
-
-		<form method="post" data-sveltekit-keepfocus action="?/search" use:enhance>
-			<input bind:value={search} placeholder="Search" type="text" name="search" />
-		</form>
+		<p class="text-gray-500">Showing {sauceCount} sauces</p>
 	</div>
 
 	<SauceGrid {sauces}></SauceGrid>

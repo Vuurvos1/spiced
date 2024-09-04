@@ -17,6 +17,7 @@ export default {
 		extend: {
 			fontFamily: {
 				inter: ['Inter Variable', ...defaultTheme.fontFamily.sans],
+				logo: ['Bebas Neue', ...defaultTheme.fontFamily.sans],
 				sans: ['Inter Variable', ...defaultTheme.fontFamily.sans]
 			}
 		}
