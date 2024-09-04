@@ -107,7 +107,6 @@ export const actions: Actions = {
 			const tokenHash = encodeHex(await sha256(new TextEncoder().encode(verificationToken)));
 
 			const verifyPasswordResetTokenResult = await verifyPasswordResetToken(tokenHash);
-			console.info(verifyPasswordResetTokenResult);
 			if (verifyPasswordResetTokenResult.success === false) {
 				return fail(400, {
 					message: verifyPasswordResetTokenResult.message
