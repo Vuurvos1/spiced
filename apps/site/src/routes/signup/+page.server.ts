@@ -19,7 +19,7 @@ export const load: PageServerLoad = async (event) => {
 };
 
 export const actions: Actions = {
-	default: async ({ request, cookies }) => {
+	signup: async ({ request, cookies }) => {
 		const formData = await request.formData();
 		const username = formData.get('username');
 		const password = formData.get('password');
