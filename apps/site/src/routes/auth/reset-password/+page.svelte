@@ -1,54 +1,46 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { page } from '$app/stores';
+	import TextInput from '$lib/components/form/TextInput.svelte';
 
-	// import { route } from '$lib/ROUTES';
-
-	// import PasswordResetForm from '$components/form/PasswordResetForm.svelte';
-	// import Button from '$components/ui/button/button.svelte';
-
-	export let data;
 	export let form;
 </script>
 
-<form method="POST" action="?/sendPasswordResetEmail" use:enhance>
-	<h2>Send reset email</h2>
+<section class="mb-8">
+	<div class="container max-w-2xl">
+		<h2 class="h3">Send reset email</h2>
 
-	<label for="email">Email</label>
-	<input type="email" name="email" id="email" required />
-	<button type="submit">Submit</button>
-</form>
+		<form class="flex flex-col gap-4" method="POST" action="?/sendPasswordResetEmail" use:enhance>
+			<TextInput label="Email" name="email" id="email" required></TextInput>
 
-<form method="POST" action="?/resetPassword" use:enhance>
-	<h2>Reset password</h2>
+			<button class="btn" type="submit">Submit</button>
+		</form>
+	</div>
+</section>
 
-	<label for="password">Password</label>
-	<input type="password" name="password" id="password" required />
+<section>
+	<div class="container max-w-2xl">
+		<h2 class="h3">Reset password</h2>
 
-	<label for="confirmPassword">Confirm Password</label>
-	<input type="password" name="confirmPassword" id="confirmPassword" required />
+		<form class="flex flex-col gap-4" method="POST" action="?/resetPassword" use:enhance>
+			<TextInput label="Password" name="password" id="password" type="password" required
+			></TextInput>
 
-	<input type="hidden" name="token" value={$page.url.searchParams.get('token')} />
+			<TextInput
+				label="Confirm password"
+				name="confirmPassword"
+				id="confirmPassword"
+				type="password"
+				required
+			></TextInput>
 
-	<button type="submit">Submit</button>
-</form>
+			<input type="hidden" name="token" value={$page.url.searchParams.get('token')} />
+
+			<button class="btn" type="submit">Submit</button>
+		</form>
+	</div>
+</section>
 
 {#if form?.message}
 	<p>{form.message}</p>
 {/if}
-
-<!-- {#if data.passwordResetTokenStatus.isValid === false}
-	<h1 class="mb-5 text-2xl font-bold text-red-600">
-		{data.passwordResetTokenStatus.message}
-	</h1>
-
-	<Button href={route('/auth/login')}>Return to Login Page to Request a New Code</Button>
-{:else}
-	<h1 class="mb-6 text-2xl font-bold leading-none">Reset Password</h1>
-
-	<!-- <PasswordResetForm
-		formData={data.passwordResetFormData}
-		formAction={route('resetPassword /auth/reset-password')}
-		isPasswordResetTokenRequired={true}
-	/> -->
-<!-- {/if} -->
