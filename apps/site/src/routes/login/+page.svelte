@@ -26,7 +26,6 @@
 				<p>{form?.message ?? ''}</p>
 			</form>
 
-			<a class="hover:underline" href="/signup">Create an account</a>
 
 			<a class="hover:underline" href="/auth/reset-password">Forgot password</a>
 		</div>
@@ -41,6 +40,10 @@
 			<a href="/login/google" class="flex-grow gap-2 font-bold">
 				<span>Google</span>
 			</a>
+		</div>
+
+		<div>
+			<a class="hover:underline" href="/signup">Create an account</a>
 		</div>
 	</div>
 </section>
