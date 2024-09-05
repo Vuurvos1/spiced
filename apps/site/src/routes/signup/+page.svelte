@@ -17,9 +17,7 @@
 			<TextInput label="Password" type="password" name="password" minlength={6} required
 			></TextInput>
 
-			<button class="w-full rounded bg-blue-600 px-2 py-1.5 text-white" type="submit">
-				Continue
-			</button>
+			<button class="btn w-full" type="submit">Continue</button>
 
 			{#if form?.message}
 				<p class="text-red-500">{form.message}</p>
@@ -33,17 +31,16 @@
 		</div>
 
 		<div class="flex flex-wrap gap-4">
-			<a
-				href="/login/google"
-				class="flex w-full flex-row items-center justify-center gap-2 rounded border px-3 py-1.5 font-bold"
-			>
+			<a href="/login/google" class="btn btn-outline w-full">
 				<Google size="24" stroke="2" />
 				<span>Google</span>
 			</a>
 		</div>
 
 		<p class="mt-8 text-center">
-			Already have an account? <a class="font-medium text-blue-600" href="/login">Login</a>
+			Already have an account? <a class="font-medium text-blue-700 hover:underline" href="/login">
+				Login
+			</a>
 		</p>
 	</div>
 </section>
