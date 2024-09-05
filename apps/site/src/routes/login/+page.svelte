@@ -7,7 +7,7 @@
 </script>
 
 {#snippet forgotPassword()}
-	<a class="ml-auto font-medium text-blue-700 hover:underline" href="/auth/reset-password">
+	<a class="ml-auto font-medium text-blue-700 hover:underline" href="/auth/forgot-password">
 		Forgot password
 	</a>
 {/snippet}

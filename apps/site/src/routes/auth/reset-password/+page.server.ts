@@ -1,10 +1,5 @@
 import { db } from '$lib/db.js';
-import {
-	createAndSetSession,
-	createPasswordResetToken,
-	verifyPasswordResetToken
-} from '$lib/server/auth';
-import { sendPasswordResetEmail } from '$lib/server/email';
+import { createAndSetSession, verifyPasswordResetToken } from '$lib/server/auth';
 import { lucia } from '$lib/server/lucia';
 import { passwordResetTokenTable, userTable } from '@app/db/schema';
 import { hash } from '@node-rs/argon2';
@@ -41,39 +36,6 @@ export const load = async (event) => {
 };
 
 export const actions: Actions = {
-	sendPasswordResetEmail: async (event) => {
-		const formData = await event.request.formData();
-		const email = formData.get('email') as string;
-
-		if (!email) {
-			return fail(400, {
-				message: 'Email is missing from the request.'
-			});
-		}
-
-		const [user] = await db.select().from(userTable).where(eq(userTable.email, email)).limit(1);
-
-		if (!user) {
-			return fail(400, {
-				message: 'User with this email does not exist.'
-			});
-		}
-
-		const verificationToken = await createPasswordResetToken(user.id);
-
-		const sendResetResult = await sendPasswordResetEmail(email, verificationToken);
-
-		if (!sendResetResult.success) {
-			return fail(500, {
-				message: 'There was a problem sending the password reset email.'
-			});
-		}
-
-		// return new Response(null, {
-		// 	status: 200
-		// });
-	},
-
 	resetPassword: async (event) => {
 		const formData = await event.request.formData();
 
