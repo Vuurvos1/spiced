@@ -20,16 +20,20 @@
 
 			<p class="mb-5 text-gray-500">{sauce.description}</p>
 
-			<div class="flex flex-row gap-6">
-				<!-- TODO: if logged in -->
-				<!-- TODO: add/remove from withlist text -->
-				<!-- TODO: error handle -->
-				<form method="post" action="?/addWishlist" use:enhance>
-					<button type="submit" class="btn">Add Wishlist <Plus size="20"></Plus></button>
-				</form>
+			{#if session}
+				<div class="flex flex-row gap-6">
+					<!-- TODO: add/remove from withlist text -->
+					<!-- TODO: error handle -->
+					<form method="post" action="?/addWishlist" use:enhance>
+						<button type="submit" class="btn">Add Wishlist <Plus size="20"></Plus></button>
+					</form>
 
-				<button class="btn">Check in</button>
-			</div>
+					<!-- TODO: imlement -->
+					<!-- <form method="post" action="?/checkin" use:enhance>
+						<button type="submit" class="btn">Check in</button>
+					</form> -->
+				</div>
+			{/if}
 		</div>
 	</section>
 
