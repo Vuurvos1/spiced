@@ -1,10 +1,15 @@
 <script>
 	import '../app.css';
 	import '@fontsource-variable/inter';
+	import '@fontsource/bebas-neue';
 	import Header from './Header.svelte';
 
 	let { children } = $props();
 </script>
+
+<svelte:head>
+	<title>Spiced</title>
+</svelte:head>
 
 <div class="flex min-h-screen flex-col">
 	<Header></Header>
