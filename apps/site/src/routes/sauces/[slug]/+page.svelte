@@ -4,10 +4,11 @@
 	import dayjs from '$lib/dayjs';
 	import StarRating from '$lib/components/StarRating.svelte';
 	import StarRater from '$lib/components/StarRater.svelte';
+	import { Plus } from '@o7/icon/lucide';
 
 	let { data } = $props();
 
-	let { sauce, reviews } = $derived(data);
+	let { sauce, reviews, session } = $derived(data);
 </script>
 
 <div class="container">
@@ -19,16 +20,20 @@
 
 			<p class="mb-5 text-gray-500">{sauce.description}</p>
 
-			<div class="flex flex-row gap-6">
-				<!-- TODO: if logged in -->
-				<!-- TODO: add/remove from withlist text -->
-				<!-- TODO: error handle -->
-				<form method="post" action="?/addWishlist" use:enhance>
-					<button type="submit" class="rounded bg-blue-400 px-2 py-2">Add Wishlist +</button>
-				</form>
+			{#if session}
+				<div class="flex flex-row gap-6">
+					<!-- TODO: add/remove from withlist text -->
+					<!-- TODO: error handle -->
+					<form method="post" action="?/addWishlist" use:enhance>
+						<button type="submit" class="btn">Add Wishlist <Plus size="20"></Plus></button>
+					</form>
 
-				<button class="rounded bg-blue-400 px-2 py-2">Check in</button>
-			</div>
+					<!-- TODO: imlement -->
+					<!-- <form method="post" action="?/checkin" use:enhance>
+						<button type="submit" class="btn">Check in</button>
+					</form> -->
+				</div>
+			{/if}
 		</div>
 	</section>
 
@@ -36,23 +41,20 @@
 		<h2 class="mb-4 text-3xl font-semibold">Reviews</h2>
 
 		<!-- TODO: maybe put this into a modal with shallow routing? -->
-		<form class="mb-12" method="post" action="?/review" use:enhance>
-			<div class="flex max-w-md flex-col gap-4">
-				<!-- rating slider -->
-				<StarRater></StarRater>
+		{#if session}
+			<form class="mb-12" method="post" action="?/review" use:enhance>
+				<div class="flex max-w-md flex-col gap-4">
+					<!-- rating slider -->
+					<StarRater></StarRater>
 
-				<!-- comment -->
-				<label for="content">Review</label>
-				<textarea class="resize-none rounded border" name="content" rows="4" cols="50"></textarea>
+					<!-- comment -->
+					<label for="content">Review</label>
+					<textarea class="resize-none rounded border" name="content" rows="4" cols="50"></textarea>
 
-				<button
-					type="submit"
-					class="rounded bg-blue-500 px-3 py-2 font-semibold text-white hover:bg-blue-700"
-				>
-					Submit Review
-				</button>
-			</div>
-		</form>
+					<button type="submit" class="btn"> Submit Review </button>
+				</div>
+			</form>
+		{/if}
 
 		{#if reviews.length === 0}
 			<p>No reviews yet.</p>

@@ -1,22 +1,46 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import TextInput from '$lib/components/form/TextInput.svelte';
+	import { Google } from '@o7/icon/remix/solid';
 
-	import type { ActionData } from './$types';
-
-	export let form: ActionData;
+	export let form;
 </script>
 
-<section class="mx-auto">
+<section class="mb-12 grid h-full flex-1 place-items-center">
 	<div class="">
-		<h1 class="h1 mb-4">Create an account</h1>
-		<form method="post" use:enhance>
-			<label class="label block" for="username">Username</label>
-			<input class="input mb-4" name="username" id="username" /><br />
-			<label class="label block" for="password">Password</label>
-			<input class="input mb-4" type="password" name="password" id="password" /><br />
-			<button>Continue</button>
-			<p>{form?.message ?? ''}</p>
+		<h1 class="h1 mb-4 text-center">Create an account</h1>
+		<form class="flex flex-col gap-4" method="POST" action="?/signup" use:enhance>
+			<TextInput label="Username" name="username" required></TextInput>
+
+			<TextInput label="Email" type="email" name="email" required></TextInput>
+
+			<TextInput label="Password" type="password" name="password" minlength={6} required
+			></TextInput>
+
+			<button class="btn w-full" type="submit">Continue</button>
+
+			{#if form?.message}
+				<p class="text-red-500">{form.message}</p>
+			{/if}
 		</form>
-		<a href="/login">Sign in</a>
+
+		<div class="my-4 flex items-center">
+			<div class="mr-3 flex-grow border-t border-gray-500"></div>
+			<div>Or continue with</div>
+			<div class="ml-3 flex-grow border-t border-gray-500"></div>
+		</div>
+
+		<div class="flex flex-wrap gap-4">
+			<a href="/login/google" class="btn btn-outline w-full">
+				<Google size="24" stroke="2" />
+				<span>Google</span>
+			</a>
+		</div>
+
+		<p class="mt-8 text-center">
+			Already have an account? <a class="font-medium text-blue-700 hover:underline" href="/login">
+				Login
+			</a>
+		</p>
 	</div>
 </section>

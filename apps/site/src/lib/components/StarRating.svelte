@@ -10,8 +10,6 @@
 	let starRating = $derived(clamp(Math.round(rating * 2) / 2, 1, 5));
 
 	function getStarFillAmount(i: number) {
-		console.log(rating, starRating, i);
-
 		if (starRating <= i) {
 			return '0%';
 		}
