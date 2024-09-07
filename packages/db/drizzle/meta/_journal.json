@@ -36,6 +36,13 @@
       "when": 1725397063487,
       "tag": "0004_early_rattler",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1725725231782,
+      "tag": "0005_medical_zuras",
+      "breakpoints": true
     }
   ]
 }

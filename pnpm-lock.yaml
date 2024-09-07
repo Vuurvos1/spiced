@@ -233,6 +233,9 @@ importers:
         specifier: ^3.4.4
         version: 3.4.4
     devDependencies:
+      '@softwaretechnik/dbml-renderer':
+        specifier: ^1.0.30
+        version: 1.0.30
       dotenv-cli:
         specifier: ^7.4.2
         version: 7.4.2
