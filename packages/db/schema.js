@@ -154,6 +154,7 @@ export const reviews = pgTable(
 		// ratings go from 1 to 6? where 6 is extreme heat
 		rating: integer('rating'), // .check((rating) => rating >= 1 && rating <= 5), rating INTEGER CHECK (rating >= 1 AND rating <= 5),
 		reviewText: text('review_text').default(''), // TODO: rename to content
+		flagged: boolean('flagged').default(false),
 		createdAt: timestamp('created_at').notNull().defaultNow(),
 		updatedAt: timestamp('updated_at')
 			.notNull()
@@ -217,6 +218,23 @@ export const wishlist = pgTable(
 	'wishlist',
 	{
 		wishlistId: serial('wishlist_id').primaryKey(),
+		userId: text('user_id')
+			.notNull()
+			.references(() => userTable.id, { onDelete: 'cascade' }),
+		hotSauceId: integer('hot_sauce_id')
+			.notNull()
+			.references(() => hotSauces.id, { onDelete: 'cascade' }),
+		createdAt: timestamp('created_at').notNull().defaultNow()
+	},
+	(t) => ({
+		unq: unique().on(t.userId, t.hotSauceId)
+	})
+);
+
+export const checkinsTable = pgTable(
+	'checkins',
+	{
+		checkinId: serial('checkin_id').primaryKey(),
 		userId: text('user_id')
 			.notNull()
 			.references(() => userTable.id, { onDelete: 'cascade' }),
