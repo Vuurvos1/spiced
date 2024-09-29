@@ -1,4 +1,4 @@
-export const load = async ({ locals: { session } }) => {
+export const load = async ({ locals: { session, user } }) => {
 	// Is this a good idea?
-	return { session };
+	return { session, user };
 };
