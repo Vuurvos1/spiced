@@ -1,9 +1,12 @@
 import { db } from '$lib/db';
 import { hotSauces, reviews, userTable, wishlist } from '@app/db/schema';
-import { error, fail, redirect } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
+import { error, fail } from '@sveltejs/kit';
+import { and, eq, or } from 'drizzle-orm';
 
-export async function load({ params }) {
+// @ts-expect-error - missing types
+import * as toxicity from '@tensorflow-models/toxicity';
+
+export async function load({ params, locals: { user } }) {
 	const sauceId = Number(params.slug);
 
 	const dbSauce = await db.select().from(hotSauces).where(eq(hotSauces.id, sauceId)).limit(1);
@@ -14,6 +17,7 @@ export async function load({ params }) {
 
 	const sauce = dbSauce[0];
 
+	// querry all reviews for a sauce, that are not flagged or are from the user
 	const dbReviews = await db
 		.select({
 			username: userTable.username,
@@ -21,7 +25,12 @@ export async function load({ params }) {
 		})
 		.from(reviews)
 		.leftJoin(userTable, eq(reviews.userId, userTable.id))
-		.where(eq(reviews.hotSauceId, sauceId));
+		.where(
+			and(
+				eq(reviews.hotSauceId, sauceId),
+				or(eq(reviews.flagged, false), eq(reviews.userId, user?.id ?? ''))
+			)
+		);
 
 	return { sauce, reviews: dbReviews };
 }
@@ -29,24 +38,57 @@ export async function load({ params }) {
 export const actions = {
 	review: async ({ request, params, locals: { session, user } }) => {
 		if (!session || !user) {
-			return fail(401, { error: 'Unauthorized' });
+			return fail(401, {
+				success: false,
+				error: 'Unauthorized'
+			});
 		}
 
 		const sauceId = Number(params.slug);
 
 		if (!sauceId) {
-			return fail(400, { error: 'Invalid sauce' });
+			return fail(400, {
+				success: false,
+				error: 'Invalid sauce'
+			});
 		}
+
+		// return fail(500, {
+		// 	success: false,
+		// 	error: 'Reviewing is disabled'
+		// });
+
+		const modelPromise = toxicity.load(0.9, ['toxicity']);
 
 		const data = await request.formData();
 
 		const rating = Number(data.get('rating'));
 
 		if (rating < 1 || rating > 5) {
-			return fail(400, { error: 'Invalid rating' });
+			return fail(400, {
+				success: false,
+				error: 'Invalid rating'
+			});
 		}
 
 		const reviewText = String(data.get('content'));
+
+		console.time('toxicity');
+		let flagged = false;
+		// this takes 4-5 seconds
+		if (reviewText) {
+			const model = await modelPromise;
+
+			const predictions = await model.classify(reviewText);
+
+			for (const prediction of predictions) {
+				if (prediction.results[0].match) {
+					flagged = true;
+					break;
+				}
+			}
+		}
+		console.timeEnd('toxicity');
 
 		try {
 			await db
@@ -56,7 +98,8 @@ export const actions = {
 						hotSauceId: sauceId,
 						reviewText,
 						userId: user.id,
-						rating
+						rating,
+						flagged
 					}
 				])
 				.onConflictDoUpdate({
@@ -68,7 +111,10 @@ export const actions = {
 				});
 		} catch (err) {
 			console.error(err);
-			return fail(500, { error: 'Failed to save review' });
+			return fail(500, {
+				success: false,
+				error: 'Failed to save review'
+			});
 		}
 
 		return { success: true };

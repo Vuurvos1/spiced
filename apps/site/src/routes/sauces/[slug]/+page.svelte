@@ -8,12 +8,13 @@
 
 	let { data } = $props();
 
-	let { sauce, reviews, session } = $derived(data);
+	let { sauce, session, user } = $derived(data);
+	let reviews = $state(data.reviews);
 </script>
 
 <div class="container">
 	<section class="mb-12 grid gap-4 md:grid-cols-5">
-		<img class="md:col-span-3" src={sauce.imageUrl} alt="" />
+		<img class="object-contain md:col-span-3" src={sauce.imageUrl} alt={sauce.name} />
 
 		<div class="md:col-span-2">
 			<h1 class="mb-3 text-4xl font-semibold">{sauce.name}</h1>
@@ -25,7 +26,7 @@
 					<!-- TODO: add/remove from withlist text -->
 					<!-- TODO: error handle -->
 					<form method="post" action="?/addWishlist" use:enhance>
-						<button type="submit" class="btn">Add Wishlist <Plus size="20"></Plus></button>
+						<button type="submit" class="btn">Add Wishlist <Plus size={20}></Plus></button>
 					</form>
 
 					<!-- TODO: imlement -->
@@ -42,7 +43,47 @@
 
 		<!-- TODO: maybe put this into a modal with shallow routing? -->
 		{#if session}
-			<form class="mb-12" method="post" action="?/review" use:enhance>
+			<form
+				class="mb-12"
+				method="post"
+				action="?/review"
+				use:enhance={({ formData }) => {
+					if (!user) return () => {};
+
+					const baseReviews = structuredClone(data.reviews);
+
+					const index = reviews.findIndex((review) => review.review.userId === session.userId);
+
+					const newRating = Number(formData.get('rating'));
+					const newReview = formData.get('content') as string;
+
+					if (index !== -1) {
+						if (newRating && newReview) {
+							const review = reviews[index].review;
+							review.rating = newRating;
+							review.reviewText = newReview;
+						}
+					} else {
+						reviews.unshift({
+							username: user.username,
+							// @ts-expect-error - only needed fields
+							review: {
+								rating: newRating,
+								reviewText: newReview,
+								createdAt: new Date()
+							}
+						});
+					}
+
+					return ({ result }) => {
+						if (result.type !== 'success') {
+							// reset
+							console.error('Failed to submit review', result);
+							data.reviews = baseReviews;
+						}
+					};
+				}}
+			>
 				<div class="flex max-w-md flex-col gap-4">
 					<!-- rating slider -->
 					<StarRater></StarRater>
@@ -51,7 +92,7 @@
 					<label for="content">Review</label>
 					<textarea class="resize-none rounded border" name="content" rows="4" cols="50"></textarea>
 
-					<button type="submit" class="btn"> Submit Review </button>
+					<button type="submit" class="btn">Submit Review</button>
 				</div>
 			</form>
 		{/if}
