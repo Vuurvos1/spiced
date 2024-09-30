@@ -1,9 +1,8 @@
 import { db } from '$lib/db';
-import { hotSauces, reviews, userTable, wishlist } from '@app/db/schema';
+import { checkins, hotSauces, reviews, userTable, wishlist } from '@app/db/schema';
 import { error, fail } from '@sveltejs/kit';
 import { and, eq, or } from 'drizzle-orm';
 
-// @ts-expect-error - missing types
 import * as toxicity from '@tensorflow-models/toxicity';
 
 export async function load({ params, locals: { user } }) {
@@ -32,7 +31,22 @@ export async function load({ params, locals: { user } }) {
 			)
 		);
 
-	return { sauce, reviews: dbReviews };
+	const dbCheckin = await db
+		.select({})
+		.from(checkins)
+		.where(and(eq(checkins.hotSauceId, sauceId), eq(checkins.userId, user?.id ?? '')));
+
+	const dbWishlist = await db
+		.select({})
+		.from(wishlist)
+		.where(and(eq(wishlist.hotSauceId, sauceId), eq(wishlist.userId, user?.id ?? '')));
+
+	return {
+		sauce,
+		reviews: dbReviews,
+		checkedin: dbCheckin.length > 0,
+		wishlisted: dbWishlist.length > 0
+	};
 }
 
 export const actions = {
@@ -73,7 +87,6 @@ export const actions = {
 
 		const reviewText = String(data.get('content'));
 
-		console.time('toxicity');
 		let flagged = false;
 		// this takes 4-5 seconds
 		if (reviewText) {
@@ -88,7 +101,6 @@ export const actions = {
 				}
 			}
 		}
-		console.timeEnd('toxicity');
 
 		try {
 			await db
@@ -119,9 +131,8 @@ export const actions = {
 
 		return { success: true };
 	},
-	addWishlist: async ({ params, locals: { session, user } }) => {
+	wishlist: async ({ params, request, locals: { session, user } }) => {
 		if (!session || !user) {
-			// redirect(302, '/signup');
 			return fail(401, { error: 'Unauthorized' });
 		}
 
@@ -129,6 +140,22 @@ export const actions = {
 
 		if (!sauceId) {
 			return fail(400, { error: 'Invalid sauce' });
+		}
+
+		const data = await request.formData();
+		const wish = data.get('wishlist');
+
+		if (wish === 'false') {
+			try {
+				await db
+					.delete(wishlist)
+					.where(and(eq(wishlist.hotSauceId, sauceId), eq(wishlist.userId, user.id)));
+			} catch (err) {
+				console.error(err);
+				return fail(500, { error: 'Failed to remove from wishlist' });
+			}
+
+			return { success: true };
 		}
 
 		try {
@@ -141,6 +168,47 @@ export const actions = {
 		} catch (err) {
 			console.error(err);
 			return fail(500, { error: 'Failed to add to wishlist' });
+		}
+
+		return { success: true };
+	},
+	checkIn: async ({ params, request, locals: { session, user } }) => {
+		if (!session || !user) {
+			return fail(401, { error: 'Unauthorized' });
+		}
+
+		const sauceId = Number(params.slug);
+
+		if (!sauceId) {
+			return fail(400, { error: 'Invalid sauce' });
+		}
+
+		const data = await request.formData();
+		const checkin = data.get('checkin');
+
+		if (checkin === 'false') {
+			try {
+				await db
+					.delete(checkins)
+					.where(and(eq(checkins.hotSauceId, sauceId), eq(checkins.userId, user.id)));
+			} catch (err) {
+				console.error(err);
+				return fail(500, { error: 'Failed to check in' });
+			}
+
+			return { success: true };
+		}
+
+		try {
+			await db.insert(checkins).values([
+				{
+					hotSauceId: sauceId,
+					userId: user.id
+				}
+			]);
+		} catch (err) {
+			console.error(err);
+			return fail(500, { error: 'Failed to check in' });
 		}
 
 		return { success: true };

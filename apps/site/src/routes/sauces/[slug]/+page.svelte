@@ -4,11 +4,11 @@
 	import dayjs from '$lib/dayjs';
 	import StarRating from '$lib/components/StarRating.svelte';
 	import StarRater from '$lib/components/StarRater.svelte';
-	import { Plus } from '@o7/icon/lucide';
+	import { ListPlus, ListMinus, Check } from '@o7/icon/lucide';
 
 	let { data } = $props();
 
-	let { sauce, session, user } = $derived(data);
+	let { sauce, session, user, checkedin, wishlisted } = $derived(data);
 	let reviews = $state(data.reviews);
 </script>
 
@@ -25,14 +25,27 @@
 				<div class="flex flex-row gap-6">
 					<!-- TODO: add/remove from withlist text -->
 					<!-- TODO: error handle -->
-					<form method="post" action="?/addWishlist" use:enhance>
-						<button type="submit" class="btn">Add Wishlist <Plus size={20}></Plus></button>
+					<form method="post" action="?/wishlist" use:enhance>
+						<input type="hidden" name="wishlist" value={!wishlisted} />
+
+						<button type="submit" class="btn">
+							{#if wishlisted}
+								<ListMinus size={20}></ListMinus>
+							{:else}
+								<ListPlus size={20}></ListPlus>
+							{/if}
+							{wishlisted ? 'Remove' : 'Add'} to Wishlist
+						</button>
 					</form>
 
-					<!-- TODO: imlement -->
-					<!-- <form method="post" action="?/checkin" use:enhance>
-						<button type="submit" class="btn">Check in</button>
-					</form> -->
+					<form method="post" action="?/checkIn" use:enhance>
+						<input type="hidden" name="checkin" value={!checkedin} />
+
+						<button type="submit" class="btn">
+							<Check class={`${checkedin ? 'text-green-500' : ''}`} size={20}></Check>
+							{checkedin ? 'Checked-in' : 'Check-in'}
+						</button>
+					</form>
 				</div>
 			{/if}
 		</div>

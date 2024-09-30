@@ -43,6 +43,13 @@
       "when": 1725725231782,
       "tag": "0005_medical_zuras",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1727723498500,
+      "tag": "0006_petite_texas_twister",
+      "breakpoints": true
     }
   ]
 }
