@@ -217,7 +217,6 @@ export const friends = pgTable(
 export const wishlist = pgTable(
 	'wishlist',
 	{
-		wishlistId: serial('wishlist_id').primaryKey(),
 		userId: text('user_id')
 			.notNull()
 			.references(() => userTable.id, { onDelete: 'cascade' }),
@@ -227,14 +226,13 @@ export const wishlist = pgTable(
 		createdAt: timestamp('created_at').notNull().defaultNow()
 	},
 	(t) => ({
-		unq: unique().on(t.userId, t.hotSauceId)
+		pk: primaryKey({ columns: [t.userId, t.hotSauceId] })
 	})
 );
 
-export const checkinsTable = pgTable(
+export const checkins = pgTable(
 	'checkins',
 	{
-		checkinId: serial('checkin_id').primaryKey(),
 		userId: text('user_id')
 			.notNull()
 			.references(() => userTable.id, { onDelete: 'cascade' }),
@@ -244,6 +242,6 @@ export const checkinsTable = pgTable(
 		createdAt: timestamp('created_at').notNull().defaultNow()
 	},
 	(t) => ({
-		unq: unique().on(t.userId, t.hotSauceId)
+		pk: primaryKey({ columns: [t.userId, t.hotSauceId] })
 	})
 );
