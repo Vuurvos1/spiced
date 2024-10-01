@@ -14,7 +14,7 @@
 <div class="flex min-h-screen flex-col">
 	<Header></Header>
 
-	<main class="flex flex-1 flex-col py-4">
+	<main class="flex flex-1 flex-col py-8">
 		{@render children()}
 	</main>
 </div>

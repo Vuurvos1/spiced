@@ -3,6 +3,9 @@ import { checkins, hotSauces, reviews, userTable, wishlist } from '@app/db/schem
 import { error, fail } from '@sveltejs/kit';
 import { and, eq, or } from 'drizzle-orm';
 
+// TODO: fix tensorflow issues
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import * as tf from '@tensorflow/tfjs';
 import * as toxicity from '@tensorflow-models/toxicity';
 
 export async function load({ params, locals: { user } }) {
@@ -31,15 +34,17 @@ export async function load({ params, locals: { user } }) {
 			)
 		);
 
-	const dbCheckin = await db
+	const dbCheckinPromise = db
 		.select({})
 		.from(checkins)
 		.where(and(eq(checkins.hotSauceId, sauceId), eq(checkins.userId, user?.id ?? '')));
 
-	const dbWishlist = await db
+	const dbWishlistPromise = db
 		.select({})
 		.from(wishlist)
 		.where(and(eq(wishlist.hotSauceId, sauceId), eq(wishlist.userId, user?.id ?? '')));
+
+	const [dbCheckin, dbWishlist] = await Promise.all([dbCheckinPromise, dbWishlistPromise]);
 
 	return {
 		sauce,
@@ -67,13 +72,6 @@ export const actions = {
 			});
 		}
 
-		// return fail(500, {
-		// 	success: false,
-		// 	error: 'Reviewing is disabled'
-		// });
-
-		const modelPromise = toxicity.load(0.9, ['toxicity']);
-
 		const data = await request.formData();
 
 		const rating = Number(data.get('rating'));
@@ -90,7 +88,7 @@ export const actions = {
 		let flagged = false;
 		// this takes 4-5 seconds
 		if (reviewText) {
-			const model = await modelPromise;
+			const model = await toxicity.load(0.9, ['toxicity']);
 
 			const predictions = await model.classify(reviewText);
 

@@ -55,6 +55,7 @@
 		"@sveltejs/adapter-vercel": "^5.4.4",
 		"@tensorflow-models/toxicity": "^1.2.2",
 		"@tensorflow/tfjs": "^4.21.0",
+		"@tensorflow/tfjs-node": "^4.21.0",
 		"arctic": "^1.9.2",
 		"boring-avatars": "^1.11.2",
 		"dayjs": "^1.11.13",
