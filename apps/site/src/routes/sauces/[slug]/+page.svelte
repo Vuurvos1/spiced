@@ -17,13 +17,12 @@
 		<img class="object-contain md:col-span-3" src={sauce.imageUrl} alt={sauce.name} />
 
 		<div class="md:col-span-2">
-			<h1 class="mb-3 text-4xl font-semibold">{sauce.name}</h1>
+			<h1 class="h1 mb-3">{sauce.name}</h1>
 
 			<p class="mb-5 text-gray-500">{sauce.description}</p>
 
 			{#if session}
 				<div class="flex flex-row gap-6">
-					<!-- TODO: add/remove from withlist text -->
 					<!-- TODO: error handle -->
 					<form method="post" action="?/wishlist" use:enhance>
 						<input type="hidden" name="wishlist" value={!wishlisted} />
