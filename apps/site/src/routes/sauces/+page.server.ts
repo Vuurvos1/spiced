@@ -1,5 +1,5 @@
 import { db } from '$lib/db';
-import { hotSauces, reviews } from '@app/db/schema';
+import { hotSauces, checkins } from '@app/db/schema';
 import { redirect, type Actions } from '@sveltejs/kit';
 import { eq, avg, count, desc, ilike, getTableColumns } from 'drizzle-orm';
 
@@ -18,13 +18,13 @@ export async function load({ url }) {
 	const sauces = await db
 		.select({
 			...hotSauceColumns,
-			avgRating: avg(reviews.rating)
+			avgRating: avg(checkins.rating)
 		})
 		.from(hotSauces)
 		.where(ilike(hotSauces.name, `%${search}%`)) // No sql injection here, I checked :)
 		.limit(pageSize)
 		.offset((page - 1) * pageSize) // TODO: check if filtering before of after the join is more efficient
-		.leftJoin(reviews, eq(hotSauces.id, reviews.hotSauceId))
+		.leftJoin(checkins, eq(hotSauces.id, checkins.hotSauceId))
 		.groupBy(hotSauces.id)
 		.orderBy(desc(hotSauces.createdAt));
 

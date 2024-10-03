@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { BeamAvatar } from '@app/boring-avatars';
 	import { page } from '$app/stores';
+	import { Trash2 } from '@o7/icon/lucide';
+	import { enhance } from '$app/forms';
 
 	let { data } = $props();
 
@@ -30,7 +32,21 @@
 		{#if checkedSauces.length > 0}
 			<ul class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
 				{#each checkedSauces as sauce}
-					<li>
+					<li class="group relative">
+						<!-- TODO: add confirm dialog -->
+						<form
+							class="pointer-events-none absolute right-2 top-2 opacity-0 transition group-hover:pointer-events-auto group-hover:opacity-100"
+							method="post"
+							action="?/removeCheckIn"
+							use:enhance
+						>
+							<input type="hidden" name="sauceId" value={sauce.id} />
+
+							<button type="submit">
+								<Trash2 size={24}></Trash2>
+							</button>
+						</form>
+
 						<a href={`/sauces/${sauce.id}`}>
 							<img src={sauce?.imageUrl} alt={sauce.name} />
 
