@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { teleport, clickOutside } from '$lib/actions';
 	import { onMount, type Snippet } from 'svelte';
-	import { XIcon } from 'lucide-svelte';
+	import { X } from '@o7/icon/lucide';
 	import { fade } from 'svelte/transition';
 
 	interface Props {
@@ -68,7 +68,7 @@
 								class="absolute right-4 top-4"
 								aria-label="close modal"
 							>
-								<XIcon size="20" />
+								<X size={20} />
 							</button>
 
 							{@render children?.()}
