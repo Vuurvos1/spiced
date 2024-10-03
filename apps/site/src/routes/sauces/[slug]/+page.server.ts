@@ -1,7 +1,7 @@
 import { db } from '$lib/db';
-import { checkins, hotSauces, reviews, userTable, wishlist } from '@app/db/schema';
+import { checkins, hotSauces, userTable, wishlist } from '@app/db/schema';
 import { error, fail } from '@sveltejs/kit';
-import { and, eq, or } from 'drizzle-orm';
+import { and, eq, not } from 'drizzle-orm';
 
 // TODO: fix tensorflow issues
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -20,22 +20,24 @@ export async function load({ params, locals: { user } }) {
 	const sauce = dbSauce[0];
 
 	// querry all reviews for a sauce, that are not flagged or are from the user
-	const dbReviews = await db
+	const dbCheckins = await db
 		.select({
 			username: userTable.username,
-			review: reviews
+			checkins: checkins
 		})
-		.from(reviews)
-		.leftJoin(userTable, eq(reviews.userId, userTable.id))
+		.from(checkins)
+		.leftJoin(userTable, eq(checkins.userId, userTable.id))
 		.where(
 			and(
-				eq(reviews.hotSauceId, sauceId),
-				or(eq(reviews.flagged, false), eq(reviews.userId, user?.id ?? ''))
+				eq(checkins.hotSauceId, sauceId),
+				eq(checkins.flagged, false),
+				not(eq(userTable.id, user?.id ?? ''))
 			)
-		);
+		)
+		.limit(24);
 
-	const dbCheckinPromise = db
-		.select({})
+	const dbUserCheckinPromise = db
+		.select()
 		.from(checkins)
 		.where(and(eq(checkins.hotSauceId, sauceId), eq(checkins.userId, user?.id ?? '')));
 
@@ -44,12 +46,12 @@ export async function load({ params, locals: { user } }) {
 		.from(wishlist)
 		.where(and(eq(wishlist.hotSauceId, sauceId), eq(wishlist.userId, user?.id ?? '')));
 
-	const [dbCheckin, dbWishlist] = await Promise.all([dbCheckinPromise, dbWishlistPromise]);
+	const [userCheckin, dbWishlist] = await Promise.all([dbUserCheckinPromise, dbWishlistPromise]);
 
 	return {
 		sauce,
-		reviews: dbReviews,
-		checkedin: dbCheckin.length > 0,
+		checkins: dbCheckins,
+		userCheckin: userCheckin[0] ?? null,
 		wishlisted: dbWishlist.length > 0
 	};
 }
@@ -83,14 +85,14 @@ export const actions = {
 			});
 		}
 
-		const reviewText = String(data.get('content'));
+		const review = String(data.get('content'));
 
 		let flagged = false;
 		// this takes 4-5 seconds
-		if (reviewText) {
+		if (review) {
 			const model = await toxicity.load(0.9, ['toxicity']);
 
-			const predictions = await model.classify(reviewText);
+			const predictions = await model.classify(review);
 
 			for (const prediction of predictions) {
 				if (prediction.results[0].match) {
@@ -102,20 +104,20 @@ export const actions = {
 
 		try {
 			await db
-				.insert(reviews)
+				.insert(checkins)
 				.values([
 					{
 						hotSauceId: sauceId,
-						reviewText,
+						review,
 						userId: user.id,
 						rating,
 						flagged
 					}
 				])
 				.onConflictDoUpdate({
-					target: [reviews.userId, reviews.hotSauceId],
+					target: [checkins.userId, checkins.hotSauceId],
 					set: {
-						reviewText,
+						review,
 						rating
 					}
 				});
@@ -166,47 +168,6 @@ export const actions = {
 		} catch (err) {
 			console.error(err);
 			return fail(500, { error: 'Failed to add to wishlist' });
-		}
-
-		return { success: true };
-	},
-	checkIn: async ({ params, request, locals: { session, user } }) => {
-		if (!session || !user) {
-			return fail(401, { error: 'Unauthorized' });
-		}
-
-		const sauceId = Number(params.slug);
-
-		if (!sauceId) {
-			return fail(400, { error: 'Invalid sauce' });
-		}
-
-		const data = await request.formData();
-		const checkin = data.get('checkin');
-
-		if (checkin === 'false') {
-			try {
-				await db
-					.delete(checkins)
-					.where(and(eq(checkins.hotSauceId, sauceId), eq(checkins.userId, user.id)));
-			} catch (err) {
-				console.error(err);
-				return fail(500, { error: 'Failed to check in' });
-			}
-
-			return { success: true };
-		}
-
-		try {
-			await db.insert(checkins).values([
-				{
-					hotSauceId: sauceId,
-					userId: user.id
-				}
-			]);
-		} catch (err) {
-			console.error(err);
-			return fail(500, { error: 'Failed to check in' });
 		}
 
 		return { success: true };

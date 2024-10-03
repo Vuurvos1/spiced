@@ -5,11 +5,15 @@
 	import StarRating from '$lib/components/StarRating.svelte';
 	import StarRater from '$lib/components/StarRater.svelte';
 	import { ListPlus, ListMinus, Check } from '@o7/icon/lucide';
+	import { Dialog } from '$lib/components/dialog/index.js';
 
 	let { data } = $props();
 
-	let { sauce, session, user, checkedin, wishlisted } = $derived(data);
-	let reviews = $state(data.reviews);
+	let { sauce, session, user, wishlisted } = $derived(data);
+	let checkins = $state(data.checkins);
+	let userCheckin = $state(data.userCheckin);
+
+	let open = $state(false);
 </script>
 
 <div class="container">
@@ -37,106 +41,111 @@
 						</button>
 					</form>
 
-					<form method="post" action="?/checkIn" use:enhance>
-						<input type="hidden" name="checkin" value={!checkedin} />
+					<!-- TODO: add shallow routing/non js option -->
+					<button onclick={() => (open = !open)} type="submit" class="btn">
+						<Check class={`${userCheckin ? 'text-green-500' : ''}`} size={20}></Check>
+						{userCheckin ? 'Checked-in' : 'Check-in'}
+					</button>
 
-						<button type="submit" class="btn">
-							<Check class={`${checkedin ? 'text-green-500' : ''}`} size={20}></Check>
-							{checkedin ? 'Checked-in' : 'Check-in'}
-						</button>
-					</form>
+					<Dialog bind:open>
+						<form
+							method="post"
+							action="?/review"
+							use:enhance={({ formData }) => {
+								if (!user) return () => {};
+
+								const baseCheckin = { ...userCheckin };
+
+								const newRating = Number(formData.get('rating'));
+								const newReview = formData.get('content') as string;
+
+								if (!userCheckin) {
+									// @ts-expect-error - only needed fields
+									userCheckin = {
+										rating: newRating,
+										review: newReview,
+										updatedAt: new Date()
+									};
+								} else {
+									userCheckin.rating = newRating;
+									userCheckin.review = newReview;
+								}
+
+								open = false;
+
+								return ({ result }) => {
+									if (result.type !== 'success') {
+										// reset
+										console.error('Failed to submit review', result);
+										userCheckin = baseCheckin;
+									}
+								};
+							}}
+						>
+							<div class="mb-5 flex flex-col gap-4">
+								<!-- rating slider -->
+								<StarRater></StarRater>
+
+								<!-- comment -->
+								<label for="content">Review</label>
+								<textarea
+									class="resize-none rounded border p-2"
+									name="content"
+									placeholder="What do you think about this sauce?"
+									rows="4"
+								></textarea>
+							</div>
+
+							<div class="flex flex-row-reverse gap-4">
+								<button type="submit" class="btn">Check-in</button>
+
+								<button onclick={() => (open = false)} type="button" class="btn btn-outline">
+									Cancel
+								</button>
+							</div>
+						</form>
+					</Dialog>
 				</div>
 			{/if}
 		</div>
 	</section>
 
+	{#snippet checkinSnip(checkin: (typeof data.checkins)[number])}
+		<li class="py-4 first:pt-0 last:pb-0">
+			<div class="mb-3 flex flex-row items-center gap-4">
+				<BeamAvatar name={checkin.username ?? ''}></BeamAvatar>
+
+				<div class="flex flex-col">
+					<time datetime={dayjs(checkin.checkins.updatedAt).format('YYYY-MM-DD')}>
+						{dayjs(checkin.checkins.updatedAt).format('MMMM D, YYYY')}
+					</time>
+					{#if checkin.username}
+						<a href={`/profile/${checkin.username}`}>{checkin.username}</a>
+					{/if}
+				</div>
+			</div>
+
+			<div class="mb-3 flex flex-row items-center gap-2">
+				<StarRating rating={checkin.checkins?.rating ?? 0}></StarRating>
+
+				<span class="ml-2">({checkin.checkins.rating?.toFixed(1) ?? '0.0'})</span>
+			</div>
+
+			<p>{checkin.checkins.review}</p>
+		</li>
+	{/snippet}
+
 	<section>
 		<h2 class="mb-4 text-3xl font-semibold">Reviews</h2>
 
-		<!-- TODO: maybe put this into a modal with shallow routing? -->
-		{#if session}
-			<form
-				class="mb-12"
-				method="post"
-				action="?/review"
-				use:enhance={({ formData }) => {
-					if (!user) return () => {};
-
-					const baseReviews = structuredClone(data.reviews);
-
-					const index = reviews.findIndex((review) => review.review.userId === session.userId);
-
-					const newRating = Number(formData.get('rating'));
-					const newReview = formData.get('content') as string;
-
-					if (index !== -1) {
-						if (newRating && newReview) {
-							const review = reviews[index].review;
-							review.rating = newRating;
-							review.reviewText = newReview;
-						}
-					} else {
-						reviews.unshift({
-							username: user.username,
-							// @ts-expect-error - only needed fields
-							review: {
-								rating: newRating,
-								reviewText: newReview,
-								createdAt: new Date()
-							}
-						});
-					}
-
-					return ({ result }) => {
-						if (result.type !== 'success') {
-							// reset
-							console.error('Failed to submit review', result);
-							data.reviews = baseReviews;
-						}
-					};
-				}}
-			>
-				<div class="flex max-w-md flex-col gap-4">
-					<!-- rating slider -->
-					<StarRater></StarRater>
-
-					<!-- comment -->
-					<label for="content">Review</label>
-					<textarea class="resize-none rounded border" name="content" rows="4" cols="50"></textarea>
-
-					<button type="submit" class="btn">Submit Review</button>
-				</div>
-			</form>
-		{/if}
-
-		{#if reviews.length === 0}
+		{#if checkins.length === 0 && !userCheckin}
 			<p>No reviews yet.</p>
 		{:else}
 			<ul class="flex flex-col divide-y">
-				{#each reviews as review}
-					<li class="py-4 first:pt-0 last:pb-0">
-						<div class="mb-3 flex flex-row items-center gap-4">
-							<BeamAvatar name={review.username ?? ''}></BeamAvatar>
+				{@render checkinSnip({ username: user?.username ?? '', checkins: userCheckin })}
 
-							<div class="flex flex-col">
-								<span>
-									<!-- TODO: change into date/time element? -->
-									{dayjs(review.review.createdAt).format('MMMM D, YYYY')}
-								</span>
-								{#if review.username}
-									<a href={`/profile/${review.username}`}>{review.username}</a>
-								{/if}
-							</div>
-						</div>
-
-						<div class="mb-3 flex flex-row items-center gap-2">
-							<StarRating rating={review.review?.rating ?? 0}></StarRating>
-
-							<span class="ml-2">({review.review.rating?.toFixed(1)})</span>
-						</div>
-
-						<p>{review.review.reviewText}</p>
-					</li>
+				{#each checkins as checkin}
+					{@render checkinSnip(checkin)}
 				{/each}
 			</ul>
 		{/if}
