@@ -14,4 +14,3 @@ export function clickOutside(node: HTMLElement, callback: () => void) {
 		}
 	};
 }
-// TOOD: rename to outClick?
