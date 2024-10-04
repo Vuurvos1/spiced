@@ -1,7 +1,7 @@
 import { db } from '$lib/db';
-import { hotSauces } from '@app/db/schema';
+import { hotSauces, checkins } from '@app/db/schema';
 import { redirect, type Actions } from '@sveltejs/kit';
-import { count, desc, ilike } from 'drizzle-orm';
+import { eq, avg, count, desc, ilike, getTableColumns } from 'drizzle-orm';
 
 export async function load({ url }) {
 	const page = Number(url.searchParams.get('page')) || 1;
@@ -14,13 +14,19 @@ export async function load({ url }) {
 		.from(hotSauces)
 		.where(ilike(hotSauces.name, `%${search}%`));
 
+	const hotSauceColumns = getTableColumns(hotSauces);
 	const sauces = await db
-		.select()
+		.select({
+			...hotSauceColumns,
+			avgRating: avg(checkins.rating)
+		})
 		.from(hotSauces)
 		.where(ilike(hotSauces.name, `%${search}%`)) // No sql injection here, I checked :)
-		.orderBy(desc(hotSauces.createdAt))
 		.limit(pageSize)
-		.offset((page - 1) * pageSize);
+		.offset((page - 1) * pageSize) // TODO: check if filtering before of after the join is more efficient
+		.leftJoin(checkins, eq(hotSauces.id, checkins.hotSauceId))
+		.groupBy(hotSauces.id)
+		.orderBy(desc(hotSauces.createdAt));
 
 	return { sauces, sauceCount: sauceCount[0].count, pageSize };
 }

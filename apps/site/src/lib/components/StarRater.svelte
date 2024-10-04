@@ -16,20 +16,13 @@
 		class="flex flex-row gap-2 text-gray-300"
 	>
 		{#each { length: 5 } as _, i}
-			<input
-				bind:group={rating}
-				class="sr-only"
-				type="radio"
-				name="rating"
-				value={i + 1}
-				id="rating{i}"
-			/>
 			<label
 				onmouseenter={() => (hoverRating = i + 1)}
 				class:text-yellow-500={i < hoverRating || (i < rating && hoverRating === 0)}
 				class="cursor-pointer"
-				for="rating{i}"
 			>
+				<input bind:group={rating} class="sr-only" type="radio" name="rating" value={i + 1} />
+
 				<span class="sr-only">{i + 1}</span>
 
 				<svg

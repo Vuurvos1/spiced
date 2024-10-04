@@ -1,5 +1,5 @@
-import * as schema from './testSchema.js';
-import { pgGenerate } from 'drizzle-dbml-generator';
+import * as schema from './schema.js';
+import { pgGenerate } from 'drizzle-dbml-generator/dist/index.cjs';
 
 const out = './schema.dbml';
 const relational = true;

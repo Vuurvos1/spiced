@@ -19,6 +19,7 @@
 		"postgres": "^3.4.4"
 	},
 	"devDependencies": {
+		"@softwaretechnik/dbml-renderer": "^1.0.30",
 		"dotenv-cli": "^7.4.2",
 		"drizzle-dbml-generator": "^0.8.0",
 		"drizzle-kit": "^0.24.2"

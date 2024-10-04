@@ -1,20 +1,34 @@
 <script lang="ts">
 	import type { HotSauce } from '@app/db/types';
+	import StarRating from './StarRating.svelte';
+
+	type SauceRating = HotSauce & { avgRating?: string | null };
 
 	interface Props {
-		sauces: HotSauce[];
+		sauces: SauceRating[];
 	}
 
 	const { sauces = [] }: Props = $props();
 </script>
 
-{#snippet sauce(sauce: HotSauce)}
+{#snippet sauce(sauce: SauceRating)}
 	<li>
 		<!-- TODO: make relative? -->
 		<a href="/sauces/{sauce.id}">
-			<img src={sauce.imageUrl} alt="" />
-
+			<img src={sauce.imageUrl} alt={sauce.name} />
 			<h2 class="mb-2 text-xl font-semibold">{sauce.name}</h2>
+
+			<div class="mb-2 flex flex-row items-center gap-3">
+				{#if sauce.avgRating}
+					{@const rating = Number(sauce.avgRating)}
+
+					<StarRating {rating} />
+					({rating.toFixed(1)})
+				{:else}
+					<p class="font-medium italic text-gray-500">No ratings yet</p>
+				{/if}
+			</div>
+
 			<p class="line-clamp-3">{sauce.description}</p>
 		</a>
 	</li>

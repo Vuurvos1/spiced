@@ -15,7 +15,7 @@ on:
         required: true
 
 jobs:
-  deploy:
+  migrate:
     runs-on: ubuntu-latest
     environment: Production
 
@@ -34,8 +34,9 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
+      # TODO: only install db dependencies
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm --filter "@app/db" install
 
       - name: Install dependencies
         run: |
