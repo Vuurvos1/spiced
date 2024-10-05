@@ -24,14 +24,11 @@ export function teleport(node: HTMLElement, element: string) {
 
 		destroy() {
 			try {
-				if (!teleportElement) return;
+				if (!teleportElement || !node) return;
 				teleportElement.removeChild(node);
 			} catch (e) {
 				console.error(e);
 			}
-			// if (!teleportElement || !node) return;
-			// // teleportElement.remove();
-			// teleportElement.removeChild(node);
 		}
 	};
 }
