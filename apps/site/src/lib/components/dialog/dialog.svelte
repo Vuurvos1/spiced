@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { teleport, clickOutside } from '$lib/actions';
+	import { teleport, clickOutside, focusTrap } from '$lib/actions';
 	import { onMount, type Snippet } from 'svelte';
 	import { X } from '@o7/icon/lucide';
 	import { fade } from 'svelte/transition';
@@ -60,6 +60,7 @@
 						use:clickOutside={() => {
 							open = false;
 						}}
+						use:focusTrap={{}}
 						class="relative w-full transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:max-w-lg"
 					>
 						<div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">

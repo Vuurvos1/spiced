@@ -63,6 +63,7 @@
 		"dayjs": "^1.11.13",
 		"drizzle-orm": "^0.32.2",
 		"drizzle-zod": "^0.5.1",
+		"focus-trap": "^7.6.0",
 		"lucia": "^3.2.0",
 		"oslo": "^1.2.1",
 		"postgres": "^3.4.4",
