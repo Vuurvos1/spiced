@@ -17,153 +17,153 @@ const cachePath = './cache/heatsupply';
 
 /** @type {import('../').GetSauceUrls} */
 async function getSauceUrls(url, cache) {
-  if (!cache || !fs.existsSync(`${cachePath}/saucePage.html`)) {
-    createDir(cachePath);
+	if (!cache) {
+		fs.rmSync(cachePath, { recursive: true, force: true });
+	}
 
-    const browser = await puppeteer.launch({
-      executablePath:
-        process.env.CHROME_EXECUTABLE_PATH ??
-        'C:/Program Files/Google/Chrome/Application/chrome.exe',
-    });
-    const page = await browser.newPage();
+	createDir(cachePath);
 
-    const u = `${url}/en/product-categorie/hot-sauces-europe/`;
-    console.info('Opening', u);
+	// get amount of sauce pages
+	if (!fs.existsSync(`${cachePath}/saucePage.html`)) {
+		const browser = await puppeteer.launch({
+			executablePath:
+				process.env.CHROME_EXECUTABLE_PATH ??
+				'C:/Program Files/Google/Chrome/Application/chrome.exe'
+		});
+		const page = await browser.newPage();
 
-    await page.goto(u, {
-      waitUntil: 'networkidle2',
-    });
+		const u = `${url}/en/product-categorie/hot-sauces-europe/`;
+		console.info('Opening', u);
 
-    await page.waitForSelector('.facetwp-pager', {});
+		await page.goto(u, {
+			waitUntil: 'networkidle2'
+		});
 
-    const body = await page.content();
+		await page.waitForSelector('.facetwp-pager', {});
 
-    browser.close();
+		const body = await page.content();
 
-    console.log('Fetching');
+		browser.close();
 
-    fs.writeFileSync(`${cachePath}/saucePage.html`, body);
-  }
+		console.log('Fetching');
 
-  // pages and sauces cache
+		fs.writeFileSync(`${cachePath}/saucePage.html`, body);
+	}
 
-  if (!cache || !fs.existsSync(`${cachePath}/saucePages`)) {
-    createDir(`${cachePath}/saucePages`);
+	// get pages and sauces cache
+	if (!fs.existsSync(`${cachePath}/saucePages`)) {
+		createDir(`${cachePath}/saucePages`);
 
-    const body = fs.readFileSync(`${cachePath}/saucePage.html`, 'utf8');
-    const document = new JSDOM(body).window.document;
+		const body = fs.readFileSync(`${cachePath}/saucePage.html`, 'utf8');
+		const document = new JSDOM(body).window.document;
 
-    const lastPage = document.querySelector(
-      '.facetwp-pager .facetwp-page.last'
-    )?.textContent;
+		const lastPage = document.querySelector('.facetwp-pager .facetwp-page.last')?.textContent;
 
-    for (let i = 1; i <= Number(lastPage); i++) {
-      const res = await fetch(
-        `${url}/en/product-categorie/hot-sauces-europe/?_paged=${i}`
-      );
-      const body = await res.text();
+		for (let i = 1; i <= Number(lastPage); i++) {
+			const res = await fetch(`${url}/en/product-categorie/hot-sauces-europe/?_paged=${i}`);
+			const body = await res.text();
 
-      fs.writeFileSync(`${cachePath}/saucePages/${i}.html`, body);
+			fs.writeFileSync(`${cachePath}/saucePages/${i}.html`, body);
 
-      // pages.push(`${url}/en/product-categorie/hot-sauces-europe/?_paged=${i}`);
-    }
+			// pages.push(`${url}/en/product-categorie/hot-sauces-europe/?_paged=${i}`);
+		}
 
-    console.log('Last page', lastPage);
-  }
+		console.log('Last page', lastPage);
+	}
 
-  const saucePages = fs.readdirSync(`${cachePath}/saucePages`);
+	const saucePages = fs.readdirSync(`${cachePath}/saucePages`);
 
-  /** @type {string[]} */
-  const sauceUrls = [];
-  for (const file of saucePages) {
-    const body = fs.readFileSync(`${cachePath}/saucePages/${file}`, 'utf8');
-    const document = new JSDOM(body).window.document;
+	/** @type {string[]} */
+	const sauceUrls = [];
+	for (const file of saucePages) {
+		const body = fs.readFileSync(`${cachePath}/saucePages/${file}`, 'utf8');
+		const document = new JSDOM(body).window.document;
 
-    /** @type {NodeListOf<HTMLAnchorElement>} */
-    const productElements = document.querySelectorAll('.products > li > a');
+		/** @type {NodeListOf<HTMLAnchorElement>} */
+		const productElements = document.querySelectorAll('.products > li > a');
 
-    const links = Array.from(productElements).map((el) => el.href);
+		const links = Array.from(productElements).map((el) => el.href);
 
-    sauceUrls.push(...links);
-  }
+		sauceUrls.push(...links);
+	}
 
-  return sauceUrls;
+	return sauceUrls;
 }
 
 /** @type {import('../').ScrapeSauces} */
 async function scrapeSauces(sauceUrls, cache = true) {
-  if (!cache || !fs.existsSync(`${cachePath}/sauces`)) {
-    createDir(`${cachePath}/sauces`);
+	if (!cache) {
+		fs.rmSync(cachePath, { recursive: true, force: true });
+	}
 
-    for (const link of sauceUrls) {
-      console.info('Scraping sauce', link);
-      const res = await fetch(link);
-      const body = await res.text();
+	if (!fs.existsSync(`${cachePath}/sauces`)) {
+		createDir(`${cachePath}/sauces`);
 
-      const fileName = `${cachePath}/sauces/${link.replace('https://', '').replace(/\//g, '_')}.html`;
-      fs.writeFileSync(fileName, body);
-    }
-  }
+		for (const link of sauceUrls) {
+			console.info('Scraping sauce', link);
+			const res = await fetch(link);
+			const body = await res.text();
 
-  /** @type {import('../').Sauce[]} */
-  const sauces = [];
+			const fileName = `${cachePath}/sauces/${link.replace('https://', '').replace(/\//g, '_')}.html`;
+			fs.writeFileSync(fileName, body);
+		}
+	}
 
-  const files = fs.readdirSync(`${cachePath}/sauces`);
+	/** @type {import('../').Sauce[]} */
+	const sauces = [];
 
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
+	const files = fs.readdirSync(`${cachePath}/sauces`);
 
-    if (i % 10 === 0) console.info('Scraping', i, 'of', files.length);
+	for (let i = 0; i < files.length; i++) {
+		const file = files[i];
 
-    const body = fs.readFileSync(`${cachePath}/sauces/${file}`, 'utf8');
-    const document = new JSDOM(body).window.document;
+		if (i % 10 === 0) console.info('Scraping', i, 'of', files.length);
 
-    const name = document.querySelector('h1')?.textContent?.trim() ?? '';
+		const body = fs.readFileSync(`${cachePath}/sauces/${file}`, 'utf8');
+		const document = new JSDOM(body).window.document;
 
-    if (
-      document.querySelector('form.bundle_form') ||
-      name.toLowerCase().endsWith(' pack') ||
-      name.toLowerCase().includes('3 pack') ||
-      name.toLowerCase().endsWith(' subscription box') ||
-      name.toLowerCase().includes('giftset')
-    ) {
-      console.info('Skipping bundle', name);
-      continue;
-    }
+		const name = document.querySelector('h1')?.textContent?.trim() ?? '';
 
-    const description =
-      document
-        .querySelector(
-          '.summary .woocommerce-product-details__short-description > p'
-        )
-        ?.textContent?.trim() ?? '';
+		if (
+			document.querySelector('form.bundle_form') ||
+			name.toLowerCase().endsWith(' pack') ||
+			name.toLowerCase().includes('3 pack') ||
+			name.toLowerCase().endsWith(' subscription box') ||
+			name.toLowerCase().includes('giftset')
+		) {
+			console.info('Skipping bundle', name);
+			continue;
+		}
 
-    // const brand =
-    //   document
-    //     .querySelector(
-    //       '.woocommerce-product-attributes-item--attribute_pa_merk-hot-sauce td p'
-    //     )
-    //     ?.textContent.trim() ?? '';
+		const description =
+			document
+				.querySelector('.summary .woocommerce-product-details__short-description > p')
+				?.textContent?.trim() ?? '';
 
-    /** @type {HTMLImageElement | null} */
-    const imageEl = document.querySelector(
-      '.woocommerce-product-gallery__image img.wp-post-image'
-    );
+		// const brand =
+		//   document
+		//     .querySelector(
+		//       '.woocommerce-product-attributes-item--attribute_pa_merk-hot-sauce td p'
+		//     )
+		//     ?.textContent.trim() ?? '';
 
-    sauces.push({
-      name,
-      description,
-      imageUrl: imageEl?.src ?? '',
-    });
-  }
+		/** @type {HTMLImageElement | null} */
+		const imageEl = document.querySelector('.woocommerce-product-gallery__image img.wp-post-image');
 
-  return sauces;
+		sauces.push({
+			name,
+			description,
+			imageUrl: imageEl?.src ?? ''
+		});
+	}
+
+	return sauces;
 }
 
 /** @type {import('../').SauceScraper} */
 export const scraper = {
-  baseUrl,
-  name: 'heatsupply',
-  getSauceUrls,
-  scrapeSauces,
+	baseUrl,
+	name: 'heatsupply',
+	getSauceUrls,
+	scrapeSauces
 };
