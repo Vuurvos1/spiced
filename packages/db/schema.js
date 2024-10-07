@@ -110,7 +110,7 @@ export const stores = pgTable('stores', {
 	storeId: serial('store_id').primaryKey(),
 	name: varchar('name', { length: 256 }).notNull().unique(),
 	description: text('description').default(''),
-	website: varchar('website', { length: 256 }),
+	url: varchar('url', { length: 256 }).notNull(),
 	// TODO: add country/loccation?
 	createdAt: timestamp('created_at').notNull().defaultNow(),
 	updatedAt: timestamp('updated_at')
