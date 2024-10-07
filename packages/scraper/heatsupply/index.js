@@ -162,8 +162,10 @@ async function scrapeSauces(sauceUrls, cache = true) {
 
 /** @type {import('../').SauceScraper} */
 export const scraper = {
-	baseUrl,
-	name: 'heatsupply',
+	name: 'Heatsupply',
+	url: baseUrl,
+	description:
+		'Do you love hot sauce? Then you are at the right place. Heatsupply has a wide and changing assortment of great hot sauces and other spicyness.',
 	getSauceUrls,
 	scrapeSauces
 };

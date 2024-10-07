@@ -29,10 +29,7 @@ async function main() {
 	const cache = !flags.noCache;
 
 	console.info('Running scraper', scraper);
-	const data = await scraper.scrapeSauces(
-		await scraper.getSauceUrls(scraper.baseUrl, cache),
-		cache
-	);
+	const data = await scraper.scrapeSauces(await scraper.getSauceUrls(scraper.url, cache), cache);
 
 	console.info('Found', data.length, 'sauces');
 	// TODO: implement fast-levenshtein to find duplicates

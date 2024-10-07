@@ -64,6 +64,20 @@
       "when": 1727903403146,
       "tag": "0008_talented_leopardon",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1728332673245,
+      "tag": "0009_silly_malice",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1728333031401,
+      "tag": "0010_nappy_shinobi_shaw",
+      "breakpoints": true
     }
   ]
 }
