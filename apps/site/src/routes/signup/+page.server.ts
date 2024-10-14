@@ -6,7 +6,6 @@ import { userTable } from '@app/db/schema';
 import postgres from 'postgres';
 import { checkIfUserExists, createEmailVerificationToken } from '$lib/server/auth';
 import { eq } from 'drizzle-orm';
-
 import type { Actions, PageServerLoad } from './$types';
 import { sendEmailVerificationToken } from '$lib/server/email';
 import { hashSettings } from '$lib/server/lucia';

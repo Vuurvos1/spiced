@@ -3,14 +3,13 @@ import { generateId } from 'lucia';
 import {
 	google,
 	GOOGLE_OAUTH_CODE_VERIFIER_COOKIE_NAME,
-	GOOGLE_OAUTH_STATE_COOKIE_NAME,
-	lucia
+	GOOGLE_OAUTH_STATE_COOKIE_NAME
 } from '$lib/server/lucia';
 import type { RequestEvent } from '@sveltejs/kit';
 import { db } from '$lib/db';
 import { oauthAccountTable, userTable } from '@app/db/schema';
 import { eq, and } from 'drizzle-orm';
-import { createAndSetSession } from '$lib/server/auth';
+import { createAndSetSessionTokenCookie } from '$lib/server/session';
 
 type GoogleUser = {
 	sub: string;
@@ -98,7 +97,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 				});
 			}
 
-			await createAndSetSession(lucia, existingUser.id, event.cookies);
+			createAndSetSessionTokenCookie(existingUser.id, event.cookies);
 		} else {
 			// Create a new user and their OAuth account
 			const userId = generateId(15);
@@ -119,7 +118,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 				});
 			});
 
-			await createAndSetSession(lucia, userId, event.cookies);
+			await createAndSetSessionTokenCookie(userId, event.cookies);
 		}
 
 		return new Response(null, {

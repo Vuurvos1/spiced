@@ -1,8 +1,9 @@
-import { hashSettings, lucia } from '$lib/server/lucia';
+import { hashSettings } from '$lib/server/lucia';
 import { fail, redirect } from '@sveltejs/kit';
 import { verify } from '@node-rs/argon2';
 import type { Actions, PageServerLoad } from './$types';
 import { checkIfUserExists } from '$lib/server/auth';
+import { createSession, generateSessionToken, setSessionTokenCookie } from '$lib/server/session';
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
@@ -69,12 +70,9 @@ export const actions: Actions = {
 			});
 		}
 
-		const session = await lucia.createSession(existingUser.id, {});
-		const sessionCookie = lucia.createSessionCookie(session.id);
-		event.cookies.set(sessionCookie.name, sessionCookie.value, {
-			path: '.',
-			...sessionCookie.attributes
-		});
+		const token = generateSessionToken();
+		const session = await createSession(token, existingUser.id);
+		setSessionTokenCookie(event.cookies, token, session.expiresAt);
 
 		return redirect(302, '/');
 	}
