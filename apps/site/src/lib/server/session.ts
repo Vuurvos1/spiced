@@ -3,7 +3,7 @@ import { sessionTable, userTable } from '@app/db/schema';
 import { eq } from 'drizzle-orm';
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from '@oslojs/encoding';
 import { sha256 } from '@oslojs/crypto/sha2';
-import type { Cookies, RequestEvent } from '@sveltejs/kit';
+import type { Cookies } from '@sveltejs/kit';
 import type { Session, User } from '@app/db/types';
 
 export function generateSessionToken(): string {
