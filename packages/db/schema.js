@@ -13,7 +13,7 @@ import {
 
 export const roleEnum = pgEnum('role', ['admin', 'moderator', 'user']);
 
-// lucia auth
+// auth
 export const userTable = pgTable('user', {
 	id: text('id').primaryKey(), // TODO: possible change to uuid, also update references
 	username: text('username').notNull().unique(),
