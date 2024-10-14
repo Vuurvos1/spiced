@@ -1,6 +1,7 @@
 import { db } from '$lib/db.js';
 import { createAndSetSession, verifyPasswordResetToken } from '$lib/server/auth';
 import { lucia } from '$lib/server/lucia';
+import { createAndSetSessionTokenCookie } from '$lib/server/session';
 import { passwordResetTokenTable, userTable } from '@app/db/schema';
 import { hash } from '@node-rs/argon2';
 import { fail, redirect, type Actions } from '@sveltejs/kit';
@@ -109,7 +110,7 @@ export const actions: Actions = {
 						.where(eq(userTable.id, userId));
 				});
 				// create session to log the user in
-				await createAndSetSession(lucia, userId, event.cookies);
+				await createAndSetSessionTokenCookie(userId, event.cookies);
 			}
 		} catch (error) {
 			console.error('Error in resetPassword action:', error);

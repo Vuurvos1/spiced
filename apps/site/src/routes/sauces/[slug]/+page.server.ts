@@ -51,7 +51,7 @@ export async function load({ params, locals: { user } }) {
 	return {
 		sauce,
 		checkins: dbCheckins,
-		userCheckin: userCheckin[0] ?? null,
+		userCheckin: userCheckin.length > 0 ? userCheckin[0] : null,
 		wishlisted: dbWishlist.length > 0
 	};
 }
