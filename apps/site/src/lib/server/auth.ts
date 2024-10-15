@@ -1,7 +1,6 @@
 import { db } from '$lib/db';
 import { emailVerificationTable, passwordResetTokenTable, userTable } from '@app/db/schema';
-import type { Cookies } from '@sveltejs/kit';
-import { generateIdFromEntropySize, type Lucia } from 'lucia';
+import { generateIdFromEntropySize } from 'lucia';
 import { eq } from 'drizzle-orm';
 import { TimeSpan, createDate, isWithinExpirationDate } from 'oslo';
 import { encodeHex } from 'oslo/encoding';
@@ -113,22 +112,3 @@ export async function verifyPasswordResetToken(tokenId: string) {
 		message: 'Password reset token is valid.'
 	};
 }
-
-export const createAndSetSession = async (lucia: Lucia, userId: string, cookies: Cookies) => {
-	const session = await lucia.createSession(userId, {});
-	const sessionCookie = lucia.createSessionCookie(session.id);
-
-	cookies.set(sessionCookie.name, sessionCookie.value, {
-		path: '.',
-		...sessionCookie.attributes
-	});
-};
-
-export const deleteSessionCookie = async (lucia: Lucia, cookies: Cookies) => {
-	const sessionCookie = lucia.createBlankSessionCookie();
-
-	cookies.set(sessionCookie.name, sessionCookie.value, {
-		path: '.',
-		...sessionCookie.attributes
-	});
-};
