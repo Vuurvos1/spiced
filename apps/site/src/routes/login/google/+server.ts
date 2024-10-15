@@ -4,7 +4,7 @@ import {
 	google,
 	GOOGLE_OAUTH_CODE_VERIFIER_COOKIE_NAME,
 	GOOGLE_OAUTH_STATE_COOKIE_NAME
-} from '$lib/server/lucia';
+} from '$lib/server/oauth.js';
 
 export async function GET({ cookies }) {
 	// Generate a unique state value for the OAuth  process
@@ -12,9 +12,7 @@ export async function GET({ cookies }) {
 	const codeVerifier = generateCodeVerifier();
 
 	// Create the Google OAuth authorization URL
-	const url = await google.createAuthorizationURL(state, codeVerifier, {
-		scopes: ['profile', 'email']
-	});
+	const url = await google.createAuthorizationURL(state, codeVerifier, ['profile', 'email']);
 
 	// Set a cookie with the state value, to be used for CSRF protection
 	cookies.set(GOOGLE_OAUTH_STATE_COOKIE_NAME, state, {
