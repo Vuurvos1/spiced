@@ -29,12 +29,6 @@ importers:
       '@fontsource/bebas-neue':
         specifier: ^5.1.0
         version: 5.1.0
-      '@lucia-auth/adapter-drizzle':
-        specifier: ^1.1.0
-        version: 1.1.0(drizzle-orm@0.32.2(@cloudflare/workers-types@4.20241011.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.4)(react@18.3.1))(lucia@3.2.1)
-      '@lucia-auth/adapter-postgresql':
-        specifier: ^3.1.2
-        version: 3.1.2(lucia@3.2.1)(pg@8.12.0)(postgres@3.4.4)
       '@node-rs/argon2':
         specifier: ^1.8.3
         version: 1.8.3
@@ -89,9 +83,6 @@ importers:
       focus-trap:
         specifier: ^7.6.0
         version: 7.6.0
-      lucia:
-        specifier: ^3.2.1
-        version: 3.2.1
       oslo:
         specifier: ^1.2.1
         version: 1.2.1
@@ -1088,27 +1079,6 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
-
-  '@lucia-auth/adapter-drizzle@1.1.0':
-    resolution: {integrity: sha512-iCTnZWvfI5lLZOdUHZYiXA1jaspIFEeo2extLxQ3DjP3uOVys7IPwBi7zezLIRu9dhro4H4Kji+7gSYyjcef2A==}
-    peerDependencies:
-      drizzle-orm: '>= 0.29 <1'
-      lucia: 3.x
-
-  '@lucia-auth/adapter-postgresql@3.1.2':
-    resolution: {integrity: sha512-XgScy312JsaiyJZ0OaUHakk01hFBldF1m8abX4Ctk2Dkt7lEVS/u0xZ2Sf6Hlji1wZtEM0uiIWdeMUu79XcXZA==}
-    peerDependencies:
-      '@neondatabase/serverless': 0.7 - 0.9
-      lucia: 3.x
-      pg: ^8.8.0
-      postgres: ^3.3.0
-    peerDependenciesMeta:
-      '@neondatabase/serverless':
-        optional: true
-      pg:
-        optional: true
-      postgres:
-        optional: true
 
   '@mapbox/node-pre-gyp@1.0.11':
     resolution: {integrity: sha512-Yhlar6v9WQgUp/He7BdgzOz8lqMQ8sU+jkCq7Wx8Myc5YFJLbEe7lgui/V7G1qB1DJykHSGwreceSaD60Y0PUQ==}
@@ -3349,9 +3319,6 @@ packages:
     resolution: {integrity: sha512-jumlc0BIUrS3qJGgIkWZsyfAM7NCWiBcCDhnd+3NNM5KbBmLTgHVfWBcg6W+rLUsIpzpERPsvwUP7CckAQSOoA==}
     engines: {node: '>=12'}
 
-  lucia@3.2.1:
-    resolution: {integrity: sha512-yIVBS/wU3R+8cLClh2ksBNxqHkAd0VUcjvib53azkSdRT1cPkKuFglkxFsghuspaioX+AHhmIECEkdOz/vIJsQ==}
-
   magic-string@0.25.9:
     resolution: {integrity: sha512-RmF0AsMzgt25qzqqLc1+MbHmhdx0ojF2Fvs4XnOqz2ZOBXzzkEwc/dJQZCYHAn7v1jbVOjAZfK8msRn4BxO4VQ==}
 
@@ -5475,18 +5442,6 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
-
-  '@lucia-auth/adapter-drizzle@1.1.0(drizzle-orm@0.32.2(@cloudflare/workers-types@4.20241011.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.4)(react@18.3.1))(lucia@3.2.1)':
-    dependencies:
-      drizzle-orm: 0.32.2(@cloudflare/workers-types@4.20241011.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.4)(react@18.3.1)
-      lucia: 3.2.1
-
-  '@lucia-auth/adapter-postgresql@3.1.2(lucia@3.2.1)(pg@8.12.0)(postgres@3.4.4)':
-    dependencies:
-      lucia: 3.2.1
-    optionalDependencies:
-      pg: 8.12.0
-      postgres: 3.4.4
 
   '@mapbox/node-pre-gyp@1.0.11':
     dependencies:
@@ -7885,11 +7840,6 @@ snapshots:
   lru-cache@10.4.3: {}
 
   lru-cache@7.18.3: {}
-
-  lucia@3.2.1:
-    dependencies:
-      '@oslojs/crypto': 1.0.1
-      '@oslojs/encoding': 1.1.0
 
   magic-string@0.25.9:
     dependencies:
