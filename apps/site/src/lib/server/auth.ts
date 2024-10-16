@@ -1,12 +1,12 @@
 import { db } from '$lib/db';
 import { emailVerificationTable, passwordResetTokenTable, userTable } from '@app/db/schema';
-import { generateIdFromEntropySize } from 'lucia';
 import { eq } from 'drizzle-orm';
 import { TimeSpan, createDate, isWithinExpirationDate } from 'oslo';
 import { encodeHex } from 'oslo/encoding';
 import { sha256 } from 'oslo/crypto';
+import { generateIdFromEntropySize } from './utils';
 
-export const checkIfUserExists = async (email: string) => {
+export async function checkIfUserExists(email: string) {
 	const [user] = await db
 		.select({
 			id: userTable.id,
@@ -19,7 +19,7 @@ export const checkIfUserExists = async (email: string) => {
 		.where(eq(userTable.email, email));
 
 	return user;
-};
+}
 
 export async function createEmailVerificationToken(userId: string, email: string): Promise<string> {
 	// optionally invalidate all existing tokens

@@ -1,9 +1,9 @@
-import { hashSettings } from '$lib/server/lucia';
 import { fail, redirect } from '@sveltejs/kit';
 import { verify } from '@node-rs/argon2';
 import type { Actions, PageServerLoad } from './$types';
 import { checkIfUserExists } from '$lib/server/auth';
 import { createSession, generateSessionToken, setSessionTokenCookie } from '$lib/server/session';
+import { hashSettings } from '$lib/server/utils';
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
