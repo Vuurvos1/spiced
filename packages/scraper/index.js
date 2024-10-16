@@ -12,6 +12,7 @@ const flags = parser(args, {
 const db = getDb(process.env.DATABASE_URL);
 
 async function main() {
+	const startTime = performance.now();
 	const command = flags['_'].shift();
 
 	if (!command) {
@@ -19,7 +20,7 @@ async function main() {
 		process.exit(1);
 	}
 
-	const scraper = scrapers[command];
+	const scraper = scrapers[command.toString().toLowerCase()];
 
 	if (!scraper) {
 		console.error('No scraper found for', command);
@@ -28,7 +29,7 @@ async function main() {
 
 	const cache = !flags.noCache;
 
-	console.info('Running scraper', scraper);
+	console.info(`Running scraper - ${scraper.name} - ${scraper.url}`);
 	const data = await scraper.scrapeSauces(await scraper.getSauceUrls(scraper.url, cache), cache);
 
 	console.info('Found', data.length, 'sauces');
@@ -39,11 +40,13 @@ async function main() {
 		await db.insert(hotSauces).values(data);
 	}
 
-	// add caching step where sauces are save to disk unless told to remove cache (yeet cache folder?)
-	// deduping step
+	// TODO: deduping step
 
 	console.info('Writing to data.json');
 	fs.writeFileSync('./data.json', JSON.stringify(data, null, 2));
+
+	console.info('done in', performance.now() - startTime, 'ms');
+	process.exit(0);
 }
 
 main();

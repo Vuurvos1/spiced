@@ -5,7 +5,7 @@
 	"scripts": {
 		"db": "pnpm --filter @app/db -- ",
 		"site": "pnpm --filter @app/site -- ",
-		"scrape": "pnpm --filter @app/scraper -- ",
+		"scrapes": "pnpm --filter @app/scraper -- ",
 		"build": "turbo run build",
 		"dev": "turbo run dev",
 		"lint": "turbo run lint",
