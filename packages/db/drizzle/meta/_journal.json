@@ -5,78 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1722788350518,
-      "tag": "0000_fuzzy_human_cannonball",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1722925850536,
-      "tag": "0001_complete_namor",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1725053335913,
-      "tag": "0002_salty_beyonder",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1725310442737,
-      "tag": "0003_unique_whistler",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1725397063487,
-      "tag": "0004_early_rattler",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1725725231782,
-      "tag": "0005_medical_zuras",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1727723498500,
-      "tag": "0006_petite_texas_twister",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1727902746015,
-      "tag": "0007_safe_zaladane",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1727903403146,
-      "tag": "0008_talented_leopardon",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "7",
-      "when": 1728332673245,
-      "tag": "0009_silly_malice",
-      "breakpoints": true
-    },
-    {
-      "idx": 10,
-      "version": "7",
-      "when": 1728333031401,
-      "tag": "0010_nappy_shinobi_shaw",
+      "when": 1729108768369,
+      "tag": "0000_white_pride",
       "breakpoints": true
     }
   ]
