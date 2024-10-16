@@ -31,28 +31,37 @@ export async function load({ params, locals: { user } }) {
 			and(
 				eq(checkins.hotSauceId, sauceId),
 				eq(checkins.flagged, false),
-				not(eq(userTable.id, user?.id ?? ''))
+				user ? not(eq(userTable.id, user.id)) : undefined
 			)
 		)
 		.limit(24);
 
-	const dbUserCheckinPromise = db
-		.select()
-		.from(checkins)
-		.where(and(eq(checkins.hotSauceId, sauceId), eq(checkins.userId, user?.id ?? '')));
+	if (user) {
+		const dbUserCheckinPromise = db
+			.select()
+			.from(checkins)
+			.where(and(eq(checkins.hotSauceId, sauceId), eq(checkins.userId, user.id)));
 
-	const dbWishlistPromise = db
-		.select({})
-		.from(wishlist)
-		.where(and(eq(wishlist.hotSauceId, sauceId), eq(wishlist.userId, user?.id ?? '')));
+		const dbWishlistPromise = db
+			.select({})
+			.from(wishlist)
+			.where(and(eq(wishlist.hotSauceId, sauceId), eq(wishlist.userId, user.id)));
 
-	const [userCheckin, dbWishlist] = await Promise.all([dbUserCheckinPromise, dbWishlistPromise]);
+		const [userCheckin, dbWishlist] = await Promise.all([dbUserCheckinPromise, dbWishlistPromise]);
+
+		return {
+			sauce,
+			checkins: dbCheckins,
+			userCheckin: userCheckin.length > 0 ? userCheckin[0] : null,
+			wishlisted: dbWishlist.length > 0
+		};
+	}
 
 	return {
 		sauce,
 		checkins: dbCheckins,
-		userCheckin: userCheckin.length > 0 ? userCheckin[0] : null,
-		wishlisted: dbWishlist.length > 0
+		userCheckin: null,
+		wishlisted: false
 	};
 }
 
