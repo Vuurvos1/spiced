@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { teleport, clickOutside } from '$lib/actions';
-	import { onMount, type Snippet } from 'svelte';
+	import { teleport, clickOutside, focusTrap, escapeKeydown } from '$lib/actions';
+	import type { Snippet } from 'svelte';
 	import { X } from '@o7/icon/lucide';
 	import { fade } from 'svelte/transition';
 
@@ -11,24 +11,9 @@
 	}
 
 	let { title, open = $bindable(false), children }: Props = $props();
-
-	function keyDownHandler(event: KeyboardEvent) {
-		if (event.key === 'Escape') {
-			open = false;
-		}
-	}
-
-	onMount(() => {
-		document.addEventListener('keydown', keyDownHandler);
-
-		return () => {
-			document.removeEventListener('keydown', keyDownHandler);
-		};
-	});
 </script>
 
 <!-- TODO: body scroll lock -->
-<!-- TODO: focus trap -->
 
 <!-- <button
 	onclick={() => {
@@ -59,6 +44,10 @@
 					<div
 						use:clickOutside={() => {
 							open = false;
+						}}
+						use:focusTrap={{}}
+						use:escapeKeydown={() => {
+							open = !open;
 						}}
 						class="relative w-full transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:max-w-lg"
 					>

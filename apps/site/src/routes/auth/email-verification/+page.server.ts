@@ -3,15 +3,11 @@ import { fail, redirect, type Actions, type Cookies } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 import { eq } from 'drizzle-orm';
-import {
-	createAndSetSession,
-	createEmailVerificationToken,
-	verifyEmailVerificationCode
-} from '$lib/server/auth';
+import { createEmailVerificationToken, verifyEmailVerificationCode } from '$lib/server/auth';
 import { db } from '$lib/db';
 import { userTable } from '@app/db/schema';
-import { lucia } from '$lib/server/lucia';
 import { sendEmailVerificationToken } from '$lib/server/email';
+import { createAndSetSessionTokenCookie } from '$lib/server/session';
 
 type PendingVerificationUserDataType = {
 	id: string;
@@ -103,7 +99,8 @@ export const actions: Actions = {
 				.set({ emailVerified: true, authMethods })
 				.where(eq(userTable.email, userData.email));
 		});
-		await createAndSetSession(lucia, userData.id, cookies);
+
+		await createAndSetSessionTokenCookie(userData.id, cookies);
 
 		cookies.set('pendingUserVerification', '', {
 			maxAge: 0,

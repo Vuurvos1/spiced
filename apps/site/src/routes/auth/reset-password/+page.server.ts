@@ -1,6 +1,6 @@
 import { db } from '$lib/db.js';
-import { createAndSetSession, verifyPasswordResetToken } from '$lib/server/auth';
-import { lucia } from '$lib/server/lucia';
+import { verifyPasswordResetToken } from '$lib/server/auth';
+import { createAndSetSessionTokenCookie, invalidateSession } from '$lib/server/session';
 import { passwordResetTokenTable, userTable } from '@app/db/schema';
 import { hash } from '@node-rs/argon2';
 import { fail, redirect, type Actions } from '@sveltejs/kit';
@@ -95,8 +95,13 @@ export const actions: Actions = {
 
 				// Hash the new password
 				const hashedPassword = await hash(password);
+
+				if (event.locals.session === null) {
+					return fail(401);
+				}
+
 				// Invalidate all user sessions before updating the password for security reasons
-				await lucia.invalidateUserSessions(userId);
+				await invalidateSession(event.locals.session.id);
 				await db.transaction(async (trx) => {
 					// Delete the password reset token from the database
 					await trx
@@ -109,7 +114,7 @@ export const actions: Actions = {
 						.where(eq(userTable.id, userId));
 				});
 				// create session to log the user in
-				await createAndSetSession(lucia, userId, event.cookies);
+				await createAndSetSessionTokenCookie(userId, event.cookies);
 			}
 		} catch (error) {
 			console.error('Error in resetPassword action:', error);

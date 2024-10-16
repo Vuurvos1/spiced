@@ -1,15 +1,13 @@
 import { fail, redirect } from '@sveltejs/kit';
-import { generateId } from 'lucia';
 import { hash } from '@node-rs/argon2';
 import { db } from '$lib/db';
 import { userTable } from '@app/db/schema';
 import postgres from 'postgres';
 import { checkIfUserExists, createEmailVerificationToken } from '$lib/server/auth';
 import { eq } from 'drizzle-orm';
-
 import type { Actions, PageServerLoad } from './$types';
 import { sendEmailVerificationToken } from '$lib/server/email';
-import { hashSettings } from '$lib/server/lucia';
+import { hashSettings } from '$lib/server/utils';
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
@@ -53,18 +51,22 @@ export const actions: Actions = {
 				});
 			}
 
-			const userId = existingUser?.id ?? generateId(15);
+			let userId = existingUser?.id;
 			const passwordHash = await hash(password, hashSettings);
 
 			if (!existingUser) {
-				await db.insert(userTable).values({
-					id: userId,
-					email,
-					username,
-					passwordHash,
-					emailVerified: false,
-					authMethods: ['email']
-				});
+				const [{ id }] = await db
+					.insert(userTable)
+					.values({
+						id: userId,
+						email,
+						username,
+						passwordHash,
+						emailVerified: false,
+						authMethods: ['email']
+					})
+					.returning({ id: userTable.id });
+				userId = id;
 			} else {
 				await db
 					.update(userTable)

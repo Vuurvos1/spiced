@@ -1,16 +1,17 @@
-import { OAuth2RequestError } from 'arctic';
-import { generateId } from 'lucia';
+import { createAndSetSessionTokenCookie } from '$lib/server/session';
 import {
 	google,
 	GOOGLE_OAUTH_CODE_VERIFIER_COOKIE_NAME,
-	GOOGLE_OAUTH_STATE_COOKIE_NAME,
-	lucia
-} from '$lib/server/lucia';
+	GOOGLE_OAUTH_STATE_COOKIE_NAME
+} from '$lib/server/oauth';
+import { decodeIdToken } from 'arctic';
+
 import type { RequestEvent } from '@sveltejs/kit';
+import type { OAuth2Tokens } from 'arctic';
+
 import { db } from '$lib/db';
 import { oauthAccountTable, userTable } from '@app/db/schema';
 import { eq, and } from 'drizzle-orm';
-import { createAndSetSession } from '$lib/server/auth';
 
 type GoogleUser = {
 	sub: string;
@@ -26,101 +27,84 @@ type GoogleUser = {
 export async function GET(event: RequestEvent): Promise<Response> {
 	const code = event.url.searchParams.get('code');
 	const state = event.url.searchParams.get('state');
-	const storedState = event.cookies.get(GOOGLE_OAUTH_STATE_COOKIE_NAME);
-	const codeVerifier = event.cookies.get(GOOGLE_OAUTH_CODE_VERIFIER_COOKIE_NAME);
+	const storedState = event.cookies.get(GOOGLE_OAUTH_STATE_COOKIE_NAME) ?? null;
+	const codeVerifier = event.cookies.get(GOOGLE_OAUTH_CODE_VERIFIER_COOKIE_NAME) ?? null;
 
-	if (!code || !state || !storedState || !codeVerifier || state !== storedState) {
+	if (code === null || state === null || storedState === null || codeVerifier === null) {
+		return new Response(null, {
+			status: 400
+		});
+	}
+	if (state !== storedState) {
 		return new Response(null, {
 			status: 400
 		});
 	}
 
+	let tokens: OAuth2Tokens;
 	try {
-		const tokens = await google.validateAuthorizationCode(code, codeVerifier);
-
-		const googleUserResponse = await fetch('https://openidconnect.googleapis.com/v1/userinfo', {
-			headers: {
-				Authorization: `Bearer ${tokens.accessToken}`
-			}
+		tokens = await google.validateAuthorizationCode(code, codeVerifier);
+	} catch (e) {
+		console.error(e);
+		// Invalid code or client credentials
+		return new Response(null, {
+			status: 400
 		});
-		const googleUser = (await googleUserResponse.json()) as GoogleUser;
+	}
 
-		if (!googleUser.email) {
-			return new Response('No primary email address', {
-				status: 400
-			});
-		}
+	const claims = decodeIdToken(tokens.idToken()) as GoogleUser;
 
-		if (!googleUser.email_verified) {
-			return new Response('Unverified email', {
-				status: 400
-			});
-		}
+	if (!claims.email) {
+		return new Response('No primary email address', {
+			status: 400
+		});
+	}
 
-		// Check if the user already exists
-		const [existingUser] = await db
+	if (!claims.email_verified) {
+		return new Response('Unverified email', {
+			status: 400
+		});
+	}
+
+	// Check if the user already exists
+	const [existingUser] = await db.select().from(userTable).where(eq(userTable.email, claims.email));
+
+	if (existingUser) {
+		// Check if the user already has a Google OAuth account linked
+		const [existingOauthAccount] = await db
 			.select()
-			.from(userTable)
-			.where(eq(userTable.email, googleUser.email));
+			.from(oauthAccountTable)
+			.where(
+				and(
+					eq(oauthAccountTable.providerId, 'google'),
+					eq(oauthAccountTable.providerUserId, claims.sub)
+				)
+			);
 
-		if (existingUser) {
-			// Check if the user already has a Google OAuth account linked
-			const [existingOauthAccount] = await db
-				.select()
-				.from(oauthAccountTable)
-				.where(
-					and(
-						eq(oauthAccountTable.providerId, 'google'),
-						eq(oauthAccountTable.providerUserId, googleUser.sub)
-					)
-				);
-
-			if (!existingOauthAccount) {
-				// Add the 'google' auth provider to the user's authMethods list
-				const authMethods = existingUser.authMethods || [];
-				authMethods.push('google');
-
-				await db.transaction(async (trx) => {
-					// Link the Google OAuth account to the existing user
-					await trx.insert(oauthAccountTable).values({
-						userId: existingUser.id,
-						providerId: 'google',
-						providerUserId: googleUser.sub
-					});
-
-					// Update the user's authMethods list
-					await trx
-						.update(userTable)
-						.set({
-							authMethods
-						})
-						.where(eq(userTable.id, existingUser.id));
-				});
-			}
-
-			await createAndSetSession(lucia, existingUser.id, event.cookies);
-		} else {
-			// Create a new user and their OAuth account
-			const userId = generateId(15);
+		if (!existingOauthAccount) {
+			// Add the 'google' auth provider to the user's authMethods list
+			const authMethods = existingUser.authMethods || [];
+			authMethods.push('google');
 
 			await db.transaction(async (trx) => {
-				await trx.insert(userTable).values({
-					id: userId,
-					username: googleUser.name,
-					email: googleUser.email,
-					emailVerified: true,
-					authMethods: ['google']
-				});
-
+				// Link the Google OAuth account to the existing user
 				await trx.insert(oauthAccountTable).values({
-					userId,
+					userId: existingUser.id,
 					providerId: 'google',
-					providerUserId: googleUser.sub
+					providerUserId: claims.sub
 				});
-			});
 
-			await createAndSetSession(lucia, userId, event.cookies);
+				// Update the user's authMethods list
+				await trx
+					.update(userTable)
+					.set({
+						authMethods
+					})
+					.where(eq(userTable.id, existingUser.id));
+			});
 		}
+
+		createAndSetSessionTokenCookie(existingUser.id, event.cookies);
 
 		return new Response(null, {
 			status: 302,
@@ -128,19 +112,35 @@ export async function GET(event: RequestEvent): Promise<Response> {
 				Location: '/'
 			}
 		});
-	} catch (error) {
-		console.error(error);
-
-		// the specific error message depends on the provider
-		if (error instanceof OAuth2RequestError) {
-			// invalid code
-			return new Response(null, {
-				status: 400
-			});
-		}
-
-		return new Response(null, {
-			status: 500
-		});
 	}
+
+	// Create a new user and their OAuth account
+	const userId = await db.transaction(async (trx) => {
+		const [insertedUser] = await trx
+			.insert(userTable)
+			.values({
+				username: claims.name,
+				email: claims.email,
+				emailVerified: true,
+				authMethods: ['google']
+			})
+			.returning({ id: userTable.id });
+
+		await trx.insert(oauthAccountTable).values({
+			userId: insertedUser.id,
+			providerId: 'google',
+			providerUserId: claims.sub
+		});
+
+		return insertedUser.id;
+	});
+
+	await createAndSetSessionTokenCookie(userId, event.cookies);
+
+	return new Response(null, {
+		status: 302,
+		headers: {
+			Location: '/'
+		}
+	});
 }

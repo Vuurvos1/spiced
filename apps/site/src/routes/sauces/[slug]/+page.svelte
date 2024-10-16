@@ -77,6 +77,7 @@
 									if (result.type !== 'success') {
 										// reset
 										console.error('Failed to submit review', result);
+										// @ts-expect-error - copy of userCheckin
 										userCheckin = baseCheckin;
 									}
 								};
@@ -142,7 +143,9 @@
 			<p>No reviews yet.</p>
 		{:else}
 			<ul class="flex flex-col divide-y">
-				{@render checkinSnip({ username: user?.username ?? '', checkins: userCheckin })}
+				{#if userCheckin && user}
+					{@render checkinSnip({ username: user.username, checkins: userCheckin })}
+				{/if}
 
 				{#each checkins as checkin}
 					{@render checkinSnip(checkin)}

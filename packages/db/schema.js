@@ -8,14 +8,15 @@ import {
 	varchar,
 	primaryKey,
 	boolean,
-	pgEnum
+	pgEnum,
+	uuid
 } from 'drizzle-orm/pg-core';
 
 export const roleEnum = pgEnum('role', ['admin', 'moderator', 'user']);
 
-// lucia auth
+// auth
 export const userTable = pgTable('user', {
-	id: text('id').primaryKey(), // TODO: possible change to uuid, also update references
+	id: uuid('id').defaultRandom().primaryKey(),
 	username: text('username').notNull().unique(),
 	passwordHash: text('password_hash'),
 	role: roleEnum('role').notNull().default('user'),
@@ -30,7 +31,7 @@ export const userTable = pgTable('user', {
 export const oauthAccountTable = pgTable(
 	'oauth_account',
 	{
-		userId: text('user_id')
+		userId: uuid('user_id')
 			.notNull()
 			.references(() => userTable.id, { onDelete: 'cascade' }),
 		providerId: text('provider').notNull(),
@@ -44,7 +45,7 @@ export const oauthAccountTable = pgTable(
 
 export const emailVerificationTable = pgTable('email_verification', {
 	id: serial('id').primaryKey(),
-	userId: text('user_id')
+	userId: uuid('user_id')
 		.notNull()
 		.references(() => userTable.id, { onDelete: 'cascade' }),
 	email: text('email').notNull(),
@@ -53,8 +54,8 @@ export const emailVerificationTable = pgTable('email_verification', {
 });
 
 export const passwordResetTokenTable = pgTable('password_reset_token', {
-	// id: serial('id').primaryKey(),
-	userId: text('user_id')
+	id: serial('id').primaryKey(),
+	userId: uuid('user_id')
 		.notNull()
 		.references(() => userTable.id),
 	tokenHash: text('token_hash').notNull().unique(),
@@ -63,7 +64,7 @@ export const passwordResetTokenTable = pgTable('password_reset_token', {
 
 export const sessionTable = pgTable('session', {
 	id: text('id').primaryKey().notNull().unique(),
-	userId: text('user_id')
+	userId: uuid('user_id')
 		.notNull()
 		.references(() => userTable.id, { onDelete: 'cascade' }),
 	expiresAt: timestamp('expires_at', {
@@ -110,7 +111,7 @@ export const stores = pgTable('stores', {
 	storeId: serial('store_id').primaryKey(),
 	name: varchar('name', { length: 256 }).notNull().unique(),
 	description: text('description').default(''),
-	website: varchar('website', { length: 256 }),
+	url: varchar('url', { length: 256 }).notNull(),
 	// TODO: add country/loccation?
 	createdAt: timestamp('created_at').notNull().defaultNow(),
 	updatedAt: timestamp('updated_at')
@@ -155,10 +156,10 @@ export const followers = pgTable(
 	'followers',
 	{
 		followerId: serial('follower_id').primaryKey(),
-		followerUserId: text('follower_user_id')
+		followerUserId: uuid('follower_user_id')
 			.notNull()
 			.references(() => userTable.id, { onDelete: 'cascade' }),
-		followedUserId: text('followed_user_id')
+		followedUserId: uuid('followed_user_id')
 			.notNull()
 			.references(() => userTable.id, { onDelete: 'cascade' }),
 		followedAt: timestamp('followed_at').defaultNow()
@@ -174,10 +175,10 @@ export const friends = pgTable(
 	'friends',
 	{
 		friendId: serial('friend_id').primaryKey(),
-		userId: text('user_id')
+		userId: uuid('user_id')
 			.notNull()
 			.references(() => userTable.id, { onDelete: 'cascade' }),
-		friendUserId: text('friend_user_id')
+		friendUserId: uuid('friend_user_id')
 			.notNull()
 			.references(() => userTable.id, { onDelete: 'cascade' }),
 		becameFriendsAt: timestamp('became_friends_at').notNull().defaultNow()
@@ -190,7 +191,7 @@ export const friends = pgTable(
 export const wishlist = pgTable(
 	'wishlist',
 	{
-		userId: text('user_id')
+		userId: uuid('user_id')
 			.notNull()
 			.references(() => userTable.id, { onDelete: 'cascade' }),
 		hotSauceId: integer('hot_sauce_id')
@@ -206,7 +207,7 @@ export const wishlist = pgTable(
 export const checkins = pgTable(
 	'checkins',
 	{
-		userId: text('user_id')
+		userId: uuid('user_id')
 			.notNull()
 			.references(() => userTable.id, { onDelete: 'cascade' }),
 		hotSauceId: integer('hot_sauce_id')
