@@ -9,7 +9,6 @@ import { decodeIdToken } from 'arctic';
 import type { RequestEvent } from '@sveltejs/kit';
 import type { OAuth2Tokens } from 'arctic';
 
-import { generateId } from 'lucia';
 import { db } from '$lib/db';
 import { oauthAccountTable, userTable } from '@app/db/schema';
 import { eq, and } from 'drizzle-orm';
@@ -116,22 +115,24 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	}
 
 	// Create a new user and their OAuth account
-	const userId = generateId(15);
-
-	await db.transaction(async (trx) => {
-		await trx.insert(userTable).values({
-			id: userId,
-			username: claims.name,
-			email: claims.email,
-			emailVerified: true,
-			authMethods: ['google']
-		});
+	const userId = await db.transaction(async (trx) => {
+		const [insertedUser] = await trx
+			.insert(userTable)
+			.values({
+				username: claims.name,
+				email: claims.email,
+				emailVerified: true,
+				authMethods: ['google']
+			})
+			.returning({ id: userTable.id });
 
 		await trx.insert(oauthAccountTable).values({
-			userId,
+			userId: insertedUser.id,
 			providerId: 'google',
 			providerUserId: claims.sub
 		});
+
+		return insertedUser.id;
 	});
 
 	await createAndSetSessionTokenCookie(userId, event.cookies);
