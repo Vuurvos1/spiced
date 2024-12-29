@@ -1,6 +1,6 @@
 import { db } from '$lib/db';
 import { hotSauces, checkins } from '@app/db/schema';
-import { redirect, type Actions } from '@sveltejs/kit';
+import { type Actions } from '@sveltejs/kit';
 import { eq, avg, count, desc, ilike, getTableColumns } from 'drizzle-orm';
 
 export async function load({ url }) {
@@ -8,6 +8,7 @@ export async function load({ url }) {
 	const pageSize = 24;
 
 	const search = url.searchParams.get('search') ?? '';
+	console.log('search', search);
 
 	const sauceCount = await db
 		.select({ count: count() })
@@ -31,14 +32,4 @@ export async function load({ url }) {
 	return { sauces, sauceCount: sauceCount[0].count, pageSize };
 }
 
-export const actions: Actions = {
-	search: async ({ request, url }) => {
-		const formData = await request.formData();
-		const search: string = (formData.get('search') as string) ?? '';
-
-		url.searchParams.set('search', search);
-		url.searchParams.delete('/search'); // Remove the search action from the URL
-
-		throw redirect(303, url.toString());
-	}
-};
+export const actions: Actions = {};

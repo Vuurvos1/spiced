@@ -19,5 +19,16 @@ export const actions: Actions = {
 		deleteSessionTokenCookie(cookies);
 
 		return redirect(302, '/login');
+	},
+	search: async ({ request, url }) => {
+		const formData = await request.formData();
+		const search: string = (formData.get('search') as string) ?? '';
+
+		url.pathname = '/sauces';
+		if (search) url.searchParams.set('search', search);
+		url.searchParams.delete('/search'); // Remove the search action from the URL
+		console.log('url', url.toString());
+
+		return redirect(303, url.toString());
 	}
 };
