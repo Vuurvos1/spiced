@@ -2,7 +2,7 @@ import parser from 'yargs-parser';
 import fs from 'node:fs';
 import scrapers from './scrapers.js';
 import { getDb } from '@app/db/index.js';
-import { hotSauces } from '@app/db/schema.js';
+import { hotSauces, stores, storeHotSauces } from '@app/db/schema.js';
 
 const [, , ...args] = process.argv;
 const flags = parser(args, {
@@ -36,16 +36,43 @@ async function main() {
 	// TODO: implement fast-levenshtein to find duplicates
 
 	if (flags.dbInsert) {
-		console.info('Inserting into db');
-		await db.insert(hotSauces).values(data);
-	}
+		// upsert store data
+		console.info('Upserting store data');
+		const store = await db
+			.insert(stores)
+			.values({
+				name: scraper.name,
+				url: scraper.url
+			})
+			.onConflictDoUpdate({
+				target: stores.name,
+				set: {
+					url: scraper.url
+				}
+			})
+			.returning();
 
-	// TODO: deduping step
+		// TODO: deduping step
+		console.info('Inserting hot sauce data');
+		const sauces = await db
+			.insert(hotSauces)
+			.values(data)
+			.returning({ id: hotSauces.id, name: hotSauces.name });
+
+		console.info('Inserting store hot sauce data');
+		await db.insert(storeHotSauces).values(
+			sauces.map((sauce) => ({
+				hotSauceId: sauce.id,
+				storeId: store[0].storeId,
+				url: `${scraper.url}/${sauce.name}`
+			}))
+		);
+	}
 
 	console.info('Writing to data.json');
 	fs.writeFileSync('./data.json', JSON.stringify(data, null, 2));
 
-	console.info('done in', performance.now() - startTime, 'ms');
+	console.info('done in', Math.round(performance.now() - startTime), 'ms');
 	process.exit(0);
 }
 

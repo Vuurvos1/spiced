@@ -120,17 +120,16 @@ export const stores = pgTable('stores', {
 		.$onUpdate(() => new Date())
 });
 
-export const hotSauceStores = pgTable(
-	'hot_sauce_stores',
+export const storeHotSauces = pgTable(
+	'store_hot_sauces',
 	{
-		id: serial('id').primaryKey(),
-		hotSauceId: integer('hot_sauce_id')
+		hotSauceId: serial('hot_sauce_id')
 			.notNull()
 			.references(() => hotSauces.id, { onDelete: 'cascade' }),
-		storeId: integer('store_id')
+		storeId: serial('store_id')
 			.notNull()
 			.references(() => stores.storeId, { onDelete: 'cascade' }),
-		// price: integer('price'),
+		url: varchar('url', { length: 256 }).notNull(),
 		createdAt: timestamp('created_at').notNull().defaultNow(),
 		updatedAt: timestamp('updated_at')
 			.notNull()
@@ -138,7 +137,7 @@ export const hotSauceStores = pgTable(
 			.$onUpdate(() => new Date())
 	},
 	(t) => ({
-		unq: unique().on(t.hotSauceId, t.storeId)
+		pk: primaryKey({ columns: [t.storeId, t.hotSauceId] })
 	})
 );
 
@@ -155,7 +154,7 @@ export const events = pgTable('events', {
 export const followers = pgTable(
 	'followers',
 	{
-		followerId: serial('follower_id').primaryKey(),
+		followerId: serial('follower_id'),
 		followerUserId: uuid('follower_user_id')
 			.notNull()
 			.references(() => userTable.id, { onDelete: 'cascade' }),
@@ -166,7 +165,7 @@ export const followers = pgTable(
 	},
 	(t) => {
 		return {
-			unq: unique().on(t.followerUserId, t.followedUserId)
+			pk: primaryKey({ columns: [t.followerUserId, t.followedUserId] })
 		};
 	}
 );
@@ -174,7 +173,7 @@ export const followers = pgTable(
 export const friends = pgTable(
 	'friends',
 	{
-		friendId: serial('friend_id').primaryKey(),
+		friendId: serial('friend_id'),
 		userId: uuid('user_id')
 			.notNull()
 			.references(() => userTable.id, { onDelete: 'cascade' }),
@@ -184,7 +183,7 @@ export const friends = pgTable(
 		becameFriendsAt: timestamp('became_friends_at').notNull().defaultNow()
 	},
 	(t) => ({
-		unq: unique().on(t.userId, t.friendUserId)
+		pk: primaryKey({ columns: [t.userId, t.friendUserId] })
 	})
 );
 

@@ -150,9 +150,12 @@ async function scrapeSauces(sauceUrls, cache = true) {
 		/** @type {HTMLImageElement | null} */
 		const imageEl = document.querySelector('.woocommerce-product-gallery__image img.wp-post-image');
 
+		const url = document.querySelector('link[rel="canonical"]')?.getAttribute('href');
+
 		sauces.push({
 			name,
 			description,
+			url: url ?? '',
 			imageUrl: imageEl?.src ?? ''
 		});
 	}
