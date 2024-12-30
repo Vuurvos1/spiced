@@ -1,5 +1,5 @@
 {
-  "id": "8b1d3dcc-d75e-482a-bbb5-f58b67c15cd7",
+  "id": "b598de3b-66a7-4fce-8567-2b2826ee932d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -16,7 +16,7 @@
         },
         "hot_sauce_id": {
           "name": "hot_sauce_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -155,7 +155,7 @@
       "columns": {
         "event_id": {
           "name": "event_id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true
         },
@@ -350,9 +350,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "name": {
           "name": "name",
@@ -381,7 +382,7 @@
         },
         "maker_id": {
           "name": "maker_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
@@ -417,7 +418,15 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "hot_sauces_name_unique": {
+          "name": "hot_sauces_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      }
     },
     "public.makers": {
       "name": "makers",
@@ -425,9 +434,10 @@
       "columns": {
         "maker_id": {
           "name": "maker_id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "name": {
           "name": "name",
@@ -629,15 +639,7 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "session_id_unique": {
-          "name": "session_id_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "id"
-          ]
-        }
-      }
+      "uniqueConstraints": {}
     },
     "public.store_hot_sauces": {
       "name": "store_hot_sauces",
@@ -645,13 +647,13 @@
       "columns": {
         "hot_sauce_id": {
           "name": "hot_sauce_id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
         "store_id": {
           "name": "store_id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -722,9 +724,10 @@
       "columns": {
         "store_id": {
           "name": "store_id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "name": {
           "name": "name",
@@ -864,7 +867,7 @@
         },
         "hot_sauce_id": {
           "name": "hot_sauce_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },

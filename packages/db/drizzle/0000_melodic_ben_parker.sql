@@ -6,7 +6,7 @@ END $$;
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "checkins" (
 	"user_id" uuid NOT NULL,
-	"hot_sauce_id" integer NOT NULL,
+	"hot_sauce_id" uuid NOT NULL,
 	"rating" integer,
 	"review" text DEFAULT '',
 	"flagged" boolean DEFAULT false,
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS "email_verification" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "events" (
-	"event_id" serial PRIMARY KEY NOT NULL,
+	"event_id" uuid PRIMARY KEY NOT NULL,
 	"name" varchar(256) NOT NULL,
 	"description" text DEFAULT '',
 	"event_date" timestamp NOT NULL,
@@ -50,18 +50,19 @@ CREATE TABLE IF NOT EXISTS "friends" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "hot_sauces" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text NOT NULL,
 	"description" text DEFAULT '',
 	"image_url" text,
 	"scovile" integer,
-	"maker_id" integer,
+	"maker_id" uuid,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "hot_sauces_name_unique" UNIQUE("name")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "makers" (
-	"maker_id" serial PRIMARY KEY NOT NULL,
+	"maker_id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar(256) NOT NULL,
 	"description" text DEFAULT '',
 	"website" varchar(256),
@@ -89,13 +90,12 @@ CREATE TABLE IF NOT EXISTS "password_reset_token" (
 CREATE TABLE IF NOT EXISTS "session" (
 	"id" text PRIMARY KEY NOT NULL,
 	"user_id" uuid NOT NULL,
-	"expires_at" timestamp with time zone NOT NULL,
-	CONSTRAINT "session_id_unique" UNIQUE("id")
+	"expires_at" timestamp with time zone NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "store_hot_sauces" (
-	"hot_sauce_id" serial NOT NULL,
-	"store_id" serial NOT NULL,
+	"hot_sauce_id" uuid NOT NULL,
+	"store_id" uuid NOT NULL,
 	"url" varchar(256) NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS "store_hot_sauces" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "stores" (
-	"store_id" serial PRIMARY KEY NOT NULL,
+	"store_id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar(256) NOT NULL,
 	"description" text DEFAULT '',
 	"url" varchar(256) NOT NULL,
@@ -127,7 +127,7 @@ CREATE TABLE IF NOT EXISTS "user" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "wishlist" (
 	"user_id" uuid NOT NULL,
-	"hot_sauce_id" integer NOT NULL,
+	"hot_sauce_id" uuid NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "wishlist_user_id_hot_sauce_id_pk" PRIMARY KEY("user_id","hot_sauce_id")
 );
