@@ -37,6 +37,6 @@ jobs:
 
       - name: Run scraper
         run: |
-          pnpm scrape ${{ github.event.inputs.store }} --dbInsert
+          pnpm scrapes scrape ${{ github.event.inputs.store }} --dbInsert
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
