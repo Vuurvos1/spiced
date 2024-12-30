@@ -69,8 +69,6 @@ async function scrapeSauces(sauceUrls, cache = true) {
 			console.warn('No description found for', name);
 		}
 
-		const brand = 'T-Rex Hot Sauce';
-
 		/** @type {HTMLImageElement | null} */
 		const img = document.querySelector('.product__media img'); // TODO: maybe get all images
 
@@ -88,7 +86,6 @@ async function scrapeSauces(sauceUrls, cache = true) {
 		producs.push(sauce);
 	}
 
-	console.info('Found', producs.length, 'sauces');
 	return producs;
 }
 

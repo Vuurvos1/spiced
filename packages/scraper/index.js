@@ -1,4 +1,5 @@
 import parser from 'yargs-parser';
+import fuzzysort from 'fuzzysort';
 import fs from 'node:fs';
 import scrapers from './scrapers.js';
 import { getDb } from '@app/db/index.js';
@@ -10,6 +11,26 @@ const flags = parser(args, {
 });
 
 const db = getDb(process.env.DATABASE_URL);
+
+/**
+ * @param {string} name
+ */
+function normalizeName(name) {
+	return name
+		.toLowerCase()
+		.replace(/[^a-z0-9\s]/gi, '')
+		.trim();
+}
+
+/**
+ * @param {string} existingName
+ * @param {string} newName
+ * @param {number} threshold
+ */
+function isSimilarName(existingName, newName, threshold = -50) {
+	const result = fuzzysort.single(newName, existingName);
+	return result ? result.score > threshold : false;
+}
 
 async function main() {
 	const startTime = performance.now();
@@ -33,7 +54,6 @@ async function main() {
 	const data = await scraper.scrapeSauces(await scraper.getSauceUrls(scraper.url, cache), cache);
 
 	console.info('Found', data.length, 'sauces');
-	// TODO: implement fast-levenshtein to find duplicates
 
 	if (flags.dbInsert) {
 		// upsert store data
@@ -52,21 +72,37 @@ async function main() {
 			})
 			.returning();
 
-		// TODO: deduping step
 		console.info('Inserting hot sauce data');
-		const sauces = await db
-			.insert(hotSauces)
-			.values(data)
-			.returning({ id: hotSauces.id, name: hotSauces.name });
+		const existingSauceNames = await db.select({ name: hotSauces.name }).from(hotSauces);
 
-		console.info('Inserting store hot sauce data');
-		await db.insert(storeHotSauces).values(
-			sauces.map((sauce) => ({
-				hotSauceId: sauce.id,
-				storeId: store[0].storeId,
-				url: `${scraper.url}/${sauce.name}`
-			}))
-		);
+		const dedupedSauces = data.filter((sauce) => {
+			const normalizedNewName = normalizeName(sauce.name);
+
+			return !existingSauceNames.some((existing) =>
+				isSimilarName(normalizeName(existing.name), normalizedNewName)
+			);
+		});
+		console.info('Deduped', data.length - dedupedSauces.length, 'sauces');
+
+		if (dedupedSauces.length > 0) {
+			const sauces = await db
+				.insert(hotSauces)
+				.values(dedupedSauces)
+				.onConflictDoNothing()
+				.returning({ id: hotSauces.sauceId, name: hotSauces.name });
+
+			console.info('Inserting store hot sauce data');
+			await db
+				.insert(storeHotSauces)
+				.values(
+					sauces.map((sauce) => ({
+						sauceId: sauce.id,
+						storeId: store[0].storeId,
+						url: `${scraper.url}/${sauce.name}`
+					}))
+				)
+				.onConflictDoNothing();
+		}
 	}
 
 	console.info('Writing to data.json');

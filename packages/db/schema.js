@@ -4,7 +4,6 @@ import {
 	serial,
 	text,
 	timestamp,
-	unique,
 	varchar,
 	primaryKey,
 	boolean,
@@ -63,7 +62,7 @@ export const passwordResetTokenTable = pgTable('password_reset_token', {
 });
 
 export const sessionTable = pgTable('session', {
-	id: text('id').primaryKey().notNull().unique(),
+	id: text('id').primaryKey().notNull(), // TODO: change to uuid?
 	userId: uuid('user_id')
 		.notNull()
 		.references(() => userTable.id, { onDelete: 'cascade' }),
@@ -75,7 +74,7 @@ export const sessionTable = pgTable('session', {
 
 // app
 export const makers = pgTable('makers', {
-	makerId: serial('maker_id').primaryKey(),
+	makerId: uuid('maker_id').primaryKey().defaultRandom(),
 	name: varchar('name', { length: 256 }).notNull().unique(),
 	description: text('description').default(''),
 	website: varchar('website', { length: 256 }),
@@ -88,19 +87,18 @@ export const makers = pgTable('makers', {
 });
 
 export const hotSauces = pgTable('hot_sauces', {
-	id: serial('id').primaryKey(),
-	name: text('name').notNull(),
+	sauceId: uuid('id').primaryKey().defaultRandom(),
+	name: text('name').notNull().unique(),
 	description: text('description').default(''),
 	imageUrl: text('image_url'),
 	scovile: integer('scovile'),
-	makerId: integer('maker_id').references(() => makers.makerId, {
+	makerId: uuid('maker_id').references(() => makers.makerId, {
 		onDelete: 'set null'
 	}),
 	createdAt: timestamp('created_at')
 		.notNull()
 		.defaultNow()
 		.$onUpdate(() => new Date()),
-
 	updatedAt: timestamp('updated_at')
 		.notNull()
 		.defaultNow()
@@ -108,7 +106,7 @@ export const hotSauces = pgTable('hot_sauces', {
 });
 
 export const stores = pgTable('stores', {
-	storeId: serial('store_id').primaryKey(),
+	storeId: uuid('store_id').primaryKey().defaultRandom(),
 	name: varchar('name', { length: 256 }).notNull().unique(),
 	description: text('description').default(''),
 	url: varchar('url', { length: 256 }).notNull(),
@@ -123,10 +121,10 @@ export const stores = pgTable('stores', {
 export const storeHotSauces = pgTable(
 	'store_hot_sauces',
 	{
-		hotSauceId: serial('hot_sauce_id')
+		sauceId: uuid('hot_sauce_id')
 			.notNull()
-			.references(() => hotSauces.id, { onDelete: 'cascade' }),
-		storeId: serial('store_id')
+			.references(() => hotSauces.sauceId, { onDelete: 'cascade' }),
+		storeId: uuid('store_id')
 			.notNull()
 			.references(() => stores.storeId, { onDelete: 'cascade' }),
 		url: varchar('url', { length: 256 }).notNull(),
@@ -137,12 +135,12 @@ export const storeHotSauces = pgTable(
 			.$onUpdate(() => new Date())
 	},
 	(t) => ({
-		pk: primaryKey({ columns: [t.storeId, t.hotSauceId] })
+		pk: primaryKey({ columns: [t.storeId, t.sauceId] })
 	})
 );
 
 export const events = pgTable('events', {
-	eventId: serial('event_id').primaryKey(),
+	eventId: uuid('event_id').primaryKey(),
 	name: varchar('name', { length: 256 }).notNull(),
 	description: text('description').default(''),
 	eventDate: timestamp('event_date').notNull(),
@@ -193,9 +191,9 @@ export const wishlist = pgTable(
 		userId: uuid('user_id')
 			.notNull()
 			.references(() => userTable.id, { onDelete: 'cascade' }),
-		hotSauceId: integer('hot_sauce_id')
+		hotSauceId: uuid('hot_sauce_id')
 			.notNull()
-			.references(() => hotSauces.id, { onDelete: 'cascade' }),
+			.references(() => hotSauces.sauceId, { onDelete: 'cascade' }),
 		createdAt: timestamp('created_at').notNull().defaultNow()
 	},
 	(t) => ({
@@ -209,9 +207,9 @@ export const checkins = pgTable(
 		userId: uuid('user_id')
 			.notNull()
 			.references(() => userTable.id, { onDelete: 'cascade' }),
-		hotSauceId: integer('hot_sauce_id')
+		hotSauceId: uuid('hot_sauce_id')
 			.notNull()
-			.references(() => hotSauces.id, { onDelete: 'cascade' }), // TODO: change to uuid?
+			.references(() => hotSauces.sauceId, { onDelete: 'cascade' }), // TODO: change to uuid?
 		rating: integer('rating'), // .check((rating) => rating >= 1 && rating <= 5), rating INTEGER CHECK (rating >= 1 AND rating <= 5),
 		review: text('review').default(''),
 		flagged: boolean('flagged').default(false),
