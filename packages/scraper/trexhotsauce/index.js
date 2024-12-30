@@ -31,8 +31,6 @@ async function getSauceUrls(url, cache = true) {
 
 	const links = Array.from(productElements).map((el) => `${url}${el.href}`);
 
-	console.info('Found', links.length, 'sauces');
-
 	return links;
 }
 
@@ -71,27 +69,23 @@ async function scrapeSauces(sauceUrls, cache = true) {
 			console.warn('No description found for', name);
 		}
 
-		const brand = 'T-Rex Hot Sauce';
-
 		/** @type {HTMLImageElement | null} */
 		const img = document.querySelector('.product__media img'); // TODO: maybe get all images
 
-		// const url = document.querySelector('link[rel="canonical"]')?.href;
+		const url = document.querySelector('link[rel="canonical"]')?.getAttribute('href');
 
 		/** @type {import('../').Sauce}} */
 		const sauce = {
 			name,
 			description,
+			url: url ?? '',
 			imageUrl: img ? `https:${img.src}` : null
 			// brand,
-			// img,
-			// url,
 		};
 
 		producs.push(sauce);
 	}
 
-	console.info('Found', producs.length, 'sauces');
 	return producs;
 }
 

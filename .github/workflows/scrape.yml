@@ -1,18 +1,16 @@
-name: Migrate db
+name: Scrape sauces
 
 on:
-  push:
-    branches:
-      - main # or your desired branch name
-    paths:
-      - '.github/workflows/migrate.yml'
-      - 'packages/db/**'
   workflow_dispatch:
     inputs:
-      environment:
-        description: 'Environment to run tests against'
-        type: environment
+      store:
+        type: choice # Specify the input type as 'choice'
+        description: 'Select the store to scrape'
         required: true
+        default: 'trex'
+        options:
+          - 'trex'
+          - 'heatsupply'
 
 jobs:
   migrate:
@@ -34,12 +32,11 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
-      # TODO: only install db dependencies
       - name: Install dependencies
         run: pnpm --filter "@app/db" install
 
-      - name: Migrate db
+      - name: Run scraper
         run: |
-          pnpm db migrate
+          pnpm scrape ${{ github.event.inputs.store }} --dbInsert
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}

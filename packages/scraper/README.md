@@ -9,6 +9,9 @@
 
 ```bash
 pnpm scrape trex
+
+# example with flags
+pnpm scrape trex --noCache --dbInsert
 ```
 
 ### Scrapers
@@ -24,4 +27,3 @@ pnpm scrape trex
 ## TODO
 
 - [ ] Add more scrapers
-- [ ] Move to packages/

@@ -6,7 +6,7 @@ END $$;
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "checkins" (
 	"user_id" uuid NOT NULL,
-	"hot_sauce_id" integer NOT NULL,
+	"hot_sauce_id" uuid NOT NULL,
 	"rating" integer,
 	"review" text DEFAULT '',
 	"flagged" boolean DEFAULT false,
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS "email_verification" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "events" (
-	"event_id" serial PRIMARY KEY NOT NULL,
+	"event_id" uuid PRIMARY KEY NOT NULL,
 	"name" varchar(256) NOT NULL,
 	"description" text DEFAULT '',
 	"event_date" timestamp NOT NULL,
@@ -34,43 +34,35 @@ CREATE TABLE IF NOT EXISTS "events" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "followers" (
-	"follower_id" serial PRIMARY KEY NOT NULL,
+	"follower_id" serial NOT NULL,
 	"follower_user_id" uuid NOT NULL,
 	"followed_user_id" uuid NOT NULL,
 	"followed_at" timestamp DEFAULT now(),
-	CONSTRAINT "followers_follower_user_id_followed_user_id_unique" UNIQUE("follower_user_id","followed_user_id")
+	CONSTRAINT "followers_follower_user_id_followed_user_id_pk" PRIMARY KEY("follower_user_id","followed_user_id")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "friends" (
-	"friend_id" serial PRIMARY KEY NOT NULL,
+	"friend_id" serial NOT NULL,
 	"user_id" uuid NOT NULL,
 	"friend_user_id" uuid NOT NULL,
 	"became_friends_at" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "friends_user_id_friend_user_id_unique" UNIQUE("user_id","friend_user_id")
-);
---> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "hot_sauce_stores" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"hot_sauce_id" integer NOT NULL,
-	"store_id" integer NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "hot_sauce_stores_hot_sauce_id_store_id_unique" UNIQUE("hot_sauce_id","store_id")
+	CONSTRAINT "friends_user_id_friend_user_id_pk" PRIMARY KEY("user_id","friend_user_id")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "hot_sauces" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text NOT NULL,
 	"description" text DEFAULT '',
 	"image_url" text,
 	"scovile" integer,
-	"maker_id" integer,
+	"maker_id" uuid,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "hot_sauces_name_unique" UNIQUE("name")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "makers" (
-	"maker_id" serial PRIMARY KEY NOT NULL,
+	"maker_id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar(256) NOT NULL,
 	"description" text DEFAULT '',
 	"website" varchar(256),
@@ -98,12 +90,20 @@ CREATE TABLE IF NOT EXISTS "password_reset_token" (
 CREATE TABLE IF NOT EXISTS "session" (
 	"id" text PRIMARY KEY NOT NULL,
 	"user_id" uuid NOT NULL,
-	"expires_at" timestamp with time zone NOT NULL,
-	CONSTRAINT "session_id_unique" UNIQUE("id")
+	"expires_at" timestamp with time zone NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "store_hot_sauces" (
+	"hot_sauce_id" uuid NOT NULL,
+	"store_id" uuid NOT NULL,
+	"url" varchar(256) NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "store_hot_sauces_store_id_hot_sauce_id_pk" PRIMARY KEY("store_id","hot_sauce_id")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "stores" (
-	"store_id" serial PRIMARY KEY NOT NULL,
+	"store_id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar(256) NOT NULL,
 	"description" text DEFAULT '',
 	"url" varchar(256) NOT NULL,
@@ -127,7 +127,7 @@ CREATE TABLE IF NOT EXISTS "user" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "wishlist" (
 	"user_id" uuid NOT NULL,
-	"hot_sauce_id" integer NOT NULL,
+	"hot_sauce_id" uuid NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "wishlist_user_id_hot_sauce_id_pk" PRIMARY KEY("user_id","hot_sauce_id")
 );
@@ -175,18 +175,6 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "hot_sauce_stores" ADD CONSTRAINT "hot_sauce_stores_hot_sauce_id_hot_sauces_id_fk" FOREIGN KEY ("hot_sauce_id") REFERENCES "public"."hot_sauces"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "hot_sauce_stores" ADD CONSTRAINT "hot_sauce_stores_store_id_stores_store_id_fk" FOREIGN KEY ("store_id") REFERENCES "public"."stores"("store_id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
  ALTER TABLE "hot_sauces" ADD CONSTRAINT "hot_sauces_maker_id_makers_maker_id_fk" FOREIGN KEY ("maker_id") REFERENCES "public"."makers"("maker_id") ON DELETE set null ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -206,6 +194,18 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "store_hot_sauces" ADD CONSTRAINT "store_hot_sauces_hot_sauce_id_hot_sauces_id_fk" FOREIGN KEY ("hot_sauce_id") REFERENCES "public"."hot_sauces"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "store_hot_sauces" ADD CONSTRAINT "store_hot_sauces_store_id_stores_store_id_fk" FOREIGN KEY ("store_id") REFERENCES "public"."stores"("store_id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

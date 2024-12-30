@@ -1,6 +1,6 @@
 import type { HotSauceInsert, StoreInsert } from '@app/db/types';
 
-export type Sauce = HotSauceInsert;
+export type Sauce = HotSauceInsert & { url: string };
 
 export type GetSauceUrls = (url: string, cache: boolean) => Promise<string[]>;
 export type ScrapeSauces = (sauceUrls: string[], cache: boolean) => Promise<HotSauceInsert[]>;

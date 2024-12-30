@@ -1,5 +1,5 @@
 {
-  "id": "82223856-c2bf-462e-8b99-ef13ba340ea9",
+  "id": "b598de3b-66a7-4fce-8567-2b2826ee932d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -16,7 +16,7 @@
         },
         "hot_sauce_id": {
           "name": "hot_sauce_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -155,7 +155,7 @@
       "columns": {
         "event_id": {
           "name": "event_id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true
         },
@@ -211,7 +211,7 @@
         "follower_id": {
           "name": "follower_id",
           "type": "serial",
-          "primaryKey": true,
+          "primaryKey": false,
           "notNull": true
         },
         "follower_user_id": {
@@ -263,17 +263,16 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "followers_follower_user_id_followed_user_id_unique": {
-          "name": "followers_follower_user_id_followed_user_id_unique",
-          "nullsNotDistinct": false,
+      "compositePrimaryKeys": {
+        "followers_follower_user_id_followed_user_id_pk": {
+          "name": "followers_follower_user_id_followed_user_id_pk",
           "columns": [
             "follower_user_id",
             "followed_user_id"
           ]
         }
-      }
+      },
+      "uniqueConstraints": {}
     },
     "public.friends": {
       "name": "friends",
@@ -282,7 +281,7 @@
         "friend_id": {
           "name": "friend_id",
           "type": "serial",
-          "primaryKey": true,
+          "primaryKey": false,
           "notNull": true
         },
         "user_id": {
@@ -334,95 +333,16 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "friends_user_id_friend_user_id_unique": {
-          "name": "friends_user_id_friend_user_id_unique",
-          "nullsNotDistinct": false,
+      "compositePrimaryKeys": {
+        "friends_user_id_friend_user_id_pk": {
+          "name": "friends_user_id_friend_user_id_pk",
           "columns": [
             "user_id",
             "friend_user_id"
           ]
         }
-      }
-    },
-    "public.hot_sauce_stores": {
-      "name": "hot_sauce_stores",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "hot_sauce_id": {
-          "name": "hot_sauce_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "store_id": {
-          "name": "store_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
       },
-      "indexes": {},
-      "foreignKeys": {
-        "hot_sauce_stores_hot_sauce_id_hot_sauces_id_fk": {
-          "name": "hot_sauce_stores_hot_sauce_id_hot_sauces_id_fk",
-          "tableFrom": "hot_sauce_stores",
-          "tableTo": "hot_sauces",
-          "columnsFrom": [
-            "hot_sauce_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "hot_sauce_stores_store_id_stores_store_id_fk": {
-          "name": "hot_sauce_stores_store_id_stores_store_id_fk",
-          "tableFrom": "hot_sauce_stores",
-          "tableTo": "stores",
-          "columnsFrom": [
-            "store_id"
-          ],
-          "columnsTo": [
-            "store_id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "hot_sauce_stores_hot_sauce_id_store_id_unique": {
-          "name": "hot_sauce_stores_hot_sauce_id_store_id_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "hot_sauce_id",
-            "store_id"
-          ]
-        }
-      }
+      "uniqueConstraints": {}
     },
     "public.hot_sauces": {
       "name": "hot_sauces",
@@ -430,9 +350,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "name": {
           "name": "name",
@@ -461,7 +382,7 @@
         },
         "maker_id": {
           "name": "maker_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
@@ -497,7 +418,15 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "hot_sauces_name_unique": {
+          "name": "hot_sauces_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      }
     },
     "public.makers": {
       "name": "makers",
@@ -505,9 +434,10 @@
       "columns": {
         "maker_id": {
           "name": "maker_id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "name": {
           "name": "name",
@@ -709,15 +639,84 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "session_id_unique": {
-          "name": "session_id_unique",
-          "nullsNotDistinct": false,
-          "columns": [
+      "uniqueConstraints": {}
+    },
+    "public.store_hot_sauces": {
+      "name": "store_hot_sauces",
+      "schema": "",
+      "columns": {
+        "hot_sauce_id": {
+          "name": "hot_sauce_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "store_id": {
+          "name": "store_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "url": {
+          "name": "url",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "store_hot_sauces_hot_sauce_id_hot_sauces_id_fk": {
+          "name": "store_hot_sauces_hot_sauce_id_hot_sauces_id_fk",
+          "tableFrom": "store_hot_sauces",
+          "tableTo": "hot_sauces",
+          "columnsFrom": [
+            "hot_sauce_id"
+          ],
+          "columnsTo": [
             "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "store_hot_sauces_store_id_stores_store_id_fk": {
+          "name": "store_hot_sauces_store_id_stores_store_id_fk",
+          "tableFrom": "store_hot_sauces",
+          "tableTo": "stores",
+          "columnsFrom": [
+            "store_id"
+          ],
+          "columnsTo": [
+            "store_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "store_hot_sauces_store_id_hot_sauce_id_pk": {
+          "name": "store_hot_sauces_store_id_hot_sauce_id_pk",
+          "columns": [
+            "store_id",
+            "hot_sauce_id"
           ]
         }
-      }
+      },
+      "uniqueConstraints": {}
     },
     "public.stores": {
       "name": "stores",
@@ -725,9 +724,10 @@
       "columns": {
         "store_id": {
           "name": "store_id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "name": {
           "name": "name",
@@ -867,7 +867,7 @@
         },
         "hot_sauce_id": {
           "name": "hot_sauce_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },

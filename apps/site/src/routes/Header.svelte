@@ -14,7 +14,7 @@
 	<nav class="bg-neutral-950 py-4 text-white">
 		<ul class="container flex flex-row items-center gap-4 font-medium md:grid md:grid-cols-4">
 			<li>
-				<a class="font-logo gap flex flex-row items-center gap-2.5 text-2xl" href="/sauces">
+				<a class="gap flex flex-row items-center gap-2.5 font-logo text-2xl" href="/sauces">
 					<svg class="size-8" fill="none" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
 						<path
 							fill="#CC1E28"
@@ -30,7 +30,7 @@
 			</li>
 
 			<li class="md:col-span-2">
-				<form method="post" data-sveltekit-keepfocus action="?/search" use:enhance>
+				<form method="POST" data-sveltekit-keepfocus action="/?/search" use:enhance>
 					<label
 						class="relative mx-auto flex w-full max-w-lg flex-row items-center text-base text-black"
 					>
@@ -42,9 +42,10 @@
 							name="search"
 							type="text"
 						/>
-						<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
+						<button type="submit" class="absolute inset-y-0 right-0 flex items-center pr-4">
+							<span class="sr-only">Search</span>
 							<Search size={20}></Search>
-						</div>
+						</button>
 					</label>
 				</form>
 			</li>
