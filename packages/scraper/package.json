@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"scrape": "node --env-file=.env index.js",
+		"scrape": "[ -f .env ] && node --env-file=.env index.js || node index.js",
 		"dev": "node --env-file=.env --watch index.js"
 	},
 	"type": "module",
