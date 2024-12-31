@@ -9,9 +9,13 @@ import * as tf from '@tensorflow/tfjs';
 import * as toxicity from '@tensorflow-models/toxicity';
 
 export async function load({ params, locals: { user } }) {
-	const sauceId = Number(params.slug);
+	const sauceId = params.slug;
 
-	const dbSauce = await db.select().from(hotSauces).where(eq(hotSauces.id, sauceId)).limit(1);
+	if (!sauceId) {
+		error(400, 'Invalid sauce');
+	}
+
+	const dbSauce = await db.select().from(hotSauces).where(eq(hotSauces.sauceId, sauceId)).limit(1);
 
 	if (dbSauce.length === 0) {
 		error(404, 'Sauce not found');
@@ -74,7 +78,7 @@ export const actions = {
 			});
 		}
 
-		const sauceId = Number(params.slug);
+		const sauceId = params.slug;
 
 		if (!sauceId) {
 			return fail(400, {
@@ -145,7 +149,7 @@ export const actions = {
 			return fail(401, { error: 'Unauthorized' });
 		}
 
-		const sauceId = Number(params.slug);
+		const sauceId = params.slug;
 
 		if (!sauceId) {
 			return fail(400, { error: 'Invalid sauce' });
