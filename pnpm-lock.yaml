@@ -75,11 +75,11 @@ importers:
         specifier: ^1.11.13
         version: 1.11.13
       drizzle-orm:
-        specifier: ^0.32.2
-        version: 0.32.2(@cloudflare/workers-types@4.20241224.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.5)(react@18.3.1)
+        specifier: ^0.38.3
+        version: 0.38.3(@cloudflare/workers-types@4.20241224.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.5)(react@18.3.1)
       drizzle-zod:
-        specifier: ^0.5.1
-        version: 0.5.1(drizzle-orm@0.32.2(@cloudflare/workers-types@4.20241224.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.5)(react@18.3.1))(zod@3.24.1)
+        specifier: ^0.6.1
+        version: 0.6.1(drizzle-orm@0.38.3(@cloudflare/workers-types@4.20241224.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.5)(react@18.3.1))(zod@3.24.1)
       focus-trap:
         specifier: ^7.6.2
         version: 7.6.2
@@ -133,8 +133,8 @@ importers:
         specifier: ^0.8.0
         version: 0.8.0(@cloudflare/workers-types@4.20241224.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.5)(react@18.3.1)
       drizzle-kit:
-        specifier: ^0.23.2
-        version: 0.23.2
+        specifier: ^0.30.1
+        version: 0.30.1
       eslint:
         specifier: ^9.17.0
         version: 9.17.0(jiti@1.21.7)
@@ -169,8 +169,8 @@ importers:
         specifier: ^5.7.2
         version: 5.7.2
       typescript-eslint:
-        specifier: ^8.18.2
-        version: 8.18.2(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)
+        specifier: ^8.19.0
+        version: 8.19.0(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)
       vite:
         specifier: ^5.4.11
         version: 5.4.11(@types/node@22.10.2)
@@ -239,30 +239,30 @@ importers:
   packages/db:
     dependencies:
       dotenv:
-        specifier: ^16.4.5
-        version: 16.4.5
+        specifier: ^16.4.7
+        version: 16.4.7
       drizzle-orm:
-        specifier: ^0.32.2
-        version: 0.32.2(@cloudflare/workers-types@4.20241224.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.4)(react@18.3.1)
+        specifier: ^0.38.3
+        version: 0.38.3(@cloudflare/workers-types@4.20241224.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.5)(react@18.3.1)
       drizzle-zod:
-        specifier: ^0.5.1
-        version: 0.5.1(drizzle-orm@0.32.2(@cloudflare/workers-types@4.20241224.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.4)(react@18.3.1))(zod@3.24.1)
+        specifier: ^0.6.1
+        version: 0.6.1(drizzle-orm@0.38.3(@cloudflare/workers-types@4.20241224.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.5)(react@18.3.1))(zod@3.24.1)
       postgres:
-        specifier: ^3.4.4
-        version: 3.4.4
+        specifier: ^3.4.5
+        version: 3.4.5
     devDependencies:
       '@softwaretechnik/dbml-renderer':
         specifier: ^1.0.30
         version: 1.0.30
       dotenv-cli:
-        specifier: ^7.4.2
-        version: 7.4.2
+        specifier: ^7.4.4
+        version: 7.4.4
       drizzle-dbml-generator:
         specifier: ^0.8.0
-        version: 0.8.0(@cloudflare/workers-types@4.20241224.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.4)(react@18.3.1)
+        version: 0.8.0(@cloudflare/workers-types@4.20241224.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.5)(react@18.3.1)
       drizzle-kit:
-        specifier: ^0.24.2
-        version: 0.24.2
+        specifier: ^0.30.1
+        version: 0.30.1
 
   packages/scraper:
     dependencies:
@@ -272,6 +272,9 @@ importers:
       chrome-aws-lambda:
         specifier: ^10.1.0
         version: 10.1.0(puppeteer-core@22.15.0)
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.4.7
       fuzzysort:
         specifier: ^3.1.0
         version: 3.1.0
@@ -387,11 +390,8 @@ packages:
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
 
-  '@drizzle-team/brocli@0.10.1':
-    resolution: {integrity: sha512-AHy0vjc+n/4w/8Mif+w86qpppHuF3AyXbcWW+R/W7GNA3F5/p2nuhlkCJaTXSLZheB4l1rtHzOfr9A7NwoR/Zg==}
-
-  '@drizzle-team/brocli@0.8.2':
-    resolution: {integrity: sha512-zTrFENsqGvOkBOuHDC1pXCkDXNd2UhP4lI3gYGhQ1R1SPeAAfqzPsV1dcpMy4uNU6kB5VpU5NGhvwxVNETR02A==}
+  '@drizzle-team/brocli@0.10.2':
+    resolution: {integrity: sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w==}
 
   '@emnapi/core@0.45.0':
     resolution: {integrity: sha512-DPWjcUDQkCeEM4VnljEOEcXdAD7pp8zSZsgOujk/LGIwCXWbXJngin+MO4zbH429lzeC3WbYLGjE2MaUOwzpyw==}
@@ -410,9 +410,11 @@ packages:
 
   '@esbuild-kit/core-utils@3.3.2':
     resolution: {integrity: sha512-sPRAnw9CdSsRmEtnsl2WXWdyquogVpB3yZ3dgwJfe8zrOzTsV7cJvmwrKVa+0ma5BoiGJ+BoqkMvawbayKUsqQ==}
+    deprecated: 'Merged into tsx: https://tsx.is'
 
   '@esbuild-kit/esm-loader@2.6.5':
     resolution: {integrity: sha512-FxEMIkJKnodyA1OaCUoEvbYRkoZlLZ4d/eXFu9Fh8CbBBgP5EmZxrfTRyN0qpXZ4vOvqnE5YdRdcrmUUXuU+dA==}
+    deprecated: 'Merged into tsx: https://tsx.is'
 
   '@esbuild-plugins/node-globals-polyfill@0.2.3':
     resolution: {integrity: sha512-r3MIryXDeXDOZh7ih1l/yE9ZLORCd5e8vWg02azWRGj5SPTuoh69A2AIyn0Z31V/kHBfZ4HgWJ+OK3GTTwLmnw==}
@@ -2045,8 +2047,8 @@ packages:
       typescript:
         optional: true
 
-  '@typescript-eslint/eslint-plugin@8.18.2':
-    resolution: {integrity: sha512-adig4SzPLjeQ0Tm+jvsozSGiCliI2ajeURDGHjZ2llnA+A67HihCQ+a3amtPhUakd1GlwHxSRvzOZktbEvhPPg==}
+  '@typescript-eslint/eslint-plugin@8.19.0':
+    resolution: {integrity: sha512-NggSaEZCdSrFddbctrVjkVZvFC6KGfKfNK0CU7mNK/iKHGKbzT4Wmgm08dKpcZECBu9f5FypndoMyRHkdqfT1Q==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       '@typescript-eslint/parser': ^8.0.0 || ^8.0.0-alpha.0
@@ -2063,8 +2065,8 @@ packages:
       typescript:
         optional: true
 
-  '@typescript-eslint/parser@8.18.2':
-    resolution: {integrity: sha512-y7tcq4StgxQD4mDr9+Jb26dZ+HTZ/SkfqpXSiqeUXZHxOUyjWDKsmwKhJ0/tApR08DgOhrFAoAhyB80/p3ViuA==}
+  '@typescript-eslint/parser@8.19.0':
+    resolution: {integrity: sha512-6M8taKyOETY1TKHp0x8ndycipTVgmp4xtg5QpEZzXxDhNvvHOJi5rLRkLr8SK3jTgD5l4fTlvBiRdfsuWydxBw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
@@ -2074,8 +2076,8 @@ packages:
     resolution: {integrity: sha512-NpixInP5dm7uukMiRyiHjRKkom5RIFA4dfiHvalanD2cF0CLUuQqxfg8PtEUo9yqJI2bBhF+pcSafqnG3UBnRQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@typescript-eslint/scope-manager@8.18.2':
-    resolution: {integrity: sha512-YJFSfbd0CJjy14r/EvWapYgV4R5CHzptssoag2M7y3Ra7XNta6GPAJPPP5KGB9j14viYXyrzRO5GkX7CRfo8/g==}
+  '@typescript-eslint/scope-manager@8.19.0':
+    resolution: {integrity: sha512-hkoJiKQS3GQ13TSMEiuNmSCvhz7ujyqD1x3ShbaETATHrck+9RaDdUbt+osXaUuns9OFwrDTTrjtwsU8gJyyRA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@typescript-eslint/type-utils@8.0.1':
@@ -2087,8 +2089,8 @@ packages:
       typescript:
         optional: true
 
-  '@typescript-eslint/type-utils@8.18.2':
-    resolution: {integrity: sha512-AB/Wr1Lz31bzHfGm/jgbFR0VB0SML/hd2P1yxzKDM48YmP7vbyJNHRExUE/wZsQj2wUCvbWH8poNHFuxLqCTnA==}
+  '@typescript-eslint/type-utils@8.19.0':
+    resolution: {integrity: sha512-TZs0I0OSbd5Aza4qAMpp1cdCYVnER94IziudE3JU328YUHgWu9gwiwhag+fuLeJ2LkWLXI+F/182TbG+JaBdTg==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
@@ -2098,8 +2100,8 @@ packages:
     resolution: {integrity: sha512-PpqTVT3yCA/bIgJ12czBuE3iBlM3g4inRSC5J0QOdQFAn07TYrYEQBBKgXH1lQpglup+Zy6c1fxuwTk4MTNKIw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@typescript-eslint/types@8.18.2':
-    resolution: {integrity: sha512-Z/zblEPp8cIvmEn6+tPDIHUbRu/0z5lqZ+NvolL5SvXWT5rQy7+Nch83M0++XzO0XrWRFWECgOAyE8bsJTl1GQ==}
+  '@typescript-eslint/types@8.19.0':
+    resolution: {integrity: sha512-8XQ4Ss7G9WX8oaYvD4OOLCjIQYgRQxO+qCiR2V2s2GxI9AUpo7riNwo6jDhKtTcaJjT8PY54j2Yb33kWtSJsmA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@typescript-eslint/typescript-estree@8.0.1':
@@ -2111,8 +2113,8 @@ packages:
       typescript:
         optional: true
 
-  '@typescript-eslint/typescript-estree@8.18.2':
-    resolution: {integrity: sha512-WXAVt595HjpmlfH4crSdM/1bcsqh+1weFRWIa9XMTx/XHZ9TCKMcr725tLYqWOgzKdeDrqVHxFotrvWcEsk2Tg==}
+  '@typescript-eslint/typescript-estree@8.19.0':
+    resolution: {integrity: sha512-WW9PpDaLIFW9LCbucMSdYUuGeFUz1OkWYS/5fwZwTA+l2RwlWFdJvReQqMUMBw4yJWJOfqd7An9uwut2Oj8sLw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       typescript: '>=4.8.4 <5.8.0'
@@ -2123,8 +2125,8 @@ packages:
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
 
-  '@typescript-eslint/utils@8.18.2':
-    resolution: {integrity: sha512-Cr4A0H7DtVIPkauj4sTSXVl+VBWewE9/o40KcF3TV9aqDEOWoXF3/+oRXNby3DYzZeCATvbdksYsGZzplwnK/Q==}
+  '@typescript-eslint/utils@8.19.0':
+    resolution: {integrity: sha512-PTBG+0oEMPH9jCZlfg07LCB2nYI0I317yyvXGfxnvGvw4SHIOuRnQ3kadyyXY6tGdChusIHIbM5zfIbp4M6tCg==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
@@ -2134,8 +2136,8 @@ packages:
     resolution: {integrity: sha512-W5E+o0UfUcK5EgchLZsyVWqARmsM7v54/qEq6PY3YI5arkgmCzHiuk0zKSJJbm71V0xdRna4BGomkCTXz2/LkQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@typescript-eslint/visitor-keys@8.18.2':
-    resolution: {integrity: sha512-zORcwn4C3trOWiCqFQP1x6G3xTRyZ1LYydnj51cRnJ6hxBlr/cKPckk+PKPUw/fXmvfKTcw7bwY3w9izgx5jZw==}
+  '@typescript-eslint/visitor-keys@8.19.0':
+    resolution: {integrity: sha512-mCFtBbFBJDCNCWUl5y6sZSCHXw1DEFEk3c/M3nRK2a4XUB8StGFtmcEMizdjKuBzB6e/smJAAWYug3VrdLMr1w==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@vercel/nft@0.27.10':
@@ -2706,27 +2708,23 @@ packages:
   domutils@3.2.1:
     resolution: {integrity: sha512-xWXmuRnN9OMP6ptPd2+H0cCbcYBULa5YDTbMm/2lvkWvNA3O4wcW+GvzooqBuNM8yy6pl3VIAeJTUUWUbfI5Fw==}
 
-  dotenv-cli@7.4.2:
-    resolution: {integrity: sha512-SbUj8l61zIbzyhIbg0FwPJq6+wjbzdn9oEtozQpZ6kW2ihCcapKVZj49oCT3oPM+mgQm+itgvUQcG5szxVrZTA==}
+  dotenv-cli@7.4.4:
+    resolution: {integrity: sha512-XkBYCG0tPIes+YZr4SpfFv76SQrV/LeCE8CI7JSEMi3VR9MvTihCGTOtbIexD6i2mXF+6px7trb1imVCXSNMDw==}
     hasBin: true
 
   dotenv-expand@10.0.0:
     resolution: {integrity: sha512-GopVGCpVS1UKH75VKHGuQFqS1Gusej0z4FyQkPdwjil2gNIv+LNsqBlboOzpJFZKVT95GkCyWJbBSdFEFUWI2A==}
     engines: {node: '>=12'}
 
-  dotenv@16.4.5:
-    resolution: {integrity: sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==}
+  dotenv@16.4.7:
+    resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
     engines: {node: '>=12'}
 
   drizzle-dbml-generator@0.8.0:
     resolution: {integrity: sha512-aNKsjKrpkYPTzOozzPh9kUp2QIS/YG3on0j2IrR7yRD+/hb/vdj5bPA5mj6MxyAGHnTxBIYrCJnSIeFS7p9grw==}
 
-  drizzle-kit@0.23.2:
-    resolution: {integrity: sha512-NWkQ7GD2OTbQ7HzcjsaCOf3n0tlFPSEAF38fvDpwDj8jRbGWGFtN2cD8I8wp4lU+5Os/oyP2xycTKGLHdPipUw==}
-    hasBin: true
-
-  drizzle-kit@0.24.2:
-    resolution: {integrity: sha512-nXOaTSFiuIaTMhS8WJC2d4EBeIcN9OSt2A2cyFbQYBAZbi7lRsVGJNqDpEwPqYfJz38yxbY/UtbvBBahBfnExQ==}
+  drizzle-kit@0.30.1:
+    resolution: {integrity: sha512-HmA/NeewvHywhJ2ENXD3KvOuM/+K2dGLJfxVfIHsGwaqKICJnS+Ke2L6UcSrSrtMJLJaT0Im1Qv4TFXfaZShyw==}
     hasBin: true
 
   drizzle-orm@0.32.2:
@@ -2818,11 +2816,103 @@ packages:
       sqlite3:
         optional: true
 
-  drizzle-zod@0.5.1:
-    resolution: {integrity: sha512-C/8bvzUH/zSnVfwdSibOgFjLhtDtbKYmkbPbUCq46QZyZCH6kODIMSOgZ8R7rVjoI+tCj3k06MRJMDqsIeoS4A==}
+  drizzle-orm@0.38.3:
+    resolution: {integrity: sha512-w41Y+PquMpSff/QDRGdItG0/aWca+/J3Sda9PPGkTxBtjWQvgU1jxlFBXdjog5tYvTu58uvi3PwR1NuCx0KeZg==}
     peerDependencies:
-      drizzle-orm: '>=0.23.13'
-      zod: '*'
+      '@aws-sdk/client-rds-data': '>=3'
+      '@cloudflare/workers-types': '>=4'
+      '@electric-sql/pglite': '>=0.2.0'
+      '@libsql/client': '>=0.10.0'
+      '@libsql/client-wasm': '>=0.10.0'
+      '@neondatabase/serverless': '>=0.10.0'
+      '@op-engineering/op-sqlite': '>=2'
+      '@opentelemetry/api': ^1.4.1
+      '@planetscale/database': '>=1'
+      '@prisma/client': '*'
+      '@tidbcloud/serverless': '*'
+      '@types/better-sqlite3': '*'
+      '@types/pg': '*'
+      '@types/react': '>=18'
+      '@types/sql.js': '*'
+      '@vercel/postgres': '>=0.8.0'
+      '@xata.io/client': '*'
+      better-sqlite3: '>=7'
+      bun-types: '*'
+      expo-sqlite: '>=14.0.0'
+      knex: '*'
+      kysely: '*'
+      mysql2: '>=2'
+      pg: '>=8'
+      postgres: '>=3'
+      prisma: '*'
+      react: '>=18'
+      sql.js: '>=1'
+      sqlite3: '>=5'
+    peerDependenciesMeta:
+      '@aws-sdk/client-rds-data':
+        optional: true
+      '@cloudflare/workers-types':
+        optional: true
+      '@electric-sql/pglite':
+        optional: true
+      '@libsql/client':
+        optional: true
+      '@libsql/client-wasm':
+        optional: true
+      '@neondatabase/serverless':
+        optional: true
+      '@op-engineering/op-sqlite':
+        optional: true
+      '@opentelemetry/api':
+        optional: true
+      '@planetscale/database':
+        optional: true
+      '@prisma/client':
+        optional: true
+      '@tidbcloud/serverless':
+        optional: true
+      '@types/better-sqlite3':
+        optional: true
+      '@types/pg':
+        optional: true
+      '@types/react':
+        optional: true
+      '@types/sql.js':
+        optional: true
+      '@vercel/postgres':
+        optional: true
+      '@xata.io/client':
+        optional: true
+      better-sqlite3:
+        optional: true
+      bun-types:
+        optional: true
+      expo-sqlite:
+        optional: true
+      knex:
+        optional: true
+      kysely:
+        optional: true
+      mysql2:
+        optional: true
+      pg:
+        optional: true
+      postgres:
+        optional: true
+      prisma:
+        optional: true
+      react:
+        optional: true
+      sql.js:
+        optional: true
+      sqlite3:
+        optional: true
+
+  drizzle-zod@0.6.1:
+    resolution: {integrity: sha512-huEbUgnsuR8tupnmLiyB2F1I2H9dswI3GfM36IbIqx9i0YUeYjRsDpJVyFVeziUvI1ogT9JHRL2Q03cC4QmvxA==}
+    peerDependencies:
+      drizzle-orm: '>=0.36.0'
+      zod: '>=3.0.0'
 
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
@@ -3191,8 +3281,8 @@ packages:
     resolution: {integrity: sha512-nBF+F1rAZVCu/p7rjzgA+Yb4lfYXrpl7a6VmJrU8wF9I1CKvP/QwPNZHnOlwbTkY6dvtFIzFMSyQXbLoTQPRpA==}
     engines: {node: '>=8'}
 
-  get-tsconfig@4.7.6:
-    resolution: {integrity: sha512-ZAqrLlu18NbDdRaHq+AKXzAmqIUPswPWKUchfytdAjiRFnCe5ojG2bstg6mRiZabkKfCoL/e98pbBELIV/YCeA==}
+  get-tsconfig@4.8.1:
+    resolution: {integrity: sha512-k9PN+cFBmaLWtVz29SkUoqU5O0slLuHJXt/2P+tMVFT+phsSGXGkp9t3rQIqdz0e+06EHNGs3oM6ZX1s2zHxRg==}
 
   get-uri@6.0.3:
     resolution: {integrity: sha512-BzUrJBS9EcUb4cFol8r4W3v1cPsSyajLSthNkz5BxbpDcHN5tIrM10E2eNvfnvBn3DaT3DUgx0OpsBKkaOpanw==}
@@ -4056,10 +4146,6 @@ packages:
   postgres-range@1.1.4:
     resolution: {integrity: sha512-i/hbxIE9803Alj/6ytL7UHQxRvZkI9O4Sy+J3HGc4F4oo/2eQAjTSNJ0bfxyse3bH0nuVesCk+3IRLaMtG3H6w==}
 
-  postgres@3.4.4:
-    resolution: {integrity: sha512-IbyN+9KslkqcXa8AO9fxpk97PA4pzewvpi2B3Dwy9u4zpV32QicaEdgmF3eSQUzdRk7ttDHQejNgAEr4XoeH4A==}
-    engines: {node: '>=12'}
-
   postgres@3.4.5:
     resolution: {integrity: sha512-cDWgoah1Gez9rN3H4165peY9qfpEo+SA61oQv65O3cRUE1pOEoJWwddwcqKE8XZYjbblOJlYDlLV4h67HrEVDg==}
     engines: {node: '>=12'}
@@ -4861,8 +4947,8 @@ packages:
       typescript:
         optional: true
 
-  typescript-eslint@8.18.2:
-    resolution: {integrity: sha512-KuXezG6jHkvC3MvizeXgupZzaG5wjhU3yE8E7e6viOvAvD9xAWYp8/vy0WULTGe9DYDWcQu7aW03YIV3mSitrQ==}
+  typescript-eslint@8.19.0:
+    resolution: {integrity: sha512-Ni8sUkVWYK4KAcTtPjQ/UTiRk6jcsuDhPpxULapUDi8A/l8TSBk+t1GtJA1RsCzIJg0q6+J7bf35AwQigENWRQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
@@ -5261,9 +5347,7 @@ snapshots:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
 
-  '@drizzle-team/brocli@0.10.1': {}
-
-  '@drizzle-team/brocli@0.8.2': {}
+  '@drizzle-team/brocli@0.10.2': {}
 
   '@emnapi/core@0.45.0':
     dependencies:
@@ -5299,7 +5383,7 @@ snapshots:
   '@esbuild-kit/esm-loader@2.6.5':
     dependencies:
       '@esbuild-kit/core-utils': 3.3.2
-      get-tsconfig: 4.7.6
+      get-tsconfig: 4.8.1
 
   '@esbuild-plugins/node-globals-polyfill@0.2.3(esbuild@0.17.19)':
     dependencies:
@@ -6585,14 +6669,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/eslint-plugin@8.18.2(@typescript-eslint/parser@8.18.2(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2))(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)':
+  '@typescript-eslint/eslint-plugin@8.19.0(@typescript-eslint/parser@8.19.0(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2))(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)':
     dependencies:
       '@eslint-community/regexpp': 4.12.1
-      '@typescript-eslint/parser': 8.18.2(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)
-      '@typescript-eslint/scope-manager': 8.18.2
-      '@typescript-eslint/type-utils': 8.18.2(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)
-      '@typescript-eslint/utils': 8.18.2(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)
-      '@typescript-eslint/visitor-keys': 8.18.2
+      '@typescript-eslint/parser': 8.19.0(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)
+      '@typescript-eslint/scope-manager': 8.19.0
+      '@typescript-eslint/type-utils': 8.19.0(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)
+      '@typescript-eslint/utils': 8.19.0(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)
+      '@typescript-eslint/visitor-keys': 8.19.0
       eslint: 9.17.0(jiti@1.21.7)
       graphemer: 1.4.0
       ignore: 5.3.2
@@ -6615,12 +6699,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/parser@8.18.2(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)':
+  '@typescript-eslint/parser@8.19.0(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)':
     dependencies:
-      '@typescript-eslint/scope-manager': 8.18.2
-      '@typescript-eslint/types': 8.18.2
-      '@typescript-eslint/typescript-estree': 8.18.2(typescript@5.7.2)
-      '@typescript-eslint/visitor-keys': 8.18.2
+      '@typescript-eslint/scope-manager': 8.19.0
+      '@typescript-eslint/types': 8.19.0
+      '@typescript-eslint/typescript-estree': 8.19.0(typescript@5.7.2)
+      '@typescript-eslint/visitor-keys': 8.19.0
       debug: 4.4.0
       eslint: 9.17.0(jiti@1.21.7)
       typescript: 5.7.2
@@ -6632,10 +6716,10 @@ snapshots:
       '@typescript-eslint/types': 8.0.1
       '@typescript-eslint/visitor-keys': 8.0.1
 
-  '@typescript-eslint/scope-manager@8.18.2':
+  '@typescript-eslint/scope-manager@8.19.0':
     dependencies:
-      '@typescript-eslint/types': 8.18.2
-      '@typescript-eslint/visitor-keys': 8.18.2
+      '@typescript-eslint/types': 8.19.0
+      '@typescript-eslint/visitor-keys': 8.19.0
 
   '@typescript-eslint/type-utils@8.0.1(eslint@9.9.0(jiti@1.21.7))(typescript@5.5.4)':
     dependencies:
@@ -6649,10 +6733,10 @@ snapshots:
       - eslint
       - supports-color
 
-  '@typescript-eslint/type-utils@8.18.2(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)':
+  '@typescript-eslint/type-utils@8.19.0(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)':
     dependencies:
-      '@typescript-eslint/typescript-estree': 8.18.2(typescript@5.7.2)
-      '@typescript-eslint/utils': 8.18.2(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)
+      '@typescript-eslint/typescript-estree': 8.19.0(typescript@5.7.2)
+      '@typescript-eslint/utils': 8.19.0(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)
       debug: 4.4.0
       eslint: 9.17.0(jiti@1.21.7)
       ts-api-utils: 1.4.3(typescript@5.7.2)
@@ -6662,7 +6746,7 @@ snapshots:
 
   '@typescript-eslint/types@8.0.1': {}
 
-  '@typescript-eslint/types@8.18.2': {}
+  '@typescript-eslint/types@8.19.0': {}
 
   '@typescript-eslint/typescript-estree@8.0.1(typescript@5.5.4)':
     dependencies:
@@ -6679,10 +6763,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/typescript-estree@8.18.2(typescript@5.7.2)':
+  '@typescript-eslint/typescript-estree@8.19.0(typescript@5.7.2)':
     dependencies:
-      '@typescript-eslint/types': 8.18.2
-      '@typescript-eslint/visitor-keys': 8.18.2
+      '@typescript-eslint/types': 8.19.0
+      '@typescript-eslint/visitor-keys': 8.19.0
       debug: 4.4.0
       fast-glob: 3.3.2
       is-glob: 4.0.3
@@ -6704,12 +6788,12 @@ snapshots:
       - supports-color
       - typescript
 
-  '@typescript-eslint/utils@8.18.2(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)':
+  '@typescript-eslint/utils@8.19.0(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)':
     dependencies:
       '@eslint-community/eslint-utils': 4.4.1(eslint@9.17.0(jiti@1.21.7))
-      '@typescript-eslint/scope-manager': 8.18.2
-      '@typescript-eslint/types': 8.18.2
-      '@typescript-eslint/typescript-estree': 8.18.2(typescript@5.7.2)
+      '@typescript-eslint/scope-manager': 8.19.0
+      '@typescript-eslint/types': 8.19.0
+      '@typescript-eslint/typescript-estree': 8.19.0(typescript@5.7.2)
       eslint: 9.17.0(jiti@1.21.7)
       typescript: 5.7.2
     transitivePeerDependencies:
@@ -6720,9 +6804,9 @@ snapshots:
       '@typescript-eslint/types': 8.0.1
       eslint-visitor-keys: 3.4.3
 
-  '@typescript-eslint/visitor-keys@8.18.2':
+  '@typescript-eslint/visitor-keys@8.19.0':
     dependencies:
-      '@typescript-eslint/types': 8.18.2
+      '@typescript-eslint/types': 8.19.0
       eslint-visitor-keys: 4.2.0
 
   '@vercel/nft@0.27.10(rollup@4.29.1)':
@@ -7276,49 +7360,16 @@ snapshots:
       domelementtype: 2.3.0
       domhandler: 5.0.3
 
-  dotenv-cli@7.4.2:
+  dotenv-cli@7.4.4:
     dependencies:
-      cross-spawn: 7.0.3
-      dotenv: 16.4.5
+      cross-spawn: 7.0.6
+      dotenv: 16.4.7
       dotenv-expand: 10.0.0
       minimist: 1.2.8
 
   dotenv-expand@10.0.0: {}
 
-  dotenv@16.4.5: {}
-
-  drizzle-dbml-generator@0.8.0(@cloudflare/workers-types@4.20241224.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.4)(react@18.3.1):
-    dependencies:
-      drizzle-orm: 0.32.2(@cloudflare/workers-types@4.20241224.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.4)(react@18.3.1)
-    transitivePeerDependencies:
-      - '@aws-sdk/client-rds-data'
-      - '@cloudflare/workers-types'
-      - '@electric-sql/pglite'
-      - '@libsql/client'
-      - '@neondatabase/serverless'
-      - '@op-engineering/op-sqlite'
-      - '@opentelemetry/api'
-      - '@planetscale/database'
-      - '@prisma/client'
-      - '@tidbcloud/serverless'
-      - '@types/better-sqlite3'
-      - '@types/pg'
-      - '@types/react'
-      - '@types/sql.js'
-      - '@vercel/postgres'
-      - '@xata.io/client'
-      - better-sqlite3
-      - bun-types
-      - expo-sqlite
-      - knex
-      - kysely
-      - mysql2
-      - pg
-      - postgres
-      - prisma
-      - react
-      - sql.js
-      - sqlite3
+  dotenv@16.4.7: {}
 
   drizzle-dbml-generator@0.8.0(@cloudflare/workers-types@4.20241224.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.5)(react@18.3.1):
     dependencies:
@@ -7353,33 +7404,14 @@ snapshots:
       - sql.js
       - sqlite3
 
-  drizzle-kit@0.23.2:
+  drizzle-kit@0.30.1:
     dependencies:
-      '@drizzle-team/brocli': 0.8.2
+      '@drizzle-team/brocli': 0.10.2
       '@esbuild-kit/esm-loader': 2.6.5
       esbuild: 0.19.12
       esbuild-register: 3.6.0(esbuild@0.19.12)
     transitivePeerDependencies:
       - supports-color
-
-  drizzle-kit@0.24.2:
-    dependencies:
-      '@drizzle-team/brocli': 0.10.1
-      '@esbuild-kit/esm-loader': 2.6.5
-      esbuild: 0.19.12
-      esbuild-register: 3.6.0(esbuild@0.19.12)
-    transitivePeerDependencies:
-      - supports-color
-
-  drizzle-orm@0.32.2(@cloudflare/workers-types@4.20241224.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.4)(react@18.3.1):
-    optionalDependencies:
-      '@cloudflare/workers-types': 4.20241224.0
-      '@types/better-sqlite3': 7.6.11
-      '@types/pg': 8.11.10
-      better-sqlite3: 11.1.2
-      pg: 8.12.0
-      postgres: 3.4.4
-      react: 18.3.1
 
   drizzle-orm@0.32.2(@cloudflare/workers-types@4.20241224.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.5)(react@18.3.1):
     optionalDependencies:
@@ -7391,14 +7423,19 @@ snapshots:
       postgres: 3.4.5
       react: 18.3.1
 
-  drizzle-zod@0.5.1(drizzle-orm@0.32.2(@cloudflare/workers-types@4.20241224.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.4)(react@18.3.1))(zod@3.24.1):
-    dependencies:
-      drizzle-orm: 0.32.2(@cloudflare/workers-types@4.20241224.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.4)(react@18.3.1)
-      zod: 3.24.1
+  drizzle-orm@0.38.3(@cloudflare/workers-types@4.20241224.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.5)(react@18.3.1):
+    optionalDependencies:
+      '@cloudflare/workers-types': 4.20241224.0
+      '@types/better-sqlite3': 7.6.11
+      '@types/pg': 8.11.10
+      better-sqlite3: 11.1.2
+      pg: 8.12.0
+      postgres: 3.4.5
+      react: 18.3.1
 
-  drizzle-zod@0.5.1(drizzle-orm@0.32.2(@cloudflare/workers-types@4.20241224.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.5)(react@18.3.1))(zod@3.24.1):
+  drizzle-zod@0.6.1(drizzle-orm@0.38.3(@cloudflare/workers-types@4.20241224.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.5)(react@18.3.1))(zod@3.24.1):
     dependencies:
-      drizzle-orm: 0.32.2(@cloudflare/workers-types@4.20241224.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.5)(react@18.3.1)
+      drizzle-orm: 0.38.3(@cloudflare/workers-types@4.20241224.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.10)(better-sqlite3@11.1.2)(pg@8.12.0)(postgres@3.4.5)(react@18.3.1)
       zod: 3.24.1
 
   eastasianwidth@0.2.0: {}
@@ -7440,7 +7477,7 @@ snapshots:
 
   esbuild-register@3.6.0(esbuild@0.19.12):
     dependencies:
-      debug: 4.3.7
+      debug: 4.4.0
       esbuild: 0.19.12
     transitivePeerDependencies:
       - supports-color
@@ -7954,7 +7991,7 @@ snapshots:
     dependencies:
       pump: 3.0.0
 
-  get-tsconfig@4.7.6:
+  get-tsconfig@4.8.1:
     dependencies:
       resolve-pkg-maps: 1.0.0
 
@@ -8781,8 +8818,6 @@ snapshots:
   postgres-interval@3.0.0: {}
 
   postgres-range@1.1.4: {}
-
-  postgres@3.4.4: {}
 
   postgres@3.4.5: {}
 
@@ -9661,11 +9696,11 @@ snapshots:
       - eslint
       - supports-color
 
-  typescript-eslint@8.18.2(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2):
+  typescript-eslint@8.19.0(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2):
     dependencies:
-      '@typescript-eslint/eslint-plugin': 8.18.2(@typescript-eslint/parser@8.18.2(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2))(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)
-      '@typescript-eslint/parser': 8.18.2(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)
-      '@typescript-eslint/utils': 8.18.2(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)
+      '@typescript-eslint/eslint-plugin': 8.19.0(@typescript-eslint/parser@8.19.0(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2))(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)
+      '@typescript-eslint/parser': 8.19.0(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)
+      '@typescript-eslint/utils': 8.19.0(eslint@9.17.0(jiti@1.21.7))(typescript@5.7.2)
       eslint: 9.17.0(jiti@1.21.7)
       typescript: 5.7.2
     transitivePeerDependencies:

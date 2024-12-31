@@ -5,6 +5,8 @@ import scrapers from './scrapers.js';
 import { getDb } from '@app/db/index.js';
 import { hotSauces, stores, storeHotSauces } from '@app/db/schema.js';
 
+import 'dotenv/config';
+
 const [, , ...args] = process.argv;
 const flags = parser(args, {
 	boolean: ['noCache', 'dbInsert']
@@ -89,14 +91,14 @@ async function main() {
 				.insert(hotSauces)
 				.values(dedupedSauces)
 				.onConflictDoNothing()
-				.returning({ id: hotSauces.sauceId, name: hotSauces.name });
+				.returning({ sauceId: hotSauces.sauceId, name: hotSauces.name });
 
 			console.info('Inserting store hot sauce data');
 			await db
 				.insert(storeHotSauces)
 				.values(
 					sauces.map((sauce) => ({
-						sauceId: sauce.id,
+						sauceId: sauce.sauceId,
 						storeId: store[0].storeId,
 						url: `${scraper.url}/${sauce.name}`
 					}))

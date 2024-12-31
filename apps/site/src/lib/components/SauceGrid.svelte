@@ -14,7 +14,7 @@
 {#snippet sauce(sauce: SauceRating)}
 	<li>
 		<!-- TODO: make relative? -->
-		<a href="/sauces/{sauce.id}">
+		<a href="/sauces/{sauce.sauceId}">
 			<img src={sauce.imageUrl} alt={sauce.name} />
 			<h2 class="mb-2 text-xl font-semibold">{sauce.name}</h2>
 

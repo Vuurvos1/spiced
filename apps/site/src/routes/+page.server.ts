@@ -27,7 +27,6 @@ export const actions: Actions = {
 		url.pathname = '/sauces';
 		if (search) url.searchParams.set('search', search);
 		url.searchParams.delete('/search'); // Remove the search action from the URL
-		console.log('url', url.toString());
 
 		return redirect(303, url.toString());
 	}

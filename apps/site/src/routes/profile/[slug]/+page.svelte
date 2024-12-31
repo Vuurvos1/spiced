@@ -40,14 +40,14 @@
 							action="?/removeCheckIn"
 							use:enhance
 						>
-							<input type="hidden" name="sauceId" value={sauce.id} />
+							<input type="hidden" name="sauceId" value={sauce.sauceId} />
 
 							<button type="submit">
 								<Trash2 size={24}></Trash2>
 							</button>
 						</form>
 
-						<a href={`/sauces/${sauce.id}`}>
+						<a href={`/sauces/${sauce.sauceId}`}>
 							<img src={sauce?.imageUrl} alt={sauce.name} />
 
 							<h3 class="h3">

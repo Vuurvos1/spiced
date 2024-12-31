@@ -3,13 +3,14 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"scrape": "[ -f .env ] && node --env-file=.env index.js || node index.js",
-		"dev": "node --env-file=.env --watch index.js"
+		"scrape": "node index.js",
+		"dev": "node --watch index.js"
 	},
 	"type": "module",
 	"dependencies": {
 		"@app/db": "workspace:^",
 		"chrome-aws-lambda": "^10.1.0",
+		"dotenv": "^16.4.7",
 		"fuzzysort": "^3.1.0",
 		"jsdom": "^24.1.1",
 		"puppeteer": "^22.15.0",

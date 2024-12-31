@@ -8,7 +8,6 @@ export async function load({ url }) {
 	const pageSize = 24;
 
 	const search = url.searchParams.get('search') ?? '';
-	console.log('search', search);
 
 	const sauceCount = await db
 		.select({ count: count() })
@@ -25,8 +24,8 @@ export async function load({ url }) {
 		.where(ilike(hotSauces.name, `%${search}%`)) // No sql injection here, I checked :)
 		.limit(pageSize)
 		.offset((page - 1) * pageSize) // TODO: check if filtering before of after the join is more efficient
-		.leftJoin(checkins, eq(hotSauces.id, checkins.hotSauceId))
-		.groupBy(hotSauces.id)
+		.leftJoin(checkins, eq(hotSauces.sauceId, checkins.hotSauceId))
+		.groupBy(hotSauces.sauceId)
 		.orderBy(desc(hotSauces.createdAt));
 
 	return { sauces, sauceCount: sauceCount[0].count, pageSize };
