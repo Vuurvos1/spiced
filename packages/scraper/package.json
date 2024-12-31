@@ -9,7 +9,7 @@
 	"type": "module",
 	"dependencies": {
 		"@app/db": "workspace:^",
-		"chrome-aws-lambda": "^10.1.0",
+		"@sparticuz/chromium": "^131.0.1",
 		"dotenv": "^16.4.7",
 		"fuzzysort": "^3.1.0",
 		"jsdom": "^24.1.1",

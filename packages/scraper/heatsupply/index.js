@@ -1,7 +1,7 @@
 import { JSDOM } from 'jsdom';
 import fs from 'node:fs';
+import chromium from '@sparticuz/chromium';
 import puppeteer from 'puppeteer-extra';
-
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import AdblockerPlugin from 'puppeteer-extra-plugin-adblocker';
 import { createDir } from '../utils.js';
@@ -25,11 +25,9 @@ async function getSauceUrls(url, cache) {
 
 	// get amount of sauce pages
 	if (!fs.existsSync(`${cachePath}/saucePage.html`)) {
-		const browser = await puppeteer.launch({
-			executablePath:
-				process.env.CHROME_EXECUTABLE_PATH ??
-				'C:/Program Files/Google/Chrome/Application/chrome.exe'
-		});
+		// executablePath: process.env.CHROME_EXECUTABLE_PATH ??
+		// 	'C:/Program Files/Google/Chrome/Application/chrome.exe';
+		const browser = await puppeteer.launch({});
 		const page = await browser.newPage();
 
 		const u = `${url}/en/product-categorie/hot-sauces-europe/`;
