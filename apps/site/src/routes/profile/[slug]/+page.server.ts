@@ -32,8 +32,6 @@ export async function load({ params }) {
 			.orderBy(desc(checkins.createdAt))
 			.limit(12);
 
-		console.info({ checkedSauces });
-
 		return {
 			user: {
 				id: user.id,

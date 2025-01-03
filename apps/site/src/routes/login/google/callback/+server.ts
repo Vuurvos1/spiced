@@ -104,6 +104,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 			});
 		}
 
+		console.log('User already exists, logging in...');
 		await createAndSetSessionTokenCookie(existingUser.id, event.cookies);
 
 		return new Response(null, {
@@ -135,6 +136,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		return insertedUser.id;
 	});
 
+	console.log('New user created, logging in...');
 	await createAndSetSessionTokenCookie(userId, event.cookies);
 
 	return new Response(null, {

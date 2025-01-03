@@ -30,8 +30,6 @@ export async function load({ params }) {
 		.leftJoin(hotSauces, eq(wishlist.hotSauceId, hotSauces.sauceId))
 		.where(eq(wishlist.userId, user.id));
 
-	console.info({ dbRes });
-
 	const sauces = dbRes.map((row) => row.hotSauces).filter((sauce) => !!sauce);
 
 	return { sauces: sauces };
