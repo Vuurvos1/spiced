@@ -19,7 +19,7 @@ export async function load({ params }) {
 			hotSauces: hotSauces
 		})
 		.from(wishlist)
-		.leftJoin(hotSauces, eq(wishlist.hotSauceId, hotSauces.id))
+		.leftJoin(hotSauces, eq(wishlist.hotSauceId, hotSauces.sauceId))
 		.where(eq(wishlist.userId, user.id));
 
 	const sauces = dbRes.map((row) => row.hotSauces).filter((sauce) => !!sauce);
