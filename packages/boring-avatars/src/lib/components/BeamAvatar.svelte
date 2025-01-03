@@ -26,7 +26,7 @@
 
 	const data = generateData(name, colors);
 
-	function generateData(name, colors) {
+	function generateData(name: string, colors: string[]) {
 		const numFromName = hashCode(name);
 		const range = colors && colors.length;
 		const wrapperColor = getRandomColor(numFromName, colors, range);

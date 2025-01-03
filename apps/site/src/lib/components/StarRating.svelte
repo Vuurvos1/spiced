@@ -23,7 +23,7 @@
 </script>
 
 <div class="flex flex-row gap-2">
-	{#each { length: 5 }, i}
+	{#each { length: 5 } as _, i}
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			width="24"

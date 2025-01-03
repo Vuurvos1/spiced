@@ -103,6 +103,8 @@ export const actions = {
 		let flagged = false;
 		// this takes 4-5 seconds
 		if (review) {
+			// TODO: only require here
+			// const toxicity = await import('@tensorflow-models/toxicity');
 			const model = await toxicity.load(0.9, ['toxicity']);
 
 			const predictions = await model.classify(review);
