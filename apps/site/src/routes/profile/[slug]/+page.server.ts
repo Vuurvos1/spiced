@@ -20,7 +20,7 @@ export async function load({ params }) {
 				hotSauce: hotSauces
 			})
 			.from(checkins)
-			.leftJoin(hotSauces, eq(checkins.hotSauceId, hotSauces.id))
+			.leftJoin(hotSauces, eq(checkins.hotSauceId, hotSauces.sauceId))
 			.orderBy(desc(checkins.createdAt))
 			.limit(12);
 
@@ -44,7 +44,7 @@ export const actions = {
 		}
 
 		const data = await request.formData();
-		const sauceId = Number(data.get('sauceId'));
+		const sauceId = (data.get('sauceId') || '') as string;
 
 		if (!sauceId) {
 			return fail(400, { error: 'Missing sauceId' });

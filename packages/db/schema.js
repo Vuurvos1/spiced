@@ -37,9 +37,7 @@ export const oauthAccountTable = pgTable(
 		providerUserId: text('provider_user_id').notNull(),
 		createdAt: timestamp('created_at').notNull().defaultNow()
 	},
-	(t) => ({
-		pk: primaryKey({ columns: [t.userId, t.providerId] })
-	})
+	(t) => [primaryKey({ columns: [t.userId, t.providerId] })]
 );
 
 export const emailVerificationTable = pgTable('email_verification', {
@@ -134,9 +132,7 @@ export const storeHotSauces = pgTable(
 			.defaultNow()
 			.$onUpdate(() => new Date())
 	},
-	(t) => ({
-		pk: primaryKey({ columns: [t.storeId, t.sauceId] })
-	})
+	(t) => [primaryKey({ columns: [t.storeId, t.sauceId] })]
 );
 
 export const events = pgTable('events', {
@@ -161,11 +157,7 @@ export const followers = pgTable(
 			.references(() => userTable.id, { onDelete: 'cascade' }),
 		followedAt: timestamp('followed_at').defaultNow()
 	},
-	(t) => {
-		return {
-			pk: primaryKey({ columns: [t.followerUserId, t.followedUserId] })
-		};
-	}
+	(t) => [primaryKey({ columns: [t.followerUserId, t.followedUserId] })]
 );
 
 export const friends = pgTable(
@@ -180,9 +172,7 @@ export const friends = pgTable(
 			.references(() => userTable.id, { onDelete: 'cascade' }),
 		becameFriendsAt: timestamp('became_friends_at').notNull().defaultNow()
 	},
-	(t) => ({
-		pk: primaryKey({ columns: [t.userId, t.friendUserId] })
-	})
+	(t) => [primaryKey({ columns: [t.userId, t.friendUserId] })]
 );
 
 export const wishlist = pgTable(
@@ -196,9 +186,7 @@ export const wishlist = pgTable(
 			.references(() => hotSauces.sauceId, { onDelete: 'cascade' }),
 		createdAt: timestamp('created_at').notNull().defaultNow()
 	},
-	(t) => ({
-		pk: primaryKey({ columns: [t.userId, t.hotSauceId] })
-	})
+	(t) => [primaryKey({ columns: [t.userId, t.hotSauceId] })]
 );
 
 export const checkins = pgTable(
@@ -219,7 +207,5 @@ export const checkins = pgTable(
 			.defaultNow()
 			.$onUpdate(() => new Date())
 	},
-	(t) => ({
-		pk: primaryKey({ columns: [t.userId, t.hotSauceId] })
-	})
+	(t) => [primaryKey({ columns: [t.userId, t.hotSauceId] })]
 );
