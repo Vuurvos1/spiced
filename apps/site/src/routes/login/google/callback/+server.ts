@@ -104,7 +104,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 			});
 		}
 
-		createAndSetSessionTokenCookie(existingUser.id, event.cookies);
+		await createAndSetSessionTokenCookie(existingUser.id, event.cookies);
 
 		return new Response(null, {
 			status: 302,
