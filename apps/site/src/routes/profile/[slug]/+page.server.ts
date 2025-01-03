@@ -4,10 +4,18 @@ import { error, fail } from '@sveltejs/kit';
 import { and, desc, eq } from 'drizzle-orm';
 
 export async function load({ params }) {
-	const { slug } = params;
+	const username = params.slug;
+
+	if (!username) {
+		error(400, 'Invalid user');
+	}
 
 	try {
-		const users = await db.select().from(userTable).where(eq(userTable.username, slug)).limit(1);
+		const users = await db
+			.select()
+			.from(userTable)
+			.where(eq(userTable.username, username))
+			.limit(1);
 
 		if (users.length === 0) {
 			error(404, 'User not found');
@@ -23,6 +31,8 @@ export async function load({ params }) {
 			.leftJoin(hotSauces, eq(checkins.hotSauceId, hotSauces.sauceId))
 			.orderBy(desc(checkins.createdAt))
 			.limit(12);
+
+		console.info({ checkedSauces });
 
 		return {
 			user: {

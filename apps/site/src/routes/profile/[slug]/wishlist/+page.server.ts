@@ -6,7 +6,15 @@ import { eq } from 'drizzle-orm';
 export async function load({ params }) {
 	const username = params.slug;
 
-	const dbUser = await db.select().from(userTable).where(eq(userTable.username, username)).limit(1);
+	if (!username) {
+		error(400, 'Invalid user');
+	}
+
+	const dbUser = await db
+		.select({ id: userTable.id, username: userTable.username })
+		.from(userTable)
+		.where(eq(userTable.username, username))
+		.limit(1);
 
 	if (dbUser.length === 0) {
 		error(404, 'User not found');
@@ -21,6 +29,8 @@ export async function load({ params }) {
 		.from(wishlist)
 		.leftJoin(hotSauces, eq(wishlist.hotSauceId, hotSauces.sauceId))
 		.where(eq(wishlist.userId, user.id));
+
+	console.info({ dbRes });
 
 	const sauces = dbRes.map((row) => row.hotSauces).filter((sauce) => !!sauce);
 
