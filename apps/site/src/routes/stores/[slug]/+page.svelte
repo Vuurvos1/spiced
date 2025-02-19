@@ -1,22 +1,45 @@
 <script lang="ts">
+	import SauceGrid from '$lib/components/SauceGrid.svelte';
+	import { Globe, ArrowUpRight } from '@o7/icon/lucide';
+
 	let { data } = $props();
 
 	let { store, sauces } = $derived(data);
+
+	const gridSauces = $derived(sauces.map((sauce) => sauce.sauce));
 </script>
 
-<h1>
-	<a href={store.url}>{store.name}</a>
-</h1>
+<section>
+	<div class="container flex flex-col items-center gap-2 pb-6">
+		<img
+			src={`/assets/stores/${store.name.toLowerCase().replaceAll(' ', '-')}.png`}
+			alt={store.name}
+			class="aspect-[3/2] h-32 w-auto object-contain"
+		/>
 
-<p>{store.description}</p>
+		<!-- <h1 class="h1 mb-6 text-center">
+			<a href={store.url}>{store.name}</a>
+		</h1> -->
 
-<div>
-	<h2>Hot Sauces</h2>
-	<ul>
-		{#each sauces as hotSauce}
-			<li>
-				<a href={`/sauces/${hotSauce.sauce.sauceId}`}>{hotSauce.sauce.name}</a>
-			</li>
-		{/each}
-	</ul>
-</div>
+		<p>{store.description}</p>
+
+		<a
+			href={store.url}
+			target="_blank"
+			rel="noopener noreferrer"
+			class="hover:text-primary-600 inline-flex items-center gap-1.5 text-sm text-gray-600"
+		>
+			<Globe size={16} />
+			<span>Visit Store</span>
+			<ArrowUpRight size={14} class="text-gray-400" />
+		</a>
+	</div>
+</section>
+
+<section>
+	<div class="container">
+		<!-- <h2 class="h2 mb-4">Their Sauces</h2> -->
+
+		<SauceGrid sauces={gridSauces}></SauceGrid>
+	</div>
+</section>

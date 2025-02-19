@@ -19,6 +19,7 @@ export type Maker = {
 };
 
 // TODO: depricate
+// TODO: add logoUrl
 export type Store = {
 	name: string;
 	description?: string;

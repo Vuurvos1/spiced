@@ -25,45 +25,7 @@
 
 			<p class="mb-5 text-gray-500">{sauce.description}</p>
 
-			<div class="mb-4">
-				<h2 class="mb-2 text-xl font-semibold">Where to get</h2>
-				{#if stores.length > 0}
-					<ul class="flex flex-wrap gap-2">
-						{#each stores as store}
-							<li>
-								<a
-									class="inline-flex items-center gap-2 rounded-lg border px-4 py-2 transition-colors hover:bg-gray-50"
-									target="_blank"
-									rel="noopener noreferrer"
-									href={store.url}
-								>
-									<span>{store.store.name}</span>
-									<svg
-										class="h-4 w-4"
-										xmlns="http://www.w3.org/2000/svg"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									>
-										<path d="M7 17L17 7" />
-										<path d="M7 7h10v10" />
-									</svg>
-								</a>
-							</li>
-						{/each}
-					</ul>
-				{:else}
-					<p class="text-gray-500">No stores available at the moment.</p>
-				{/if}
-			</div>
-
 			{#if session}
-				<!-- divider -->
-				<div class="my-4 h-px w-full bg-gray-200"></div>
-
 				<div class="flex flex-row gap-6">
 					<!-- TODO: error handle -->
 					<form method="post" action="?/wishlist" use:enhance>
@@ -145,7 +107,45 @@
 						</form>
 					</Dialog>
 				</div>
+
+				<!-- divider -->
+				<div class="my-4 h-px w-full bg-gray-200"></div>
 			{/if}
+
+			<div class="mb-4">
+				<h2 class="mb-2 text-xl font-semibold">Where to get</h2>
+				{#if stores.length > 0}
+					<ul class="flex flex-wrap gap-2">
+						{#each stores as store}
+							<li>
+								<a
+									class="inline-flex items-center gap-2 rounded-lg border px-4 py-2 transition-colors hover:bg-gray-50"
+									target="_blank"
+									rel="noopener noreferrer"
+									href={store.url}
+								>
+									<span>{store.store.name}</span>
+									<svg
+										class="h-4 w-4"
+										xmlns="http://www.w3.org/2000/svg"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<path d="M7 17L17 7" />
+										<path d="M7 7h10v10" />
+									</svg>
+								</a>
+							</li>
+						{/each}
+					</ul>
+				{:else}
+					<p class="text-gray-500">No stores available at the moment.</p>
+				{/if}
+			</div>
 		</div>
 	</section>
 

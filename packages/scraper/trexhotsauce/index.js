@@ -91,7 +91,7 @@ async function scrapeSauces(sauceUrls, cache = true) {
 
 /** @type {import('../').SauceScraper} */
 export const scraper = {
-	name: 'T-rex Hot sauce',
+	name: 'T-Rex Hot Sauce',
 	url: baseUrl,
 	description:
 		'T-rex Hot sauce is a Amsterdam based hot sauce brand. From our own little kitchen we make small batches of vegan and fermented hot sauce.',
