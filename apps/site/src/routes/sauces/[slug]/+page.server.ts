@@ -1,5 +1,5 @@
 import { db } from '$lib/db';
-import { checkins, hotSauces, userTable, wishlist } from '@app/db/schema';
+import { checkins, hotSauces, userTable, wishlist, stores, storeHotSauces } from '@app/db/schema';
 import { error, fail } from '@sveltejs/kit';
 import { and, eq, not } from 'drizzle-orm';
 
@@ -22,6 +22,19 @@ export async function load({ params, locals: { user } }) {
 	}
 
 	const sauce = dbSauce[0];
+
+	// TODO: get stores
+	const dbStores = await db
+		.select({
+			store: stores,
+			url: storeHotSauces.url,
+			updatedAt: storeHotSauces.updatedAt
+		})
+		.from(stores)
+		.innerJoin(
+			storeHotSauces,
+			and(eq(storeHotSauces.storeId, stores.storeId), eq(storeHotSauces.sauceId, sauce.sauceId))
+		);
 
 	// querry all reviews for a sauce, that are not flagged or are from the user
 	const dbCheckins = await db
@@ -56,6 +69,7 @@ export async function load({ params, locals: { user } }) {
 		return {
 			sauce,
 			checkins: dbCheckins,
+			stores: dbStores ?? [],
 			userCheckin: userCheckin.length > 0 ? userCheckin[0] : null,
 			wishlisted: dbWishlist.length > 0
 		};
@@ -64,6 +78,7 @@ export async function load({ params, locals: { user } }) {
 	return {
 		sauce,
 		checkins: dbCheckins,
+		stores: dbStores ?? [],
 		userCheckin: null,
 		wishlisted: false
 	};

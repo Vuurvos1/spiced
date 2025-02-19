@@ -3,7 +3,7 @@ import type { HotSauceInsert, StoreInsert } from '@app/db/types';
 export type Sauce = HotSauceInsert & { url: string };
 
 export type GetSauceUrls = (url: string, cache: boolean) => Promise<string[]>;
-export type ScrapeSauces = (sauceUrls: string[], cache: boolean) => Promise<HotSauceInsert[]>;
+export type ScrapeSauces = (sauceUrls: string[], cache: boolean) => Promise<Sauce[]>;
 
 // Could be a class with method chaining?
 export type SauceScraper = StoreInsert & {
