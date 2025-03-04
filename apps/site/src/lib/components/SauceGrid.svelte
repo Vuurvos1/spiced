@@ -2,7 +2,7 @@
 	import type { HotSauce } from '@app/db/types';
 	import StarRating from './StarRating.svelte';
 
-	type SauceRating = HotSauce & { avgRating?: string | null };
+	type SauceRating = HotSauce & { avgRating?: string | number | null };
 
 	interface Props {
 		sauces: SauceRating[];
