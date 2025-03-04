@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import TextInput from '$lib/components/form/TextInput.svelte';
 
 	export let form;
@@ -22,7 +22,7 @@
 				required
 			></TextInput>
 
-			<input type="hidden" name="token" value={$page.url.searchParams.get('token')} />
+			<input type="hidden" name="token" value={page.url.searchParams.get('token')} />
 
 			<button class="btn" type="submit">Submit</button>
 		</form>
