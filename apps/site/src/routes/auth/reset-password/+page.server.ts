@@ -5,8 +5,8 @@ import { passwordResetTokenTable, userTable } from '@app/db/schema';
 import { hash } from '@node-rs/argon2';
 import { fail, redirect, type Actions } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
-import { sha256 } from 'oslo/crypto';
-import { encodeHex } from 'oslo/encoding';
+import { sha256 } from '@oslojs/crypto/sha2';
+import { encodeHexLowerCase } from '@oslojs/encoding';
 
 export const load = async (event) => {
 	// await passwordResetPageActionRateLimiter.cookieLimiter?.preflight(event);
@@ -66,7 +66,9 @@ export const actions: Actions = {
 		}
 
 		try {
-			const tokenHash = encodeHex(await sha256(new TextEncoder().encode(verificationToken)));
+			const tokenHash = encodeHexLowerCase(
+				await sha256(new TextEncoder().encode(verificationToken))
+			);
 
 			const verifyPasswordResetTokenResult = await verifyPasswordResetToken(tokenHash);
 			if (verifyPasswordResetTokenResult.success === false) {

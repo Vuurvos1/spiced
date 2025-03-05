@@ -63,7 +63,6 @@
 		"drizzle-orm": "^0.39.3",
 		"drizzle-zod": "^0.7.0",
 		"focus-trap": "^7.6.4",
-		"oslo": "^1.2.1",
 		"postgres": "^3.4.5",
 		"prettier-plugin-tailwindcss": "^0.6.11",
 		"resend": "^4.1.2",
