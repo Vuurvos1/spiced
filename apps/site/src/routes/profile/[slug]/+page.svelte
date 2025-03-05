@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { BeamAvatar } from '@app/boring-avatars';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { Trash2 } from '@o7/icon/lucide';
 	import { enhance } from '$app/forms';
 
@@ -15,7 +15,7 @@
 
 		<h1 class="h1">{user.username}</h1>
 
-		<a href={`/profile/${$page.params.slug}/wishlist`}>wishlist</a>
+		<a href={`/profile/${page.params.slug}/wishlist`}>wishlist</a>
 
 		{#if session?.userId === user.id}
 			<form method="post" action="/?/logout">

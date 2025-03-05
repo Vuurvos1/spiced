@@ -1,10 +1,10 @@
 import { db } from '$lib/db';
 import { emailVerificationTable, passwordResetTokenTable, userTable } from '@app/db/schema';
 import { eq } from 'drizzle-orm';
-import { TimeSpan, createDate, isWithinExpirationDate } from 'oslo';
-import { encodeHex } from 'oslo/encoding';
-import { sha256 } from 'oslo/crypto';
+import { encodeHexLowerCase } from '@oslojs/encoding';
+import { sha256 } from '@oslojs/crypto/sha2';
 import { generateIdFromEntropySize } from './utils';
+import dayjs from 'dayjs';
 
 export async function checkIfUserExists(email: string) {
 	const [user] = await db
@@ -32,7 +32,7 @@ export async function createEmailVerificationToken(userId: string, email: string
 			userId,
 			email,
 			token: tokenId,
-			expiresAt: createDate(new TimeSpan(2, 'h'))
+			expiresAt: dayjs().add(2, 'hours').toDate()
 		});
 	});
 
@@ -41,14 +41,14 @@ export async function createEmailVerificationToken(userId: string, email: string
 
 export async function createPasswordResetToken(userId: string): Promise<string> {
 	const tokenId = generateIdFromEntropySize(25); // 40 character
-	const tokenHash = encodeHex(await sha256(new TextEncoder().encode(tokenId)));
+	const tokenHash = encodeHexLowerCase(await sha256(new TextEncoder().encode(tokenId)));
 	await db.transaction(async (trx) => {
 		await trx.delete(passwordResetTokenTable).where(eq(passwordResetTokenTable.userId, userId));
 
 		await trx.insert(passwordResetTokenTable).values({
 			tokenHash,
 			userId,
-			expiresAt: createDate(new TimeSpan(2, 'h'))
+			expiresAt: dayjs().add(2, 'hours').toDate()
 		});
 	});
 
@@ -72,7 +72,7 @@ export async function verifyEmailVerificationCode(userId: string, token: string)
 	}
 
 	// If the verification code has expired
-	if (!isWithinExpirationDate(verificationCode.expiresAt)) {
+	if (dayjs().isAfter(dayjs(verificationCode.expiresAt))) {
 		return {
 			success: false,
 			message: 'The verification code has expired, please request a new one.'
@@ -99,7 +99,7 @@ export async function verifyPasswordResetToken(tokenId: string) {
 		};
 	}
 
-	if (!isWithinExpirationDate(passwordResetToken.expiresAt)) {
+	if (dayjs().isAfter(dayjs(passwordResetToken.expiresAt))) {
 		return {
 			success: false,
 			message: 'The password reset link has expired. Please request a new one.'

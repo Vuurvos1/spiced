@@ -1,21 +1,21 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import SauceGrid from '$lib/components/SauceGrid.svelte';
 
 	let { data } = $props();
 
 	let { sauces, sauceCount, pageSize } = $derived(data);
 
-	const currentPage = $derived(Math.max(Number($page.url.searchParams.get('page')) || 1, 1));
+	const currentPage = $derived(Math.max(Number(page.url.searchParams.get('page')) || 1, 1));
 
 	const previousUrl = $derived.by(() => {
-		const url = new URL($page.url);
+		const url = new URL(page.url);
 		url.searchParams.set('page', String(currentPage - 1));
 		return url.toString();
 	});
 
 	const nextUrl = $derived.by(() => {
-		const url = new URL($page.url);
+		const url = new URL(page.url);
 		url.searchParams.set('page', String(currentPage + 1));
 		return url.toString();
 	});

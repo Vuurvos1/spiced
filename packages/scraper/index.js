@@ -75,7 +75,9 @@ async function main() {
 			.returning();
 
 		console.info('Inserting hot sauce data');
-		const existingSauceNames = await db.select({ name: hotSauces.name }).from(hotSauces);
+		const existingSauceNames = await db
+			.select({ id: hotSauces.sauceId, name: hotSauces.name })
+			.from(hotSauces);
 
 		const dedupedSauces = data.filter((sauce) => {
 			const normalizedNewName = normalizeName(sauce.name);
@@ -92,18 +94,30 @@ async function main() {
 				.values(dedupedSauces)
 				.onConflictDoNothing()
 				.returning({ sauceId: hotSauces.sauceId, name: hotSauces.name });
+			console.info(`Inserted ${dedupedSauces.length} hot sauces`);
+		}
 
-			console.info('Inserting store hot sauce data');
+		console.info('Inserting store hot sauce data');
+		for (const sauce of data) {
+			const s = existingSauceNames.find((s) => isSimilarName(s.name, sauce.name));
+			if (!s) {
+				console.error('Sauce not found', sauce.name);
+				continue;
+			}
+
 			await db
 				.insert(storeHotSauces)
-				.values(
-					sauces.map((sauce) => ({
-						sauceId: sauce.sauceId,
-						storeId: store[0].storeId,
-						url: `${scraper.url}/${sauce.name}`
-					}))
-				)
-				.onConflictDoNothing();
+				.values({
+					sauceId: s.id,
+					storeId: store[0].storeId,
+					url: sauce.url
+				})
+				.onConflictDoUpdate({
+					target: [storeHotSauces.sauceId, storeHotSauces.storeId],
+					set: {
+						url: sauce.url
+					}
+				});
 		}
 	}
 
