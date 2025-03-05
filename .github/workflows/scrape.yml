@@ -4,13 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       store:
-        type: choice # Specify the input type as 'choice'
+        type: choice
         description: 'Select the store to scrape'
         required: true
         default: 'trex'
         options:
           - 'trex'
           - 'heatsupply'
+          - 'heatonist'
 
 jobs:
   scrape:
