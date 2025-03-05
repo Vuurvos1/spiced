@@ -60,7 +60,7 @@
 		"boring-avatars": "^1.11.2",
 		"clsx": "^2.1.1",
 		"dayjs": "^1.11.13",
-		"drizzle-orm": "^0.39.3",
+		"drizzle-orm": "^0.40.0",
 		"drizzle-zod": "^0.7.0",
 		"focus-trap": "^7.6.4",
 		"postgres": "^3.4.5",

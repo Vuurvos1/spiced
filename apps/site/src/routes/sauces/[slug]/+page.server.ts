@@ -23,7 +23,6 @@ export async function load({ params, locals: { user } }) {
 
 	const sauce = dbSauce[0];
 
-	// TODO: get stores
 	const dbStores = await db
 		.select({
 			store: stores,

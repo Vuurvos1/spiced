@@ -9,7 +9,8 @@
 		"build": "turbo run build",
 		"dev": "turbo run dev",
 		"lint": "turbo run lint",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"docker:up": "docker compose up -d"
 	},
 	"devDependencies": {
 		"prettier": "^3.5.3",
