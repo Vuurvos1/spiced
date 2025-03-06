@@ -50,14 +50,25 @@ async function main() {
 		process.exit(1);
 	}
 
-	const cache = !flags.noCache;
+	/** @type {import('./index.d').ScrapeSauceOptions} */
+	const options = {
+		cache: !flags.noCache,
+		dbInsert: flags.dbInsert
+	};
 
 	console.info(`Running scraper - ${scraper.name} - ${scraper.url}`);
-	const data = await scraper.scrapeSauces(await scraper.getSauceUrls(scraper.url, cache), cache);
+	const urls = await scraper.getSauceUrls(scraper.url, options);
+
+	/** @type {import('./index.d').Sauce[]} */
+	const data = [];
+	for (const url of urls) {
+		const sauce = await scraper.scrapeSauce(url, options);
+		if (sauce) data.push(sauce);
+	}
 
 	console.info('Found', data.length, 'sauces');
 
-	if (flags.dbInsert) {
+	if (options.dbInsert) {
 		// upsert store data
 		console.info('Upserting store data');
 		const store = await db

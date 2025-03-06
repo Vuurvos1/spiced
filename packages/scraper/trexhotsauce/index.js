@@ -6,7 +6,9 @@ const baseUrl = 'https://t-rexhotsauce.com';
 const cachePath = './cache/trex';
 
 /** @type {import('../').GetSauceUrls} */
-async function getSauceUrls(url, cache = true) {
+async function getSauceUrls(url, options) {
+	const { cache } = options;
+
 	if (!cache) {
 		fs.rmSync(cachePath, { recursive: true, force: true });
 	}
@@ -34,14 +36,14 @@ async function getSauceUrls(url, cache = true) {
 	return links;
 }
 
-/** @type {import('../').ScrapeSauces} */
-async function scrapeSauces(sauceUrls, cache = true) {
+/** @type {import('../').ScrapeSauce} */
+async function scrapeSauce(sauceUrls, options) {
+	const { cache } = options;
+
 	/**
 	 * @type {import('../').Sauce[]}}
 	 */
 	const producs = [];
-
-	// TODO: delete cache if no cache?
 
 	if (!cache || !fs.existsSync(`${cachePath}/sauces`)) {
 		createDir(`${cachePath}/sauces`);
@@ -86,7 +88,7 @@ async function scrapeSauces(sauceUrls, cache = true) {
 		producs.push(sauce);
 	}
 
-	return producs;
+	return null;
 }
 
 /** @type {import('../').SauceScraper} */
@@ -96,5 +98,5 @@ export const scraper = {
 	description:
 		'T-rex Hot sauce is a Amsterdam based hot sauce brand. From our own little kitchen we make small batches of vegan and fermented hot sauce.',
 	getSauceUrls,
-	scrapeSauces
+	scrapeSauce
 };

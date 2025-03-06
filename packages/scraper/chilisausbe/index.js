@@ -1,15 +1,15 @@
 const baseUrl = 'https://chilisaus.be/';
 
 /** @type {import('../').GetSauceUrls} */
-async function getSauceUrls(url, cache = true) {
+async function getSauceUrls(url, options) {
 	console.warn('TODO: Not implemented');
 	return [];
 }
 
-/** @type {import('../').ScrapeSauces} */
-async function scrapeSauces(sauceUrls, cache = true) {
+/** @type {import('../').ScrapeSauce} */
+async function scrapeSauce(url, options) {
 	console.warn('TODO: Not implemented');
-	return [];
+	return null;
 }
 
 /** @type {import('../').SauceScraper} */
@@ -21,5 +21,5 @@ export const scraper = {
 NEVER Products with Additives, Artificial Flavours or Colours
 You will NOT find our Products in ANY Supermarkets!`,
 	getSauceUrls,
-	scrapeSauces
+	scrapeSauce
 };
