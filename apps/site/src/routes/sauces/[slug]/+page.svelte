@@ -18,7 +18,7 @@
 
 <div class="container">
 	<section class="mb-12 grid gap-4 md:grid-cols-5">
-		<img class="object-contain md:col-span-3" src={sauce.imageUrl} alt={sauce.name} />
+		<img class="aspect-square object-contain md:col-span-3" src={sauce.imageUrl} alt={sauce.name} />
 
 		<div class="md:col-span-2">
 			<h1 class="h1 mb-3">{sauce.name}</h1>

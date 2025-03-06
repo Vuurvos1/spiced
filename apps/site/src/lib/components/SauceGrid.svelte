@@ -15,7 +15,7 @@
 	<li>
 		<!-- TODO: make relative? -->
 		<a href="/sauces/{sauce.sauceId}">
-			<img src={sauce.imageUrl} alt={sauce.name} />
+			<img class="aspect-square object-contain" src={sauce.imageUrl} alt={sauce.name} />
 			<h2 class="mb-2 text-xl font-semibold">{sauce.name}</h2>
 
 			<div class="mb-2 flex flex-row items-center gap-3">
