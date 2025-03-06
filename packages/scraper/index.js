@@ -93,8 +93,10 @@ async function main() {
 				.insert(hotSauces)
 				.values(dedupedSauces)
 				.onConflictDoNothing()
-				.returning({ sauceId: hotSauces.sauceId, name: hotSauces.name });
+				.returning({ id: hotSauces.sauceId, name: hotSauces.name });
 			console.info(`Inserted ${dedupedSauces.length} hot sauces`);
+
+			existingSauceNames.push(...sauces);
 		}
 
 		console.info('Inserting store hot sauce data');

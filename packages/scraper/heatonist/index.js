@@ -22,6 +22,10 @@ function getProductUrls(document) {
 		const lowerTitle = title.toLowerCase();
 
 		if (lowerTitle.match(/\b(pack|trio|duo)\b/)) continue;
+		if (lowerTitle.endsWith('socks')) continue;
+		if (lowerTitle.match(/\b(monthly|subscription)\b/)) continue;
+		if (lowerTitle.endsWith('challenge')) continue;
+		if (lowerTitle.endsWith('collection')) continue;
 
 		/** @type {HTMLAnchorElement | null} */
 		const anchor = product.querySelector('a:first-child');
