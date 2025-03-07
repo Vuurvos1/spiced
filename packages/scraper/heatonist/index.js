@@ -91,7 +91,6 @@ async function scrapeSauce(url, options) {
 	const cachePath = getCachePath('heatonist', url);
 
 	if (!cache || !fs.existsSync(cachePath)) {
-		console.info('Fetching', url);
 		const page = await fetch(url);
 		const body = await page.text();
 		writeFile(cachePath, body);

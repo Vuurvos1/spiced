@@ -45,7 +45,6 @@ export function getCachePath(store, url) {
 	return `./cache/${store}/${cachePath}.html`;
 }
 
-// TODO: put under test
 /**
  * @param {string} name
  */
