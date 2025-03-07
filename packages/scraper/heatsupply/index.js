@@ -1,15 +1,6 @@
 import { JSDOM } from 'jsdom';
 import fs from 'node:fs';
-import puppeteer from 'puppeteer-extra';
-import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import AdblockerPlugin from 'puppeteer-extra-plugin-adblocker';
 import { getCachePath, writeFile } from '../utils.js';
-
-// Add stealth plugin and use defaults (all tricks to hide puppeteer usage)
-puppeteer.use(StealthPlugin());
-
-// Add adblocker plugin to block all ads and trackers (saves bandwidth)
-puppeteer.use(AdblockerPlugin({ blockTrackers: true }));
 
 const baseUrl = 'https://heatsupply.nl';
 const cachePath = './cache/heatsupply';
@@ -22,36 +13,11 @@ async function getSauceUrls(url, options) {
 		fs.rmSync(cachePath, { recursive: true, force: true });
 	}
 
-	// get amount of sauce pages
-	if (!fs.existsSync(`${cachePath}/saucePage.html`)) {
-		const mainPageUrl = `${url}/en/product-categorie/hot-sauces-europe/`;
-		const mainPageCachePath = getCachePath('heatsupply', mainPageUrl);
-
-		if (!cache || !fs.existsSync(mainPageCachePath)) {
-			const browser = await puppeteer.launch({});
-			const page = await browser.newPage();
-
-			await page.goto(mainPageUrl, {
-				waitUntil: 'networkidle2'
-			});
-			await page.waitForSelector('.facetwp-pager', {});
-
-			const body = await page.content();
-			writeFile(mainPageCachePath, body);
-
-			browser.close();
-		}
-	}
-
-	const mainPage = fs.readFileSync(`${cachePath}/saucePage.html`, 'utf8');
-	const mainDocument = new JSDOM(mainPage).window.document;
-	const lastPage = mainDocument.querySelector('.facetwp-pager .facetwp-page.last')?.textContent;
-	const pageCount = Number(lastPage);
-
 	/** @type {string[]} */
 	const sauceUrls = [];
 
-	for (let i = 1; i <= pageCount; i++) {
+	// hard limit pages just in case
+	for (let i = 1; i < 100; i++) {
 		const pageUrl = `${url}/en/product-categorie/hot-sauces-europe/?_paged=${i}`;
 		const pageCachePath = getCachePath('heatsupply', pageUrl);
 
@@ -65,6 +31,7 @@ async function getSauceUrls(url, options) {
 		const document = new JSDOM(page).window.document;
 
 		const productElements = document.querySelectorAll('.products .product');
+		if (productElements.length === 0) break;
 
 		for (const el of productElements) {
 			const name = el.querySelector('h3')?.textContent?.trim();
@@ -122,7 +89,7 @@ async function scrapeSauce(url, options) {
 		name,
 		url,
 		description: descriptionElement?.textContent?.trim() ?? '',
-		imageUrl: imageEl?.src ?? ''
+		imageUrl: imageEl?.src ?? null
 	};
 }
 
