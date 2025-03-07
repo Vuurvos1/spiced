@@ -9,19 +9,20 @@ import * as tf from '@tensorflow/tfjs';
 import * as toxicity from '@tensorflow-models/toxicity';
 
 export async function load({ params, locals: { user } }) {
-	const sauceId = params.slug;
+	const slug = params.slug;
 
-	if (!sauceId) {
+	if (!slug) {
 		error(400, 'Invalid sauce');
 	}
 
-	const dbSauce = await db.select().from(hotSauces).where(eq(hotSauces.sauceId, sauceId)).limit(1);
+	const dbSauce = await db.select().from(hotSauces).where(eq(hotSauces.slug, slug)).limit(1);
 
 	if (dbSauce.length === 0) {
 		error(404, 'Sauce not found');
 	}
 
 	const sauce = dbSauce[0];
+	const { sauceId } = sauce;
 
 	const dbStores = await db
 		.select({

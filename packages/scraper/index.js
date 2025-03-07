@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import scrapers from './scrapers.js';
 import { getDb } from '@app/db/index.js';
 import { hotSauces, stores, storeHotSauces } from '@app/db/schema.js';
+import { eq } from 'drizzle-orm';
 
 import 'dotenv/config';
 
@@ -50,14 +51,25 @@ async function main() {
 		process.exit(1);
 	}
 
-	const cache = !flags.noCache;
+	/** @type {import('./index.d').ScrapeSauceOptions} */
+	const options = {
+		cache: !flags.noCache,
+		dbInsert: flags.dbInsert
+	};
 
 	console.info(`Running scraper - ${scraper.name} - ${scraper.url}`);
-	const data = await scraper.scrapeSauces(await scraper.getSauceUrls(scraper.url, cache), cache);
+	const urls = await scraper.getSauceUrls(scraper.url, options);
+
+	/** @type {import('./index.d').Sauce[]} */
+	const data = [];
+	for (const url of urls) {
+		const sauce = await scraper.scrapeSauce(url, options);
+		if (sauce) data.push(sauce);
+	}
 
 	console.info('Found', data.length, 'sauces');
 
-	if (flags.dbInsert) {
+	if (options.dbInsert) {
 		// upsert store data
 		console.info('Upserting store data');
 		const store = await db
@@ -79,22 +91,45 @@ async function main() {
 			.select({ id: hotSauces.sauceId, name: hotSauces.name })
 			.from(hotSauces);
 
-		const dedupedSauces = data.filter((sauce) => {
-			const normalizedNewName = normalizeName(sauce.name);
+		const { newSauces, existingSauces } = data.reduce(
+			(acc, sauce) => {
+				const normalizedNewName = normalizeName(sauce.name);
+				const existing = existingSauceNames.find((existing) =>
+					isSimilarName(normalizeName(existing.name), normalizedNewName)
+				);
 
-			return !existingSauceNames.some((existing) =>
-				isSimilarName(normalizeName(existing.name), normalizedNewName)
-			);
-		});
-		console.info('Deduped', data.length - dedupedSauces.length, 'sauces');
+				if (existing) {
+					sauce.sauceId = existing.id;
+					acc.existingSauces.push(sauce);
+				} else {
+					acc.newSauces.push(sauce);
+				}
+				return acc;
+			},
+			/** @type {{ newSauces: import('./index.d').Sauce[], existingSauces: (import('./index.d').Sauce)[] }} */
+			({ newSauces: [], existingSauces: [] })
+		);
 
-		if (dedupedSauces.length > 0) {
+		console.info('Deduped', data.length - existingSauces.length, 'sauces');
+
+		// update existing sauces
+		for (const sauce of existingSauces) {
+			if (!sauce.sauceId) continue;
+			try {
+				await db.update(hotSauces).set(sauce).where(eq(hotSauces.sauceId, sauce.sauceId));
+			} catch (error) {
+				console.error('Error updating sauce', sauce.name, error);
+			}
+		}
+
+		// insert new sauces
+		if (newSauces.length > 0) {
 			const sauces = await db
 				.insert(hotSauces)
-				.values(dedupedSauces)
+				.values(newSauces)
 				.onConflictDoNothing()
-				.returning({ sauceId: hotSauces.sauceId, name: hotSauces.name });
-			console.info(`Inserted ${dedupedSauces.length} hot sauces`);
+				.returning({ id: hotSauces.sauceId, name: hotSauces.name });
+			existingSauceNames.push(...sauces);
 		}
 
 		console.info('Inserting store hot sauce data');

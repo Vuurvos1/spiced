@@ -1,92 +1,70 @@
 import { JSDOM } from 'jsdom';
 import fs from 'node:fs';
-import { createDir } from '../utils.js';
+import { getCachePath, slugifyName, writeFile } from '../utils.js';
 
 const baseUrl = 'https://t-rexhotsauce.com';
 const cachePath = './cache/trex';
 
 /** @type {import('../').GetSauceUrls} */
-async function getSauceUrls(url, cache = true) {
+async function getSauceUrls(url, options) {
+	const { cache } = options;
+
 	if (!cache) {
 		fs.rmSync(cachePath, { recursive: true, force: true });
 	}
 
-	if (!fs.existsSync(`${cachePath}/saucePage.html`)) {
-		createDir(cachePath);
+	const pageUrl = `${url}/collections/all`;
+	const pageCachePath = getCachePath('trex', pageUrl);
 
-		console.log('Fetching');
-		const res = await fetch(`${url}/collections/all`);
-		const body = await res.text();
-		fs.writeFileSync(`${cachePath}/saucePage.html`, body);
+	if (!cache || !fs.existsSync(pageCachePath)) {
+		const page = await fetch(pageUrl);
+		const body = await page.text();
+		writeFile(pageCachePath, body);
 	}
 
-	const body = fs.readFileSync(`${cachePath}/saucePage.html`, 'utf8');
-
-	const document = new JSDOM(body).window.document;
+	const page = fs.readFileSync(pageCachePath, 'utf8');
+	const document = new JSDOM(page).window.document;
 
 	/** @type {NodeListOf<HTMLAnchorElement>} */
 	const productElements = document.querySelectorAll(
 		'#product-grid .grid__item .card > .card__content a'
 	);
 
-	const links = Array.from(productElements).map((el) => `${url}${el.href}`);
-
-	return links;
+	return Array.from(productElements).map((el) => `${url}${el.href}`);
 }
 
-/** @type {import('../').ScrapeSauces} */
-async function scrapeSauces(sauceUrls, cache = true) {
-	/**
-	 * @type {import('../').Sauce[]}}
-	 */
-	const producs = [];
+/** @type {import('../').ScrapeSauce} */
+async function scrapeSauce(url, options) {
+	const { cache } = options;
+	const cachePath = getCachePath('trex', url);
 
-	// TODO: delete cache if no cache?
-
-	if (!cache || !fs.existsSync(`${cachePath}/sauces`)) {
-		createDir(`${cachePath}/sauces`);
-
-		for (const link of sauceUrls) {
-			console.info('Scraping sauce', link);
-			const res = await fetch(link);
-			const body = await res.text();
-
-			const fileName = `${cachePath}/sauces/${link.replace('https://', '').replace(/\//g, '_')}.html`;
-			fs.writeFileSync(fileName, body);
-		}
+	if (!cache || !fs.existsSync(cachePath)) {
+		const page = await fetch(url);
+		const body = await page.text();
+		writeFile(cachePath, body);
 	}
 
-	const files = fs.readdirSync(`${cachePath}/sauces`);
-	for (const file of files) {
-		const body = fs.readFileSync(`${cachePath}/sauces/${file}`, 'utf8');
+	const page = fs.readFileSync(cachePath, 'utf8');
+	const document = new JSDOM(page).window.document;
 
-		const document = new JSDOM(body).window.document;
-		const name = document.querySelector('h1')?.textContent?.trim() ?? '';
-		const description =
-			document.querySelector('.product__description')?.textContent?.trim().replace(/^"|"$/g, '') ||
-			'';
-		if (!description) {
-			console.warn('No description found for', name);
-		}
-
-		/** @type {HTMLImageElement | null} */
-		const img = document.querySelector('.product__media img'); // TODO: maybe get all images
-
-		const url = document.querySelector('link[rel="canonical"]')?.getAttribute('href');
-
-		/** @type {import('../').Sauce}} */
-		const sauce = {
-			name,
-			description,
-			url: url ?? '',
-			imageUrl: img ? `https:${img.src}` : null
-			// brand,
-		};
-
-		producs.push(sauce);
+	const name = document.querySelector('h1')?.textContent?.trim() ?? '';
+	const description =
+		document.querySelector('.product__description')?.textContent?.trim().replace(/^"|"$/g, '') ||
+		'';
+	if (!description) {
+		console.warn('No description found for', name);
 	}
 
-	return producs;
+	/** @type {HTMLImageElement | null} */
+	const img = document.querySelector('.product__media img'); // TODO: maybe get all images
+
+	return {
+		name,
+		slug: slugifyName(name),
+		description,
+		url,
+		imageUrl: img?.src ? `https:${img.src}` : null
+	};
 }
 
 /** @type {import('../').SauceScraper} */
@@ -96,5 +74,5 @@ export const scraper = {
 	description:
 		'T-rex Hot sauce is a Amsterdam based hot sauce brand. From our own little kitchen we make small batches of vegan and fermented hot sauce.',
 	getSauceUrls,
-	scrapeSauces
+	scrapeSauce
 };

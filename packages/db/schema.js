@@ -8,7 +8,8 @@ import {
 	primaryKey,
 	boolean,
 	pgEnum,
-	uuid
+	uuid,
+	index
 } from 'drizzle-orm/pg-core';
 
 export const roleEnum = pgEnum('role', ['admin', 'moderator', 'user']);
@@ -84,24 +85,28 @@ export const makers = pgTable('makers', {
 		.$onUpdate(() => new Date())
 });
 
-export const hotSauces = pgTable('hot_sauces', {
-	sauceId: uuid('id').primaryKey().defaultRandom(),
-	name: text('name').notNull().unique(),
-	description: text('description').default(''),
-	imageUrl: text('image_url'),
-	scovile: integer('scovile'),
-	makerId: uuid('maker_id').references(() => makers.makerId, {
-		onDelete: 'set null'
-	}),
-	createdAt: timestamp('created_at')
-		.notNull()
-		.defaultNow()
-		.$onUpdate(() => new Date()),
-	updatedAt: timestamp('updated_at')
-		.notNull()
-		.defaultNow()
-		.$onUpdate(() => new Date())
-});
+export const hotSauces = pgTable(
+	'hot_sauces',
+	{
+		sauceId: uuid('id').primaryKey().defaultRandom(),
+		name: text('name').notNull().unique(),
+		slug: text('slug').notNull().unique(),
+		description: text('description').default(''),
+		imageUrl: text('image_url'),
+		makerId: uuid('maker_id').references(() => makers.makerId, {
+			onDelete: 'set null'
+		}), // TODO: a sauce can have multiple makers
+		createdAt: timestamp('created_at')
+			.notNull()
+			.defaultNow()
+			.$onUpdate(() => new Date()),
+		updatedAt: timestamp('updated_at')
+			.notNull()
+			.defaultNow()
+			.$onUpdate(() => new Date())
+	},
+	(table) => [index('slug_idx').on(table.slug)]
+);
 
 export const stores = pgTable('stores', {
 	storeId: uuid('store_id').primaryKey().defaultRandom(),

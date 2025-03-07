@@ -1,6 +1,6 @@
 import { JSDOM } from 'jsdom';
 import fs from 'node:fs';
-import { createDir } from '../utils.js';
+import { getCachePath, slugifyName, writeFile } from '../utils.js';
 
 const baseUrl = 'https://heatonist.com';
 const cachePath = './cache/heatonist';
@@ -22,6 +22,10 @@ function getProductUrls(document) {
 		const lowerTitle = title.toLowerCase();
 
 		if (lowerTitle.match(/\b(pack|trio|duo)\b/)) continue;
+		if (lowerTitle.endsWith('socks')) continue;
+		if (lowerTitle.match(/\b(monthly|subscription)\b/)) continue;
+		if (lowerTitle.endsWith(' challenge')) continue;
+		if (lowerTitle.endsWith('collection')) continue;
 
 		/** @type {HTMLAnchorElement | null} */
 		const anchor = product.querySelector('a:first-child');
@@ -34,39 +38,46 @@ function getProductUrls(document) {
 }
 
 /** @type {import('../').GetSauceUrls} */
-async function getSauceUrls(url, cache = true) {
+async function getSauceUrls(url, options) {
+	const { cache } = options;
+
 	if (!cache) {
 		fs.rmSync(cachePath, { recursive: true, force: true });
 	}
 
-	createDir(cachePath);
+	const mainPageUrl = `${baseUrl}/collections/all-hot-sauces`;
+	const mainPageCachePath = getCachePath('heatonist', mainPageUrl);
+	if (!cache || !fs.existsSync(mainPageCachePath)) {
+		const page = await fetch(mainPageUrl);
+		const body = await page.text();
+		writeFile(mainPageCachePath, body);
+	}
 
-	const mainPage = await fetch(`${baseUrl}/collections/all-hot-sauces`);
-	const body = await mainPage.text();
+	const mainPage = fs.readFileSync(mainPageCachePath, 'utf8');
+	const mainDocument = new JSDOM(mainPage).window.document;
 
-	// write to file
-	fs.writeFileSync(`${cachePath}/mainPage.html`, body);
-
-	const document = new JSDOM(body).window.document;
-
-	// get counts from .pagination-message
-	const paginationMessage = document.querySelector('.pagination-message');
+	// get total pages
+	const paginationMessage = mainDocument.querySelector('.pagination-message');
 	const numbers = paginationMessage?.textContent?.match(/\d+/g);
 	const pageCount = parseInt(numbers?.[0] ?? '0');
 	const totalProducts = parseInt(numbers?.[1] ?? '0');
-
 	const totalPages = Math.ceil(totalProducts / pageCount);
 
 	/** @type {string[]} */
-	const sauceUrls = getProductUrls(document);
+	const sauceUrls = getProductUrls(mainDocument);
 
 	for (let i = 2; i <= totalPages; i++) {
-		const page = await fetch(`${baseUrl}/collections/all-hot-sauces?page=${i}`);
-		const body = await page.text();
+		const pageUrl = `${baseUrl}/collections/all-hot-sauces?page=${i}`;
+		const pageCachePath = getCachePath('heatonist', pageUrl);
 
-		fs.writeFileSync(`${cachePath}/page${i}.html`, body);
+		if (!cache || !fs.existsSync(pageCachePath)) {
+			const page = await fetch(pageUrl);
+			const body = await page.text();
+			writeFile(pageCachePath, body);
+		}
 
-		const document = new JSDOM(body).window.document;
+		const page = fs.readFileSync(pageCachePath, 'utf8');
+		const document = new JSDOM(page).window.document;
 
 		sauceUrls.push(...getProductUrls(document));
 	}
@@ -74,36 +85,38 @@ async function getSauceUrls(url, cache = true) {
 	return sauceUrls;
 }
 
-// TODO: turn into single sauce scrape, and move loop logic to index
-// TODO: change param to options instead of just cache
-/** @type {import('../').ScrapeSauces} */
-async function scrapeSauces(sauceUrls, cache = true) {
-	console.info('urls', sauceUrls);
+/** @type {import('../').ScrapeSauce} */
+async function scrapeSauce(url, options) {
+	const { cache } = options;
+	const cachePath = getCachePath('heatonist', url);
 
-	/** @type {import('../').Sauce[]} */
-	const sauces = [];
-
-	for (const url of sauceUrls) {
+	if (!cache || !fs.existsSync(cachePath)) {
 		const page = await fetch(url);
 		const body = await page.text();
-
-		const document = new JSDOM(body).window.document;
-
-		const name = document.querySelector('h1')?.textContent?.trim() ?? '';
-
-		/** @type {HTMLImageElement | null} */
-		const imageElement = document.querySelector('.product-image img');
-		const descriptionElement = document.querySelector('#info-wrap .reveal-content p');
-
-		sauces.push({
-			name,
-			description: descriptionElement?.textContent?.trim() ?? '',
-			url,
-			imageUrl: imageElement?.src ?? ''
-		});
+		writeFile(cachePath, body);
 	}
 
-	return sauces;
+	const page = fs.readFileSync(cachePath, 'utf8');
+	const document = new JSDOM(page).window.document;
+
+	const name = document.querySelector('h1')?.textContent?.trim() ?? '';
+
+	/** @type {HTMLImageElement | null} */
+	const imageElement = document.querySelector('.product-image img');
+	const descriptionElement = document.querySelector('#info-wrap .reveal-content p');
+
+	let imageUrl = imageElement?.src.split('?')[0];
+	if (imageUrl?.startsWith('//')) {
+		imageUrl = 'https:' + imageUrl;
+	}
+
+	return {
+		name,
+		slug: slugifyName(name),
+		url,
+		description: descriptionElement?.textContent?.trim() ?? '',
+		imageUrl
+	};
 }
 
 /** @type {import('../').SauceScraper} */
@@ -113,5 +126,5 @@ export const scraper = {
 	description:
 		'Shop top rated hot sauce, from the official Hot Ones hot sauces to our own flavorful creations and collabs with the best hot sauce makers!',
 	getSauceUrls,
-	scrapeSauces
+	scrapeSauce
 };
