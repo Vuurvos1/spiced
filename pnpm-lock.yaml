@@ -266,6 +266,9 @@ importers:
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
+      drizzle-orm:
+        specifier: ^0.40.0
+        version: 0.40.0(@cloudflare/workers-types@4.20250303.0)(@types/better-sqlite3@7.6.11)(@types/pg@8.11.11)(better-sqlite3@11.1.2)(gel@2.0.0)(pg@8.12.0)(postgres@3.4.5)
       fuzzysort:
         specifier: ^3.1.0
         version: 3.1.0
@@ -297,6 +300,9 @@ importers:
       '@types/yargs-parser':
         specifier: ^21.0.3
         version: 21.0.3
+      vitest:
+        specifier: ^2.1.9
+        version: 2.1.9(@types/node@22.13.9)(jsdom@24.1.1)
 
 packages:
 
@@ -2851,7 +2857,7 @@ packages:
     engines: {node: '>= 14'}
 
   github-from-package@0.0.0:
-    resolution: {integrity: sha1-l/tdlr/eiXMxPyDoKI75oWf6ZM4=}
+    resolution: {integrity: sha512-SyHy3T1v2NUXn29OsWdxmK6RwHD+vkj3v8en8AOBZ1wBQ/hCAQ5bAQTD02kW4W9tUp/3Qh6J8r9EvntiyCmOOw==}
 
   glob-parent@5.1.2:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}

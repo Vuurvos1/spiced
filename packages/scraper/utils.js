@@ -38,10 +38,20 @@ export function writeFile(path, data) {
  * @param {string} url
  */
 export function getCachePath(store, url) {
-	// parse url
 	const parsedUrl = new URL(url);
 	const path = parsedUrl.pathname + parsedUrl.search;
 	const cachePath = path.replace(/\//g, '_');
 
 	return `./cache/${store}/${cachePath}.html`;
+}
+
+// TODO: put under test
+/**
+ * @param {string} name
+ */
+export function slugifyName(name) {
+	return name
+		.toLowerCase() // convert to lowercase first
+		.replace(/[^a-z0-9 ]/g, '') // remove all non-alphanumeric chars except spaces
+		.replace(/ +/g, '-'); // replace one or more spaces with single hyphen
 }

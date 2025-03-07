@@ -1,6 +1,6 @@
 import { JSDOM } from 'jsdom';
 import fs from 'node:fs';
-import { getCachePath, writeFile } from '../utils.js';
+import { getCachePath, slugifyName, writeFile } from '../utils.js';
 
 const baseUrl = 'https://t-rexhotsauce.com';
 const cachePath = './cache/trex';
@@ -60,6 +60,7 @@ async function scrapeSauce(url, options) {
 
 	return {
 		name,
+		slug: slugifyName(name),
 		description,
 		url,
 		imageUrl: img?.src ? `https:${img.src}` : null

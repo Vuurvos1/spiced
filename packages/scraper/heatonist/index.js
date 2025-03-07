@@ -1,6 +1,6 @@
 import { JSDOM } from 'jsdom';
 import fs from 'node:fs';
-import { getCachePath, writeFile } from '../utils.js';
+import { getCachePath, slugifyName, writeFile } from '../utils.js';
 
 const baseUrl = 'https://heatonist.com';
 const cachePath = './cache/heatonist';
@@ -113,6 +113,7 @@ async function scrapeSauce(url, options) {
 
 	return {
 		name,
+		slug: slugifyName(name),
 		url,
 		description: descriptionElement?.textContent?.trim() ?? '',
 		imageUrl
