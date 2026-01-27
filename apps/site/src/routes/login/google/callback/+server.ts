@@ -5,7 +5,7 @@ import {
 	GOOGLE_OAUTH_STATE_COOKIE_NAME
 } from '$lib/server/oauth';
 import { decodeIdToken } from 'arctic';
-import { db } from '$lib/db';
+import { db } from '$lib/server/db';
 import { oauthAccountTable, userTable } from '@app/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { generateRandomName } from '$lib/utils/name';

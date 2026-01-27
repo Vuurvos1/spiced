@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { verify } from '@node-rs/argon2';
 import type { Actions, PageServerLoad } from './$types';
-import { checkIfUserExists } from '$lib/server/auth';
+import { checkIfUserExists } from '$lib/server/old-auth';
 import { createSession, generateSessionToken, setSessionTokenCookie } from '$lib/server/session';
 import { hashSettings } from '$lib/server/utils';
 

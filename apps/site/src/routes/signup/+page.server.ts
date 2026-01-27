@@ -1,9 +1,9 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { hash } from '@node-rs/argon2';
-import { db } from '$lib/db';
+import { db } from '$lib/server/db';
 import { userTable } from '@app/db/schema';
 import postgres from 'postgres';
-import { checkIfUserExists, createEmailVerificationToken } from '$lib/server/auth';
+import { checkIfUserExists, createEmailVerificationToken } from '$lib/server/old-auth';
 import { eq } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
 import { sendEmailVerificationToken } from '$lib/server/email';

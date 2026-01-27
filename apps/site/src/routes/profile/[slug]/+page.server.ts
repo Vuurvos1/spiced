@@ -1,4 +1,4 @@
-import { db } from '$lib/db';
+import { db } from '$lib/server/db';
 import { checkins, hotSauces, userTable } from '@app/db/schema';
 import { error, fail } from '@sveltejs/kit';
 import { getAchievements } from '$lib/server/achievements';

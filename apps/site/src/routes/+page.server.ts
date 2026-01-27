@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { invalidateSession, deleteSessionTokenCookie } from '$lib/server/session';
-import { db } from '$lib/db';
+import { db } from '$lib/server/db';
 import { checkins, hotSauces } from '@app/db/schema';
 import { avg, desc, getTableColumns, eq, count } from 'drizzle-orm';
 

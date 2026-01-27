@@ -1,6 +1,6 @@
 import { invalidateSession, deleteSessionTokenCookie } from '$lib/server/session';
 import { fail, redirect, type Actions } from '@sveltejs/kit';
-import { db } from '$lib/db';
+import { db } from '$lib/server/db';
 import { userTable } from '@app/db/schema';
 import { eq } from 'drizzle-orm';
 import { usernameSchema } from '$lib/validation/index.js';

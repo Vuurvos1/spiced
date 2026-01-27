@@ -1,5 +1,5 @@
-import { db } from '$lib/db.js';
-import { createPasswordResetToken, verifyPasswordResetToken } from '$lib/server/auth';
+import { db } from '$lib/server/db.js';
+import { createPasswordResetToken, verifyPasswordResetToken } from '$lib/server/old-auth';
 import { sendPasswordResetEmail } from '$lib/server/email';
 import { userTable } from '@app/db/schema';
 import { fail, type Actions } from '@sveltejs/kit';

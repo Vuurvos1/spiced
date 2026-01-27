@@ -3,8 +3,8 @@ import { fail, redirect, type Actions, type Cookies } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 import { eq } from 'drizzle-orm';
-import { createEmailVerificationToken, verifyEmailVerificationCode } from '$lib/server/auth';
-import { db } from '$lib/db';
+import { createEmailVerificationToken, verifyEmailVerificationCode } from '$lib/server/old-auth';
+import { db } from '$lib/server/db';
 import { userTable } from '@app/db/schema';
 import { sendEmailVerificationToken } from '$lib/server/email';
 import { createAndSetSessionTokenCookie } from '$lib/server/session';

@@ -1,5 +1,5 @@
-import { db } from '$lib/db.js';
-import { verifyPasswordResetToken } from '$lib/server/auth';
+import { db } from '$lib/server/db.js';
+import { verifyPasswordResetToken } from '$lib/server/old-auth';
 import { createAndSetSessionTokenCookie, invalidateSession } from '$lib/server/session';
 import { passwordResetTokenTable, userTable } from '@app/db/schema';
 import { hash } from '@node-rs/argon2';
