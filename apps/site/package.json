@@ -12,7 +12,8 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:integration": "playwright test",
-		"test:unit": "vitest"
+		"test:unit": "vitest",
+		"generate:auth": "pnpm dlx @better-auth/cli@latest generate --config ./src/lib/server/auth.ts --output ../../packages/db/auth-schema.js"
 	},
 	"devDependencies": {
 		"@app/boring-avatars": "workspace:^",

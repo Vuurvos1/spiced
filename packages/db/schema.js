@@ -12,6 +12,8 @@ import {
 	index
 } from 'drizzle-orm/pg-core';
 
+export * from './auth-schema.js';
+
 export const roleEnum = pgEnum('role', ['admin', 'moderator', 'user']);
 
 // auth
