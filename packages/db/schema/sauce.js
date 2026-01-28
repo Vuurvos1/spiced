@@ -12,66 +12,64 @@ import {
 	index
 } from 'drizzle-orm/pg-core';
 
-export * from './auth-schema.js';
-
 export const roleEnum = pgEnum('role', ['admin', 'moderator', 'user']);
 
 // auth
-export const userTable = pgTable('user', {
-	id: uuid('id').defaultRandom().primaryKey(),
-	username: text('username').notNull().unique(),
-	passwordHash: text('password_hash'),
-	role: roleEnum('role').notNull().default('user'),
+// export const userTable = pgTable('user', {
+// 	id: uuid('id').defaultRandom().primaryKey(),
+// 	username: text('username').notNull().unique(),
+// 	passwordHash: text('password_hash'),
+// 	role: roleEnum('role').notNull().default('user'),
 
-	email: text('email').notNull().unique(),
-	emailVerified: boolean('is_email_verified').notNull().default(false),
-	authMethods: text('auth_methods').array().notNull().default([]),
+// 	email: text('email').notNull().unique(),
+// 	emailVerified: boolean('is_email_verified').notNull().default(false),
+// 	authMethods: text('auth_methods').array().notNull().default([]),
 
-	createdAt: timestamp('created_at').notNull().defaultNow()
-});
+// 	createdAt: timestamp('created_at').notNull().defaultNow()
+// });
 
-export const oauthAccountTable = pgTable(
-	'oauth_account',
-	{
-		userId: uuid('user_id')
-			.notNull()
-			.references(() => userTable.id, { onDelete: 'cascade' }),
-		providerId: text('provider').notNull(),
-		providerUserId: text('provider_user_id').notNull(),
-		createdAt: timestamp('created_at').notNull().defaultNow()
-	},
-	(t) => [primaryKey({ columns: [t.userId, t.providerId] })]
-);
+// export const oauthAccountTable = pgTable(
+// 	'oauth_account',
+// 	{
+// 		userId: uuid('user_id')
+// 			.notNull()
+// 			.references(() => userTable.id, { onDelete: 'cascade' }),
+// 		providerId: text('provider').notNull(),
+// 		providerUserId: text('provider_user_id').notNull(),
+// 		createdAt: timestamp('created_at').notNull().defaultNow()
+// 	},
+// 	(t) => [primaryKey({ columns: [t.userId, t.providerId] })]
+// );
 
-export const emailVerificationTable = pgTable('email_verification', {
-	id: serial('id').primaryKey(),
-	userId: uuid('user_id')
-		.notNull()
-		.references(() => userTable.id, { onDelete: 'cascade' }),
-	email: text('email').notNull(),
-	token: text('token').notNull(),
-	expiresAt: timestamp('expires_at').notNull()
-});
+// export const emailVerificationTable = pgTable('email_verification', {
+// 	id: serial('id').primaryKey(),
+// 	userId: uuid('user_id')
+// 		.notNull()
+// 		.references(() => userTable.id, { onDelete: 'cascade' }),
+// 	email: text('email').notNull(),
+// 	token: text('token').notNull(),
+// 	expiresAt: timestamp('expires_at').notNull()
+// });
 
-export const passwordResetTokenTable = pgTable('password_reset_token', {
-	id: serial('id').primaryKey(),
-	userId: uuid('user_id')
-		.notNull()
-		.references(() => userTable.id),
-	tokenHash: text('token_hash').notNull().unique(),
-	expiresAt: timestamp('expires_at').notNull()
-});
+// export const passwordResetTokenTable = pgTable('password_reset_token', {
+// 	id: serial('id').primaryKey(),
+// 	userId: uuid('user_id')
+// 		.notNull()
+// 		.references(() => userTable.id),
+// 	tokenHash: text('token_hash').notNull().unique(),
+// 	expiresAt: timestamp('expires_at').notNull()
+// });
 
-export const sessionTable = pgTable('session', {
-	id: text('id').primaryKey().notNull(), // TODO: change to uuid?
-	userId: uuid('user_id')
-		.notNull()
-		.references(() => userTable.id, { onDelete: 'cascade' }),
-	expiresAt: timestamp('expires_at', {
-		withTimezone: true,
-		mode: 'date'
-	}).notNull()
-});
+// export const sessionTable = pgTable('session', {
+// 	id: text('id').primaryKey().notNull(), // TODO: change to uuid?
+// 	userId: uuid('user_id')
+// 		.notNull()
+// 		.references(() => userTable.id, { onDelete: 'cascade' }),
+// 	expiresAt: timestamp('expires_at', {
+// 		withTimezone: true,
+// 		mode: 'date'
+// 	}).notNull()
+// });
 
 // app
 export const makers = pgTable('makers', {
