@@ -1,18 +1,35 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import TextInput from '$lib/components/form/TextInput.svelte';
 	import { Google } from '@o7/icon/remix/solid';
+	import { superForm } from 'sveltekit-superforms';
 
-	let { form } = $props();
+	let { data } = $props();
+
+	const { form, errors, message, enhance, submitting } = superForm(data.form);
 </script>
 
 <section class="mb-12 grid h-full flex-1 place-items-center">
 	<div class="w-full max-w-sm">
 		<h1 class="h1 mb-4 text-center">Create an account</h1>
 		<form class="flex flex-col gap-4" method="POST" action="?/signup" use:enhance>
-			<TextInput label="Username" name="username" minlength={1} maxlength={30} required></TextInput>
+			<TextInput
+				label="Username"
+				name="username"
+				minlength={1}
+				maxlength={30}
+				required
+				bind:value={$form.username}
+				errorMessage={$errors.username?.[0]}
+			/>
 
-			<TextInput label="Email" type="email" name="email" required></TextInput>
+			<TextInput
+				label="Email"
+				type="email"
+				name="email"
+				required
+				bind:value={$form.email}
+				errorMessage={$errors.email?.[0]}
+			/>
 
 			<TextInput
 				label="Password"
@@ -21,12 +38,20 @@
 				minlength={6}
 				maxlength={255}
 				required
-			></TextInput>
+				bind:value={$form.password}
+				errorMessage={$errors.password?.[0]}
+			/>
 
-			<button class="btn w-full" type="submit">Continue</button>
+			<button class="btn w-full" type="submit" disabled={$submitting}>
+				{#if $submitting}
+					Creating account...
+				{:else}
+					Continue
+				{/if}
+			</button>
 
-			{#if form?.message}
-				<p class="text-red-500">{form.message}</p>
+			{#if $message}
+				<p class="text-center text-red-500">{$message}</p>
 			{/if}
 		</form>
 

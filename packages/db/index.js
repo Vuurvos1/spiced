@@ -5,6 +5,9 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import * as authSchema from './schema/auth.js';
 import * as sauceSchema from './schema/sauce.js';
 
+export * from './schema/auth.js';
+export * from './schema/sauce.js';
+
 export const schema = {
   ...authSchema,
   ...sauceSchema,
