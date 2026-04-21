@@ -38,12 +38,13 @@ export const actions: Actions = {
 				body: {
 					email,
 					password,
-					name: username
-				}
+					name: username,
+					username
+				},
+				headers: request.headers
 			});
 		} catch (err) {
 			if (err instanceof APIError) {
-				// Handle specific better-auth errors
 				if (err.body?.code === 'USER_ALREADY_EXISTS') {
 					return message(form, 'An account with this email already exists', { status: 400 });
 				}
@@ -61,6 +62,6 @@ export const actions: Actions = {
 			return message(form, 'An unexpected error occurred. Please try again.', { status: 500 });
 		}
 
-		redirect(303, '/auth/email-verification');
+		redirect(303, `/auth/email-verification?email=${encodeURIComponent(email)}`);
 	}
 };

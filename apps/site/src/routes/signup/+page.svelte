@@ -2,10 +2,14 @@
 	import TextInput from '$lib/components/form/TextInput.svelte';
 	import { Google } from '@o7/icon/remix/solid';
 	import { superForm } from 'sveltekit-superforms';
+	import { authClient } from '$lib/auth-client';
 
 	let { data } = $props();
 
 	const { form, errors, message, enhance, submitting } = superForm(data.form);
+
+	const signInWithGoogle = () =>
+		authClient.signIn.social({ provider: 'google', callbackURL: '/' });
 </script>
 
 <section class="mb-12 grid h-full flex-1 place-items-center">
@@ -62,10 +66,10 @@
 		</div>
 
 		<div class="flex flex-wrap gap-4">
-			<a href="/login/google" class="btn btn-outline w-full">
+			<button type="button" class="btn btn-outline w-full" onclick={signInWithGoogle}>
 				<Google size="24" stroke="2" />
 				<span>Google</span>
-			</a>
+			</button>
 		</div>
 
 		<p class="mt-8 text-center">

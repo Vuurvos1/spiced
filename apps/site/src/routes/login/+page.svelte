@@ -2,8 +2,12 @@
 	import { enhance } from '$app/forms';
 	import TextInput from '$lib/components/form/TextInput.svelte';
 	import { Google } from '@o7/icon/remix/solid';
+	import { authClient } from '$lib/auth-client';
 
 	let { form } = $props();
+
+	const signInWithGoogle = () =>
+		authClient.signIn.social({ provider: 'google', callbackURL: '/' });
 </script>
 
 {#snippet forgotPassword()}
@@ -43,10 +47,10 @@
 		</div>
 
 		<div class="flex flex-wrap gap-4">
-			<a href="/login/google" class="btn btn-outline w-full">
+			<button type="button" class="btn btn-outline w-full" onclick={signInWithGoogle}>
 				<Google size="24" stroke="2" />
 				<span>Google</span>
-			</a>
+			</button>
 		</div>
 
 		<p class="mt-8 text-center">

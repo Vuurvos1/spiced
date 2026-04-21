@@ -1,7 +1,6 @@
 import type { hotSauces, user, stores, session } from './';
 import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 
-export type DatabaseUser = InferSelectModel<typeof user>;
 export type User = InferSelectModel<typeof user>;
 
 export type Session = InferSelectModel<typeof session>;
