@@ -1,5 +1,6 @@
 <script lang="ts">
 	import TextInput from '$lib/components/form/TextInput.svelte';
+	import PasswordRequirements from '$lib/components/form/PasswordRequirements.svelte';
 	import { Google } from '@o7/icon/remix/solid';
 	import { superForm } from 'sveltekit-superforms';
 	import { authClient } from '$lib/auth-client';
@@ -35,16 +36,26 @@
 				errorMessage={$errors.email?.[0]}
 			/>
 
-			<TextInput
-				label="Password"
-				type="password"
-				name="password"
-				minlength={6}
-				maxlength={255}
-				required
-				bind:value={$form.password}
-				errorMessage={$errors.password?.[0]}
-			/>
+			<div class="group">
+				<TextInput
+					label="Password"
+					type="password"
+					name="password"
+					minlength={8}
+					maxlength={255}
+					required
+					bind:value={$form.password}
+					errorMessage={$errors.password?.[0]}
+				/>
+
+				<div
+					class="grid grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity,margin-top] duration-200 ease-out group-focus-within:mt-1 group-focus-within:grid-rows-[1fr] group-focus-within:opacity-100"
+				>
+					<div class="overflow-hidden">
+						<PasswordRequirements password={$form.password} />
+					</div>
+				</div>
+			</div>
 
 			<button class="btn w-full" type="submit" disabled={$submitting}>
 				{#if $submitting}

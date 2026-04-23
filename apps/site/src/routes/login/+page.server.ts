@@ -1,43 +1,55 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
+import { emailSchema, loginPasswordSchema } from '$lib/validation';
+import { superValidate, message } from 'sveltekit-superforms';
+import { zod4 } from 'sveltekit-superforms/adapters';
+import { z } from 'zod/v4';
 import { auth } from '$lib/server/auth';
 import { APIError } from 'better-auth/api';
+
+const loginSchema = z.object({
+	email: emailSchema,
+	password: loginPasswordSchema
+});
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
 		return redirect(302, '/');
 	}
-	return {};
+
+	const form = await superValidate(zod4(loginSchema));
+
+	return { form };
 };
 
 export const actions: Actions = {
-	login: async (event) => {
-		const formData = await event.request.formData();
-		const email = formData.get('email');
-		const password = formData.get('password');
+	login: async ({ request }) => {
+		const form = await superValidate(request, zod4(loginSchema));
 
-		if (typeof email !== 'string' || !email.includes('@')) {
-			return fail(400, { message: 'Invalid email' });
+		if (!form.valid) {
+			return fail(400, { form });
 		}
 
-		if (typeof password !== 'string' || password.length < 6) {
-			return fail(400, { message: 'Invalid password' });
-		}
+		const { email, password } = form.data;
 
 		try {
 			await auth.api.signInEmail({
 				body: { email, password },
-				headers: event.request.headers
+				headers: request.headers
 			});
 		} catch (err) {
 			if (err instanceof APIError) {
 				if (err.body?.code === 'EMAIL_NOT_VERIFIED') {
-					return fail(400, { message: 'You must verify your email before logging in.' });
+					return message(form, 'You must verify your email before logging in.', {
+						status: 400
+					});
 				}
-				return fail(400, { message: err.body?.message ?? 'Incorrect email or password' });
+				return message(form, err.body?.message ?? 'Incorrect email or password', {
+					status: 400
+				});
 			}
 			console.error('Login error:', err);
-			return fail(500, { message: 'An unexpected error occurred.' });
+			return message(form, 'An unexpected error occurred.', { status: 500 });
 		}
 
 		return redirect(302, '/');

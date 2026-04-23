@@ -50,22 +50,19 @@ test.describe('login', () => {
 		await expect(page.getByText(/invalid email/i)).toBeVisible();
 	});
 
-	test('password shorter than 6 chars shows "invalid password"', async ({ page }) => {
+	test('blank password shows "password is required"', async ({ page }) => {
 		await page.goto('/login');
 
-		// The password field has minlength={6}. Strip it and set value via evaluate
-		// to reach the server-side branch we're testing.
 		await page.getByLabel('Email').fill(CANONICAL_USER.email);
+		// Leave password empty. The HTML `required` attribute would normally block
+		// submission, so remove it to reach the server/zod branch.
 		await page.evaluate(() => {
-			const input = document.querySelector<HTMLInputElement>('input[name="password"]');
-			if (input) {
-				input.removeAttribute('minlength');
-				input.value = 'abc';
-				input.dispatchEvent(new Event('input', { bubbles: true }));
-			}
+			document
+				.querySelector<HTMLInputElement>('input[name="password"]')
+				?.removeAttribute('required');
 		});
 		await page.getByRole('button', { name: 'Continue' }).click();
 
-		await expect(page.getByText(/invalid password/i)).toBeVisible();
+		await expect(page.getByText(/password is required/i)).toBeVisible();
 	});
 });
